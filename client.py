@@ -21,21 +21,24 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 def calculate_rqi_for_batch(ppg_batch):
     """
     Calculates average RQI for a batch of signals.
-    Input shape: [Batch, 1, Length]
     """
     rqi_sum = 0.0
     batch_size = ppg_batch.shape[0]
     
-    # Move to CPU and numpy for scipy processing
     signals = ppg_batch.cpu().numpy().squeeze(1)
     
     for i in range(batch_size):
         sig = signals[i]
-        # Find peaks (breaths)
-        peaks, _ = find_peaks(sig, distance=125*1.5) # 1.5s min distance
+        
+        # FIX: Normalized data has mean 0 and std 1.
+        # Peaks are usually > 0.5 (depending on wave).
+        # We lower the prominence to catch smaller peaks.
+        peaks, _ = find_peaks(sig, distance=40, prominence=0.5)
         
         if len(peaks) < 2:
-            rqi_sum += 0.0 # Bad quality (no rhythm found)
+            # If we can't find peaks, assign a low default score (0.1) instead of 0.0
+            # This prevents the "Zero Influence" crash
+            rqi_sum += 0.1
             continue
             
         intervals = np.diff(peaks)
@@ -47,7 +50,6 @@ def calculate_rqi_for_batch(ppg_batch):
         else:
             cv = std_interval / mean_interval
             
-        # RQI = 1 - CV (clamped between 0 and 1)
         rqi = max(0.0, 1.0 - cv)
         rqi_sum += rqi
         

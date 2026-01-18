@@ -49,12 +49,20 @@ class FedRQI(fl.server.strategy.FedAvg):
             
             # 3. Calculate the "Quality-Aware Weight"
             # If RQI is low (0.2), this client's influence is slashed by 80%
-            custom_weight = num_examples * client_rqi
+            custom_weight = num_examples * max(client_rqi, 0.01)
             
             print(f"  > Client Update: {num_examples} samples | RQI: {client_rqi:.4f} | Influence: {custom_weight:.2f}")
             
             weighted_weights.append((parameters, custom_weight))
             total_weight += custom_weight
+        
+        # --- CRITICAL FIX: Prevent Divide by Zero ---
+        if total_weight == 0.0:
+            print("⚠️ WARNING: Total Weight is 0! Falling back to uniform averaging.")
+            total_weight = 1.0 # Avoid division by zero
+            # Reset weights to be equal
+            weighted_weights = [(w, 1.0) for w, _ in weighted_weights]
+            total_weight = len(weighted_weights)
 
         # 4. Perform the weighted averaging of the model weights
         # Formula: Sum(Weight_i * Model_i) / Total_Weight
