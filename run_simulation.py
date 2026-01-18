@@ -45,7 +45,7 @@ def run_experiment(strategy_name):
 
 if __name__ == "__main__":
     # You can change this to 'fedavg' to see the difference!
-    strategy = "fedrqi" 
+    strategy = "fedrqi"
     
     if len(sys.argv) > 1:
         strategy = sys.argv[1]
