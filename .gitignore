@@ -1,0 +1,15 @@
+# Virtual Environment
+venv/
+__pycache__/
+*.pyc
+
+# Datasets (Too large for GitHub)
+data/
+*.csv
+*.mat
+*.zip
+
+# System files
+.DS_Store
+.vscode/
+.qodo
