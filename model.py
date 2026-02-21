@@ -1,78 +1,78 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
-class BreathBiLSTM(nn.Module):
+class AttentionBiLSTM(nn.Module):
     def __init__(self, input_size=1, hidden_size=64, num_layers=2, output_size=1):
         """
-        A Bidirectional LSTM Network for Respiratory Rate Estimation.
-        
-        Args:
-            input_size (int): Number of features per time step (1 because we only use PPG).
-            hidden_size (int): Number of neurons in the LSTM memory.
-            num_layers (int): Number of stacked LSTM layers.
-            output_size (int): Final output (1 for Respiratory Rate).
+        Upgraded Bidirectional LSTM with an Attention Mechanism for Explainable AI (XAI).
         """
-        super(BreathBiLSTM, self).__init__()
+        super(AttentionBiLSTM, self).__init__()
         
-        # 1. The LSTM Layer (The core brain)
+        # 1. The Core Memory
         self.lstm = nn.LSTM(
             input_size=input_size,
             hidden_size=hidden_size,
             num_layers=num_layers,
-            batch_first=True,   # Expect input shape: (Batch, Time, Features)
-            bidirectional=True  # Read forwards and backwards
+            batch_first=True,
+            bidirectional=True
         )
         
-        # 2. The Regressor (The final decision maker)
-        # Since it's bidirectional, the hidden state size doubles (64 * 2 = 128)
+        # 2. THE NOVELTY: The Attention Layer
+        # BiLSTM outputs double the hidden size (forward + backward)
+        self.attention_layer = nn.Linear(hidden_size * 2, 1)
+        
+        # 3. The Final Regressor
         self.fc = nn.Linear(hidden_size * 2, output_size)
 
-    def forward(self, x):
+    def forward(self, x, return_attention=False):
         """
-        Forward pass logic.
-        x shape: (Batch_Size, 1, Sequence_Length) -> We need to transpose it.
+        x shape: (Batch_Size, Features, Sequence_Length)
         """
-        # PyTorch LSTMs expect shape: (Batch, Sequence_Length, Features)
-        # Our input is (Batch, Features, Sequence_Length) e.g., (1, 1, 3750)
-        # So we swap dimensions 1 and 2.
+        # Swap dimensions to match PyTorch LSTM expectations -> (Batch, Seq_Len, Features)
         x = x.transpose(1, 2) 
         
         # Pass through LSTM
-        # out shape: (Batch, Seq_Len, Hidden_Size*2)
-        # _ (hidden_states): We ignore the internal memory states for now
+        # lstm_out shape: (Batch, Seq_Len, Hidden_Size*2)
         lstm_out, _ = self.lstm(x)
         
-        # We only care about the LAST time step's output to make the prediction
-        # Alternatively, we could average all time steps (Global Average Pooling)
-        last_time_step = lstm_out[:, -1, :]
+        # --- ATTENTION MECHANISM MATH ---
+        # 1. Score each time step: How important is this specific millisecond?
+        attention_scores = torch.tanh(self.attention_layer(lstm_out)) 
         
-        # Pass through the linear layer to get the final Respiratory Rate
-        predicted_rr = self.fc(last_time_step)
+        # 2. Normalize scores into percentages (probabilities summing to 1.0)
+        # alpha shape: (Batch, Seq_Len, 1)
+        alpha = F.softmax(attention_scores, dim=1) 
         
+        # 3. Multiply the LSTM outputs by their importance scores
+        context_vector = lstm_out * alpha
+        
+        # 4. Compress the sequence into a single highly-focused representation
+        # representation shape: (Batch, Hidden_Size*2)
+        representation = torch.sum(context_vector, dim=1)
+        
+        # --- FINAL PREDICTION ---
+        predicted_rr = self.fc(representation)
+        
+        # We use a flag here so we don't break our old training scripts yet!
+        if return_attention:
+            # Squeeze removes the extra dimension so it's a flat list of scores for the GUI
+            return predicted_rr, alpha.squeeze(-1) 
+            
         return predicted_rr
 
 # --- TEST BLOCK ---
 if __name__ == "__main__":
-    print("Testing Neural Network Architecture...")
+    print("Testing Upgraded XAI Architecture...")
     
-    # 1. Create the model
-    model = BreathBiLSTM()
-    print("✅ Model created successfully.")
-    print(model) # Prints the architecture
+    model = AttentionBiLSTM()
+    dummy_input = torch.randn(1, 1, 3750) # 30 seconds of simulated data
     
-    # 2. Create a dummy input (1 batch, 1 channel, 3750 samples)
-    # This simulates 30 seconds of PPG data
-    dummy_input = torch.randn(1, 1, 3750)
-    print(f"\nDummy Input Shape: {dummy_input.shape}")
-    
-    # 3. Pass it through the model
+    # Test standard forward pass
     output = model(dummy_input)
+    print(f"✅ Prediction Shape: {output.shape} (Should be [1, 1])")
     
-    # 4. Check output
-    print(f"Output Shape: {output.shape} (Should be [1, 1])")
-    print(f"Predicted RR: {output.item():.2f} (Random value, untrained)")
-    
-    if output.shape == (1, 1):
-        print("\n✅ Success! Data flows through the network correctly.")
-    else:
-        print("\n❌ Error: Output shape mismatch.")
+    # Test XAI forward pass
+    output, attention_weights = model(dummy_input, return_attention=True)
+    print(f"✅ Attention Weights Shape: {attention_weights.shape} (Should be [1, 3750])")
+    print("🚀 Phase 1 Complete: Model is now Explainable!")
