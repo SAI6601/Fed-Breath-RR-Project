@@ -22,10 +22,15 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def get_model_size_mb(model):
     """Helper function to measure model size in Megabytes."""
-    torch.save(model.state_dict(), "temp_model.p")
-    size = os.path.getsize("temp_model.p") / 1e6
-    if os.path.exists("temp_model.p"):
-        os.remove("temp_model.p")
+    # Create a unique filename for each client using its Process ID
+    temp_file = f"temp_model_{os.getpid()}.p"
+    
+    torch.save(model.state_dict(), temp_file)
+    size = os.path.getsize(temp_file) / 1e6
+    
+    if os.path.exists(temp_file):
+        os.remove(temp_file)
+        
     return size
 
 def quantize_for_edge(model):
