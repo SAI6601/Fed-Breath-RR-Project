@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fed-Breath Command Center</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+    <style>
+        /* ── Reset & Base ─────────────────────────────────────── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg-base: #0b0f1a;
+            --bg-card: #111827;
+            --bg-card2: #151e2d;
+            --border: #1f2d42;
+            --neon-cyan: #00e5ff;
+            --neon-green: #39ff14;
+            --neon-red: #ff2d55;
+            --neon-orange: #ff9900;
+            --neon-purple: #a855f7;
+            --text-pri: #e2e8f0;
+            --text-sec: #64748b;
+            --text-dim: #334155;
+            --font: 'Inter', sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        html,
+        body {
+            height: 100%;
+            background: var(--bg-base);
+            color: var(--text-pri);
+            font-family: var(--font);
+            overflow-x: hidden;
+        }
+
+        /* Subtle grid lines on background */
+        body {
+            background-image:
+                linear-gradient(rgba(0, 229, 255, .03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, .03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* ── Header ───────────────────────────────────────────── */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 32px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(11, 15, 26, .85);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 0 18px rgba(0, 229, 255, .4);
+        }
+
+        header h1 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: .04em;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(57, 255, 20, .08);
+            border: 1px solid rgba(57, 255, 20, .25);
+            border-radius: 999px;
+            padding: 6px 16px;
+            font-size: .78rem;
+            font-weight: 600;
+            color: var(--neon-green);
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .pulse-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--neon-green);
+            box-shadow: 0 0 8px var(--neon-green);
+            animation: pulse 1.6s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.5);
+                opacity: .5;
+            }
+        }
+
+        .header-meta {
+            font-size: .72rem;
+            color: var(--text-sec);
+            font-family: var(--mono);
+        }
+
+        /* ── Dashboard Grid ───────────────────────────────────── */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto auto;
+            gap: 20px;
+            padding: 24px 28px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* ── Card Base ────────────────────────────────────────── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px 24px;
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow .3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 0 28px rgba(0, 229, 255, .07);
+        }
+
+        /* subtle top accent line */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+            opacity: .45;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: .7rem;
+            font-weight: 600;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--text-sec);
+        }
+
+        .card-badge {
+            font-size: .65rem;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-family: var(--mono);
+        }
+
+        .badge-cyan {
+            background: rgba(0, 229, 255, .1);
+            color: var(--neon-cyan);
+            border: 1px solid rgba(0, 229, 255, .2);
+        }
+
+        .badge-orange {
+            background: rgba(255, 153, 0, .1);
+            color: var(--neon-orange);
+            border: 1px solid rgba(255, 153, 0, .2);
+        }
+
+        .badge-purple {
+            background: rgba(168, 85, 247, .1);
+            color: var(--neon-purple);
+            border: 1px solid rgba(168, 85, 247, .2);
+        }
+
+        .badge-red {
+            background: rgba(255, 45, 85, .1);
+            color: var(--neon-red);
+            border: 1px solid rgba(255, 45, 85, .2);
+        }
+
+        .badge-green {
+            background: rgba(57, 255, 20, .1);
+            color: var(--neon-green);
+            border: 1px solid rgba(57, 255, 20, .2);
+        }
+
+        .chart-wrap {
+            position: relative;
+            height: 220px;
+        }
+
+        /* ── Bottom full-width card ───────────────────────────── */
+        .card-full {
+            grid-column: 1 / -1;
+        }
+
+        .card-full .chart-wrap {
+            height: 180px;
+        }
+
+        /* ── Compression Stat Card ────────────────────────────── */
+        .compression-content {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .compression-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .comp-label {
+            font-family: var(--mono);
+            font-size: .8rem;
+            font-weight: 600;
+            color: var(--text-sec);
+            width: 48px;
+            flex-shrink: 0;
+        }
+
+        .comp-bar-track {
+            flex: 1;
+            height: 10px;
+            background: var(--bg-base);
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .comp-bar-fill {
+            height: 100%;
+            border-radius: 999px;
+            transition: width 1.5s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .fill-fp32 {
+            background: linear-gradient(90deg, #ff4d6d, #ff2d55);
+            box-shadow: 0 0 10px rgba(255, 45, 85, .4);
+            width: 100%;
+        }
+
+        .fill-int8 {
+            background: linear-gradient(90deg, #00e5ff, #a855f7);
+            box-shadow: 0 0 10px rgba(0, 229, 255, .4);
+            width: 24%;
+        }
+
+        .comp-size {
+            font-family: var(--mono);
+            font-size: .85rem;
+            font-weight: 700;
+            width: 58px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .reduction-badge {
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(0, 229, 255, .08), rgba(168, 85, 247, .08));
+            border: 1px solid rgba(0, 229, 255, .15);
+            border-radius: 12px;
+            padding: 14px 20px;
+        }
+
+        .reduction-pct {
+            font-size: 2.8rem;
+            font-weight: 900;
+            font-family: var(--mono);
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .reduction-label {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .reduction-label strong {
+            font-size: .9rem;
+            font-weight: 700;
+            color: var(--text-pri);
+        }
+
+        .reduction-label span {
+            font-size: .72rem;
+            color: var(--text-sec);
+        }
+
+        /* ── BFT Terminal ─────────────────────────────────────── */
+        .terminal {
+            background: #060a12;
+            border: 1px solid #1a2740;
+            border-radius: 10px;
+            padding: 14px;
+            height: 220px;
+            overflow-y: auto;
+            font-family: var(--mono);
+            font-size: .74rem;
+            line-height: 1.75;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+
+        .terminal::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .terminal::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .terminal::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        .log-line {
+            display: block;
+            animation: fadeIn .3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        .log-ts {
+            color: var(--text-dim);
+            margin-right: 8px;
+        }
+
+        .log-pass {
+            color: var(--neon-green);
+        }
+
+        .log-warn {
+            color: var(--neon-orange);
+        }
+
+        .log-fail {
+            color: var(--neon-red);
+        }
+
+        .log-info {
+            color: var(--neon-cyan);
+        }
+
+        /* ── Glow PPG legend ──────────────────────────────────── */
+        .ppg-legend {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: .72rem;
+            color: var(--text-sec);
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* ── Scrollbar global ─────────────────────────────────── */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 6px;
+        }
+
+        /* ── Responsive ───────────────────────────────────────── */
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .card-full {
+                grid-column: 1 / -1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ═══════════════════ HEADER ═══════════════════ -->
+    <header>
+        <div class="header-left">
+            <div class="logo-icon">🫁</div>
+            <h1>Fed-Breath Command Center</h1>
+        </div>
+
+        <div class="status-pill">
+            <div class="pulse-dot"></div>
+            System Online
+        </div>
+
+        <div class="header-meta" id="clock">--:--:-- UTC</div>
+    </header>
+
+    <!-- ═══════════════════ GRID ═══════════════════ -->
+    <div class="dashboard">
+
+        <!-- ① Global Accuracy (Line Chart) -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">🌐 Global Accuracy — Validation MAE</span>
+                <span class="card-badge badge-cyan">FL ROUNDS</span>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="maeChart"></canvas>
+            </div>
+        </div>
+
+        <!-- ② Node Quality (Bar Chart) -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">🏥 Node Quality — RQI Scores</span>
+                <span class="card-badge badge-orange">2 HOSPITALS</span>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="rqiChart"></canvas>
+            </div>
+        </div>
+
+        <!-- ③ Edge Compression Stat Card -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">⚡ Edge Optimization — Model Compression</span>
+                <span class="card-badge badge-purple">QUANTIZATION</span>
+            </div>
+            <div class="compression-content">
+                <div class="compression-row">
+                    <span class="comp-label">FP32</span>
+                    <div class="comp-bar-track">
+                        <div class="comp-bar-fill fill-fp32" id="barFP32"></div>
+                    </div>
+                    <span class="comp-size" style="color: var(--neon-red);">5.0 MB</span>
+                </div>
+                <div class="compression-row">
+                    <span class="comp-label">INT8</span>
+                    <div class="comp-bar-track">
+                        <div class="comp-bar-fill fill-int8" id="barINT8"></div>
+                    </div>
+                    <span class="comp-size" style="color: var(--neon-cyan);">1.2 MB</span>
+                </div>
+                <div class="reduction-badge">
+                    <div class="reduction-pct">76%</div>
+                    <div class="reduction-label">
+                        <strong>Size Reduction</strong>
+                        <span>FP32 → INT8 Quantization</span>
+                        <span style="color: var(--neon-green); font-size:.68rem;">✔ Inference-safe on edge MCUs</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ④ BFT Security Terminal -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">🛡️ BFT Security Shield</span>
+                <span class="card-badge badge-red">LIVE LOGS</span>
+            </div>
+            <div class="terminal" id="terminal"></div>
+        </div>
+
+        <!-- ⑤ PPG Breathing Wave — Full Width -->
+        <div class="card card-full">
+            <div class="card-header">
+                <span class="card-title">🧠 Explainable AI Monitor — PPG Breathing Wave (30-sec)</span>
+                <span class="card-badge badge-green">ATTENTION ACTIVE</span>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="ppgChart"></canvas>
+            </div>
+            <div class="ppg-legend">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:var(--neon-red); box-shadow:0 0 6px var(--neon-red);">
+                    </div>
+                    Attention Peak (high importance)
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:rgba(255,45,85,.25);"></div>
+                    Normal Signal
+                </div>
+                <div class="legend-item" style="margin-left:auto; font-family:var(--mono); color:var(--neon-cyan);">
+                    ⏱ 30 s window · 20 Hz sample rate
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /* ─────────────────────────────────────────────────────────────
+           Utilities & Clock
+        ───────────────────────────────────────────────────────────── */
+        const C = (id) => document.getElementById(id).getContext('2d');
+
+        Chart.defaults.color = '#64748b';
+        Chart.defaults.borderColor = '#1f2d42';
+        Chart.defaults.font.family = "'Inter', sans-serif";
+
+        function ticker() {
+            document.getElementById('clock').textContent =
+                new Date().toUTCString().split(' ').slice(4, 5).join('') + ' UTC';
+        }
+        ticker(); setInterval(ticker, 1000);
+
+        /* ─────────────────────────────────────────────────────────────
+           Chart Initializations (Wired for Live Data)
+        ───────────────────────────────────────────────────────────── */
+        // ① MAE Chart
+        const maeChart = new Chart(C('maeChart'), {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Validation MAE',
+                    data: [],
+                    borderColor: '#00e5ff',
+                    backgroundColor: (ctx) => {
+                        const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 220);
+                        g.addColorStop(0, 'rgba(0,229,255,.22)');
+                        g.addColorStop(1, 'rgba(0,229,255,0)');
+                        return g;
+                    },
+                    borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#00e5ff',
+                    pointBorderColor: '#0b0f1a', pointBorderWidth: 2, tension: 0.45, fill: true,
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false }, tooltip: { backgroundColor: '#111827', borderColor: '#00e5ff', borderWidth: 1 } },
+                scales: { x: { grid: { color: 'rgba(255,255,255,.04)' } }, y: { grid: { color: 'rgba(255,255,255,.04)' }, min: 0, max: 0.6 } }
+            }
+        });
+
+        // ② RQI Chart
+        const rqiChart = new Chart(C('rqiChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Hospital A (VIT Med)', 'Hospital B (AIIMS-Link)'],
+                datasets: [{
+                    label: 'RQI Score',
+                    data: [0, 0],
+                    backgroundColor: ['rgba(0,229,255,.85)', 'rgba(168,85,247,.85)'],
+                    borderColor: ['#00e5ff', '#a855f7'],
+                    borderWidth: 1.5, borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(255,255,255,.04)' }, min: 0, max: 1 } }
+            }
+        });
+
+        // ⑤ PPG Chart (Explainable AI Wave)
+        let ppgWave = [];
+        let ppgLabels = [];
+        let attentionMask = [];
+
+        const ppgChart = new Chart(C('ppgChart'), {
+            type: 'line',
+            data: {
+                labels: ppgLabels, datasets: [{
+                    data: ppgWave, borderWidth: 1.8, pointRadius: 0, tension: 0.35, fill: false,
+                    segment: {
+                        borderColor: (ctx) => {
+                            // AI Attention: Turn the line RED if the backend says it's important!
+                            const idx = ctx.p1DataIndex;
+                            return attentionMask[idx] > 0.5 ? '#ff2d55' : 'rgba(255,45,85,.4)';
+                        },
+                        borderWidth: (ctx) => attentionMask[ctx.p1DataIndex] > 0.5 ? 3 : 1.8
+                    }
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false, animation: false,
+                plugins: { legend: { display: false } },
+                scales: { x: { display: false }, y: { grid: { color: 'rgba(255,255,255,.04)' }, min: -1.5, max: 1.5 } }
+            }
+        });
+
+        /* ─────────────────────────────────────────────────────────────
+           Terminal Logic
+        ───────────────────────────────────────────────────────────── */
+        const term = document.getElementById('terminal');
+        function appendTerminalLog(msg, type = 'log-info') {
+            const now = new Date().toTimeString().split(' ')[0];
+            const line = document.createElement('span');
+            line.className = `log-line ${type}`;
+            line.innerHTML = `<span class="log-ts">[${now}]</span>${msg}`;
+            term.appendChild(line);
+            term.scrollTop = term.scrollHeight;
+            if (term.children.length > 40) term.removeChild(term.firstChild);
+        }
+
+        appendTerminalLog("System Initialized. Waiting for WebSocket connection...", "log-warn");
+
+        /* ─────────────────────────────────────────────────────────────
+           WebSocket Integration (The Real-Time Engine)
+        ───────────────────────────────────────────────────────────── */
+        const ws = new WebSocket("ws://localhost:8000/ws");
+
+        ws.onopen = () => {
+            appendTerminalLog("📡 Connected to FastAPI Data Stream", "log-pass");
+            appendTerminalLog("🛡️ BFT Security Shield Active", "log-pass");
+        };
+
+        ws.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+
+            // 1. Update MAE Graph & Logs (Triggers only on new rounds)
+            const currentRound = `R${data.round}`;
+            if (data.round > 0 && !maeChart.data.labels.includes(currentRound)) {
+                maeChart.data.labels.push(currentRound);
+                maeChart.data.datasets[0].data.push(data.mae);
+                maeChart.update();
+
+                appendTerminalLog(`🔄 Aggregation Round ${data.round} Complete. MAE: ${data.mae.toFixed(3)}`, "log-info");
+            }
+
+            // 2. Update Hospital Quality Bars
+            if (data.c0_rqi > 0 || data.c1_rqi > 0) {
+                rqiChart.data.datasets[0].data = [data.c0_rqi, data.c1_rqi];
+                rqiChart.update();
+            }
+
+            // 3. Stream the Live Breathing Wave & Attention Heatmap
+            if (data.wave && data.attention) {
+                for (let i = 0; i < data.wave.length; i++) {
+                    ppgWave.push(data.wave[i]);
+                    ppgLabels.push("");
+                    attentionMask.push(data.attention[i]);
+                }
+
+                // Keep a rolling window of 200 data points to slide the graph left
+                if (ppgWave.length > 200) {
+                    ppgWave.splice(0, ppgWave.length - 200);
+                    ppgLabels.splice(0, ppgLabels.length - 200);
+                    attentionMask.splice(0, attentionMask.length - 200);
+                }
+                ppgChart.update('none');
+            }
+        };
+
+        ws.onerror = () => {
+            appendTerminalLog("🚨 WebSocket Error: Backend offline. Did you start Uvicorn?", "log-fail");
+        };
+    </script>
+
+
+</body>
+
+</html>
