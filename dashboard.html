@@ -456,6 +456,41 @@
                 grid-column: 1 / -1;
             }
         }
+
+        .prob-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .prob-label {
+            font-size: 11px;
+            min-width: 110px;
+            font-family: var(--mono);
+        }
+
+        .prob-track {
+            flex: 1;
+            height: 5px;
+            background: rgba(255, 255, 255, .08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .prob-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 3px;
+            transition: width .5s ease;
+        }
+
+        .prob-pct {
+            font-size: 11px;
+            font-family: var(--mono);
+            min-width: 38px;
+            text-align: right;
+            color: #64748b;
+        }
     </style>
 </head>
 
@@ -542,11 +577,122 @@
             <div class="terminal" id="terminal"></div>
         </div>
 
-        <!-- ⑤ PPG Breathing Wave — Full Width -->
+        <!-- ④b Differential Privacy Budget -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">🔒 Differential Privacy Budget</span>
+                <span id="dp-badge" class="card-badge badge-red">DP INACTIVE</span>
+            </div>
+            <div style="padding: 12px 4px;">
+                <!-- ε gauge -->
+                <div style="margin-bottom:14px">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+                        <span style="font-size:11px;color:#64748b;letter-spacing:.05em;">PRIVACY SPENT (ε)</span>
+                        <span id="epsilonVal" style="font-family:var(--mono);font-size:22px;color:#a855f7;">—</span>
+                    </div>
+                    <div style="height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden">
+                        <div id="epsilonBar"
+                            style="height:100%;width:0%;background:linear-gradient(90deg,#7c3aed,#a855f7);border-radius:3px;transition:width .6s ease">
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:10px;color:#475569;margin-top:3px">
+                        <span>ε = 0 (perfect)</span><span>ε = 10 (weak)</span>
+                    </div>
+                </div>
+                <!-- δ and status row -->
+                <div style="display:flex;gap:10px;margin-bottom:14px">
+                    <div style="flex:1;background:rgba(255,255,255,.04);border-radius:6px;padding:8px 10px">
+                        <div style="font-size:10px;color:#64748b;margin-bottom:3px;">DELTA (δ)</div>
+                        <div id="deltaVal" style="font-family:var(--mono);font-size:14px;color:#94a3b8;">1e-5</div>
+                    </div>
+                    <div style="flex:1;background:rgba(255,255,255,.04);border-radius:6px;padding:8px 10px">
+                        <div style="font-size:10px;color:#64748b;margin-bottom:3px;">MECHANISM</div>
+                        <div style="font-family:var(--mono);font-size:14px;color:#94a3b8;">DP-SGD</div>
+                    </div>
+                    <div style="flex:1;background:rgba(255,255,255,.04);border-radius:6px;padding:8px 10px">
+                        <div style="font-size:10px;color:#64748b;margin-bottom:3px;">σ (NOISE)</div>
+                        <div style="font-family:var(--mono);font-size:14px;color:#94a3b8;">1.0</div>
+                    </div>
+                </div>
+                <!-- Interpretation line -->
+                <div id="dpInterpret"
+                    style="font-size:11px;color:#64748b;line-height:1.5;border-left:2px solid #7c3aed;padding-left:8px;">
+                    Waiting for first FL round to report ε...
+                </div>
+            </div>
+        </div>
+
+        <!-- ⑤ Respiratory Anomaly Monitor — Full Width -->
+        <div class="card card-full" id="anomaly-card" style="border:1px solid rgba(255,255,255,.06)">
+            <div class="card-header">
+                <span class="card-title">🫁 Respiratory Anomaly Monitor</span>
+                <span id="anomaly-badge" class="card-badge badge-green">NORMAL</span>
+            </div>
+            <div style="display:flex;align-items:stretch;gap:16px;padding:4px 0 8px">
+
+                <!-- Current status block -->
+                <div id="anomaly-status"
+                    style="min-width:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,.03);border-radius:8px;padding:16px 12px;text-align:center">
+                    <div id="anomaly-icon" style="font-size:32px;margin-bottom:6px">🫁</div>
+                    <div id="anomaly-name" style="font-size:18px;font-weight:600;color:#22c55e;margin-bottom:4px">Normal
+                    </div>
+                    <div id="anomaly-rr" style="font-family:var(--mono);font-size:13px;color:#64748b">RR — BrPM</div>
+                    <div id="anomaly-conf" style="font-size:11px;color:#475569;margin-top:4px">Confidence —</div>
+                </div>
+
+                <!-- Probability bars for all 5 classes -->
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:space-around;padding:4px 0">
+                    <div id="prob-bars" style="display:flex;flex-direction:column;gap:7px">
+                        <div class="prob-row" data-idx="0"><span class="prob-label" style="color:#22c55e">Normal</span>
+                            <div class="prob-track">
+                                <div class="prob-fill" id="pbar-0" style="background:#22c55e"></div>
+                            </div><span class="prob-pct" id="ppct-0">—</span>
+                        </div>
+                        <div class="prob-row" data-idx="1"><span class="prob-label"
+                                style="color:#eab308">Bradypnea</span>
+                            <div class="prob-track">
+                                <div class="prob-fill" id="pbar-1" style="background:#eab308"></div>
+                            </div><span class="prob-pct" id="ppct-1">—</span>
+                        </div>
+                        <div class="prob-row" data-idx="2"><span class="prob-label" style="color:#ef4444">Apnea</span>
+                            <div class="prob-track">
+                                <div class="prob-fill" id="pbar-2" style="background:#ef4444"></div>
+                            </div><span class="prob-pct" id="ppct-2">—</span>
+                        </div>
+                        <div class="prob-row" data-idx="3"><span class="prob-label"
+                                style="color:#f97316">Tachypnea</span>
+                            <div class="prob-track">
+                                <div class="prob-fill" id="pbar-3" style="background:#f97316"></div>
+                            </div><span class="prob-pct" id="ppct-3">—</span>
+                        </div>
+                        <div class="prob-row" data-idx="4"><span class="prob-label" style="color:#dc2626">Severe
+                                Tachypnea</span>
+                            <div class="prob-track">
+                                <div class="prob-fill" id="pbar-4" style="background:#dc2626"></div>
+                            </div><span class="prob-pct" id="ppct-4">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clinical reference ranges -->
+                <div
+                    style="min-width:155px;background:rgba(255,255,255,.03);border-radius:8px;padding:12px;font-size:11px;color:#475569;line-height:2">
+                    <div style="font-size:10px;letter-spacing:.06em;color:#64748b;margin-bottom:6px">CLINICAL RANGES
+                    </div>
+                    <div><span style="color:#ef4444">●</span> Apnea &lt; 8 BrPM</div>
+                    <div><span style="color:#eab308">●</span> Bradypnea 8–11 BrPM</div>
+                    <div><span style="color:#22c55e">●</span> Normal 12–20 BrPM</div>
+                    <div><span style="color:#f97316">●</span> Tachypnea 21–25 BrPM</div>
+                    <div><span style="color:#dc2626">●</span> Severe &gt; 25 BrPM</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ⑥ PPG Breathing Wave — Full Width -->
         <div class="card card-full">
             <div class="card-header">
                 <span class="card-title">🧠 Explainable AI Monitor — PPG Breathing Wave (30-sec)</span>
-                <span class="card-badge badge-green">ATTENTION ACTIVE</span>
+                <span id="xai-badge" class="card-badge badge-green">ATTENTION ACTIVE</span>
             </div>
             <div class="chart-wrap">
                 <canvas id="ppgChart"></canvas>
@@ -680,7 +826,8 @@
         /* ─────────────────────────────────────────────────────────────
            WebSocket Integration (The Real-Time Engine)
         ───────────────────────────────────────────────────────────── */
-        const ws = new WebSocket("ws://localhost:8000/ws");
+        const wsUrl = `ws://${window.location.host}/ws`;
+        const ws = new WebSocket(wsUrl);
 
         ws.onopen = () => {
             appendTerminalLog("📡 Connected to FastAPI Data Stream", "log-pass");
@@ -706,7 +853,7 @@
                 rqiChart.update();
             }
 
-            // 3. Stream the Live Breathing Wave & Attention Heatmap
+            // 3. Stream the Live Breathing Wave & Real Attention Heatmap
             if (data.wave && data.attention) {
                 for (let i = 0; i < data.wave.length; i++) {
                     ppgWave.push(data.wave[i]);
@@ -714,13 +861,110 @@
                     attentionMask.push(data.attention[i]);
                 }
 
-                // Keep a rolling window of 200 data points to slide the graph left
+                // Keep a rolling window of 200 data points
                 if (ppgWave.length > 200) {
                     ppgWave.splice(0, ppgWave.length - 200);
                     ppgLabels.splice(0, ppgLabels.length - 200);
                     attentionMask.splice(0, attentionMask.length - 200);
                 }
                 ppgChart.update('none');
+            }
+
+            // 4. Update XAI badge to show real vs synthetic inference
+            const xaiBadge = document.getElementById('xai-badge');
+            if (xaiBadge) {
+                if (data.xai_live) {
+                    xaiBadge.textContent = 'REAL INFERENCE';
+                    xaiBadge.className = 'card-badge badge-green';
+                } else {
+                    xaiBadge.textContent = 'SYNTHETIC FALLBACK';
+                    xaiBadge.className = 'card-badge badge-red';
+                }
+            }
+
+            // 5. Update Differential Privacy Budget panel
+            if (data.epsilon !== undefined) {
+                const dpBadge = document.getElementById('dp-badge');
+                const epsilonVal = document.getElementById('epsilonVal');
+                const epsilonBar = document.getElementById('epsilonBar');
+                const deltaVal = document.getElementById('deltaVal');
+                const dpInterpret = document.getElementById('dpInterpret');
+
+                if (data.dp_enabled && data.epsilon >= 0) {
+                    const eps = data.epsilon;
+                    dpBadge.textContent = 'DP-SGD ACTIVE';
+                    dpBadge.className = 'card-badge badge-green';
+                    epsilonVal.textContent = eps.toFixed(3);
+
+                    // Bar fills proportionally up to ε = 10 (then clips at 100%)
+                    const pct = Math.min((eps / 10) * 100, 100).toFixed(1);
+                    epsilonBar.style.width = pct + '%';
+                    // Colour shifts red as budget depletes
+                    const g = eps < 2 ? '#7c3aed,#a855f7' : eps < 5 ? '#854F0B,#EF9F27' : '#A32D2D,#E24B4A';
+                    epsilonBar.style.background = `linear-gradient(90deg,${g})`;
+
+                    // Scientific notation for delta
+                    const dExp = Math.round(Math.log10(data.delta));
+                    deltaVal.textContent = `1e${dExp}`;
+
+                    // Human-readable interpretation
+                    let msg = '';
+                    if (eps < 1) msg = 'Strong privacy — attacker learns very little from updates.';
+                    else if (eps < 3) msg = 'Good privacy — suitable for clinical data (ε < 3 recommended).';
+                    else if (eps < 8) msg = 'Moderate privacy — consider reducing noise_multiplier.';
+                    else msg = 'Weak privacy — budget nearly exhausted, reduce rounds or increase σ.';
+                    dpInterpret.textContent = `ε = ${eps.toFixed(3)}, δ = 1e${dExp} — ${msg}`;
+
+                    appendTerminalLog(`🔒 DP Budget: ε = ${eps.toFixed(3)}, δ = 1e${dExp}`, 'log-pass');
+
+                } else if (!data.dp_enabled) {
+                    dpBadge.textContent = 'DP DISABLED';
+                    dpBadge.className = 'card-badge badge-red';
+                    epsilonVal.textContent = 'N/A';
+                    dpInterpret.textContent = 'Differential privacy is off — set DP_ENABLED = True in client.py.';
+                }
+            }
+
+            // 6. Update Respiratory Anomaly Monitor
+            if (data.anomaly) {
+                const a = data.anomaly;
+                const icons = { 0: '🫁', 1: '🔵', 2: '🚨', 3: '🟠', 4: '🔴' };
+                const severityMap = { safe: 'badge-green', warning: 'badge-orange', critical: 'badge-red' };
+
+                document.getElementById('anomaly-name').textContent = a.name;
+                document.getElementById('anomaly-name').style.color = a.color;
+                document.getElementById('anomaly-icon').textContent = icons[a.class_id] ?? '🫁';
+                document.getElementById('anomaly-rr').textContent = `RR ${a.rr_pred.toFixed(1)} BrPM`;
+                document.getElementById('anomaly-conf').textContent = `Confidence ${(a.confidence * 100).toFixed(1)}%`;
+
+                const anomalyBadge = document.getElementById('anomaly-badge');
+                anomalyBadge.textContent = a.name.toUpperCase();
+                anomalyBadge.className = 'card-badge ' + (severityMap[a.severity] ?? 'badge-green');
+
+                // Pulse card border on warning/critical events
+                const anomalyCard = document.getElementById('anomaly-card');
+                if (a.severity === 'critical') {
+                    anomalyCard.style.borderColor = a.color;
+                    appendTerminalLog(
+                        `🚨 ANOMALY: ${a.name} detected — RR ${a.rr_pred.toFixed(1)} BrPM ` +
+                        `(conf ${(a.confidence * 100).toFixed(0)}%)`,
+                        'log-fail'
+                    );
+                } else if (a.severity === 'warning') {
+                    anomalyCard.style.borderColor = a.color;
+                } else {
+                    anomalyCard.style.borderColor = 'rgba(255,255,255,.06)';
+                }
+
+                // Animate probability bars for all 5 classes
+                if (a.all_probs) {
+                    a.all_probs.forEach((p, idx) => {
+                        const bar = document.getElementById(`pbar-${idx}`);
+                        const pct = document.getElementById(`ppct-${idx}`);
+                        if (bar) bar.style.width = (p * 100).toFixed(1) + '%';
+                        if (pct) pct.textContent = (p * 100).toFixed(1) + '%';
+                    });
+                }
             }
         };
 

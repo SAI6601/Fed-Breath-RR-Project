@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 # Import our custom modules
 from dataset import BidmcDataset
-from model import BreathBiLSTM
+from model import AttentionBiLSTM
 
 # --- CONFIGURATION ---
 BATCH_SIZE = 8
@@ -32,7 +32,7 @@ def train_centralized():
     print(f"📊 Data Loaded: {len(train_dataset)} Train samples, {len(val_dataset)} Validation samples.")
 
     # 2. Initialize Model, Loss, Optimizer
-    model = BreathBiLSTM().to(device)
+    model = AttentionBiLSTM().to(device)
     criterion = nn.MSELoss()  # Mean Squared Error (Standard for regression)
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
     
@@ -52,8 +52,8 @@ def train_centralized():
             # Zero gradients
             optimizer.zero_grad()
             
-            # Forward pass
-            outputs = model(inputs)
+            # Forward pass — use return_attention=True to get (prediction, weights)
+            outputs, _ = model(inputs, return_attention=True)
             
             # Reshape targets to match outputs [Batch, 1]
             loss = criterion(outputs, targets.unsqueeze(1))
@@ -75,7 +75,7 @@ def train_centralized():
         with torch.no_grad(): # No need to track gradients for validation
             for inputs, targets in val_loader:
                 inputs, targets = inputs.to(device), targets.to(device)
-                outputs = model(inputs)
+                outputs, _ = model(inputs, return_attention=True)
                 
                 # Calculate Absolute Error (Difference in BrPM)
                 mae = torch.abs(outputs - targets.unsqueeze(1))

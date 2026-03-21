@@ -22,11 +22,29 @@ class FedRQI(fl.server.strategy.FedAvg):
         with open(LOG_FILE, mode='a', newline='') as f:
             writer = csv.writer(f)
             if not file_exists:
-                writer.writerow(['Round', 'MAE', 'Client_0_RQI', 'Client_1_RQI'])
-            
-            c0_rqi = client_rqis[0] if len(client_rqis) > 0 else 0
-            c1_rqi = client_rqis[1] if len(client_rqis) > 1 else 0
-            writer.writerow([round_num, global_mae, c0_rqi, c1_rqi])
+                writer.writerow([
+                    'Round', 'MAE',
+                    'Client_0_RQI', 'Client_1_RQI',
+                    'FP32_MB', 'INT8_MB',
+                    'Epsilon', 'Delta', 'DP_Enabled',
+                    'Ano_Normal', 'Ano_Brady', 'Ano_Apnea', 'Ano_Tachy', 'Ano_SevTachy'
+                ])
+
+            c0_rqi     = client_rqis[0] if len(client_rqis) > 0 else 0
+            c1_rqi     = client_rqis[1] if len(client_rqis) > 1 else 0
+            fp32       = getattr(self, 'last_fp32_mb',   5.4)
+            int8       = getattr(self, 'last_int8_mb',   1.2)
+            epsilon    = getattr(self, 'last_epsilon',   -1.0)
+            delta      = getattr(self, 'last_delta',     1e-5)
+            dp_enabled = getattr(self, 'last_dp_enabled', 0)
+            ac         = getattr(self, 'last_anomaly_counts', {})
+            writer.writerow([round_num, global_mae,
+                             c0_rqi, c1_rqi,
+                             fp32, int8,
+                             epsilon, delta, dp_enabled,
+                             ac.get('anomaly_0', 0), ac.get('anomaly_1', 0),
+                             ac.get('anomaly_2', 0), ac.get('anomaly_3', 0),
+                             ac.get('anomaly_4', 0)])
 
     def aggregate_fit(
         self,
@@ -39,6 +57,37 @@ class FedRQI(fl.server.strategy.FedAvg):
             return None, {}
 
         self.last_rqis = [res.metrics.get("rqi", 0.0) for _, res in results]
+        # Capture real edge compression metrics from clients
+        fp32_vals = [res.metrics.get("fp32_mb", 5.4) for _, res in results]
+        int8_vals = [res.metrics.get("int8_mb", 1.2) for _, res in results]
+        self.last_fp32_mb = float(sum(fp32_vals) / len(fp32_vals))
+        self.last_int8_mb = float(sum(int8_vals) / len(int8_vals))
+
+        # Capture DP privacy budget (epsilon) — take the MAX across clients
+        eps_vals = [res.metrics.get("epsilon", -1.0) for _, res in results]
+        valid_eps = [e for e in eps_vals if e >= 0]
+        self.last_epsilon    = float(max(valid_eps)) if valid_eps else -1.0
+        self.last_delta      = float(results[0][1].metrics.get("delta", 1e-5))
+        self.last_dp_enabled = int(any(res.metrics.get("dp_enabled", 0) > 0.5
+                                       for _, res in results))
+
+        if valid_eps:
+            print(f"🔒 Privacy Budget — ε = {self.last_epsilon:.4f}, "
+                  f"δ = {self.last_delta:.0e}  "
+                  f"({'DP-SGD active' if self.last_dp_enabled else 'no DP'})")
+
+        # Aggregate anomaly class counts across all clients
+        self.last_anomaly_counts = {}
+        for idx in range(5):
+            key = f"anomaly_{idx}"
+            total = sum(res.metrics.get(key, 0.0) for _, res in results)
+            self.last_anomaly_counts[key] = int(total)
+
+        if any(v > 0 for v in self.last_anomaly_counts.values()):
+            print("🧠 Anomaly Distribution (this round):")
+            labels = {0:"Normal",1:"Bradypnea",2:"Apnea",3:"Tachypnea",4:"SevTachy"}
+            for idx in range(5):
+                print(f"   {labels[idx]:18s}: {self.last_anomaly_counts[f'anomaly_{idx}']}")
 
         print(f"\n========================================")
         print(f"--- Round {server_round} Aggregation Report ---")
@@ -84,11 +133,9 @@ class FedRQI(fl.server.strategy.FedAvg):
                 weighted_weights.append((update["params"], update["weight"]))
                 total_weight += update["weight"]
 
-        if total_weight == 0.0:
-            print("⚠️ WARNING: Total Weight is 0! Falling back to uniform averaging.")
-            total_weight = 1.0
-            weighted_weights = [(w, 1.0) for w, _ in weighted_weights]
-            total_weight = len(weighted_weights)
+        if total_weight == 0.0 or not weighted_weights:
+            print("⚠️ WARNING: All clients flagged as malicious! Skipping this round.")
+            return None, {}
 
         # 3. Aggregate
         aggregated_updates = [np.zeros_like(w) for w in weighted_weights[0][0]]

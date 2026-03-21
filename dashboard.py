@@ -24,7 +24,7 @@ with col2:
 
 metric_placeholder = st.empty()
 
-LOG_FILE = "gui_data.csv"
+LOG_FILE = "simulation_log.csv"
 
 # --- LIVE UPDATE LOOP ---
 st.markdown("---")
