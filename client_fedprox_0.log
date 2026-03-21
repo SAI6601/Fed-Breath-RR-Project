@@ -1,0 +1,204 @@
+[93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated. 
+	Instead, use `flwr.client.start_client()` by ensuring you first call the `.to_client()` method as shown below: 
+	flwr.client.start_client(
+		server_address='<IP>:<PORT>',
+		client=FlowerClient().to_client(), # <-- where FlowerClient is of type flwr.client.NumPyClient object
+	)
+	Using `start_numpy_client()` is deprecated.
+
+            This is a deprecated feature. It will be removed
+            entirely in future versions of Flower.
+        
+[93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
+	Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
+
+		$ flower-supernode --insecure --superlink='<IP>:<PORT>'
+
+	To view all available options, run:
+
+		$ flower-supernode --help
+
+	Using `start_client()` is deprecated.
+
+            This is a deprecated feature. It will be removed
+            entirely in future versions of Flower.
+        
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 2ba84a31-8977-4661-a1c3-9d93b5f00464
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message fb1b8ca4-b823-4c63-94f2-6b202dcee44d
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message eafb1b34-7362-4d3c-a512-af4b3702da72
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message da6bd5d2-f06c-436b-94c5-b6c19596a9ab
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 3cc94b6e-fe38-43b7-aac4-5627c2621401
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 111c6178-86c8-4fa8-9e62-199c71dfe462
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message f7c5a7bf-d9ed-4bfa-8bd4-9bce717cd883
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message fb1fb437-34e1-4053-9e0e-6a58f86a911c
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message b38893a2-8fe2-4dca-b87e-9b6f146d4f40
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 3d40bf8f-b87c-46a3-8443-e23074d715f1
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message de091f00-7908-4d0b-b774-2ce456d1ba82
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 404ebbc1-a248-4b1a-b703-5c21854b5019
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message f1d84e00-019e-44ff-b278-8b7a3b165bbd
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message b3f62747-3902-4486-9d2f-be6e4690f5ee
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 0a468bce-71bb-4b01-aeb2-26a87c329b72
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 97c358de-3402-47ff-8688-3f286a9e0310
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 76833563-1484-4f64-8eaf-d170dcb5128f
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 9ea17127-f85a-4e7b-a9d7-5451a274e9bf
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 01368c27-dca0-446e-a8c5-b14fdb7575ef
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message d5d0241f-b9bf-4ba9-98c2-0680e97fe120
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 583e8d0d-a646-4611-8aee-c444f2430886
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message de4ac4f9-d600-4c8b-82a9-0db0cb8d1c21
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 96f12838-7888-4bd5-ba48-95b0dfb15513
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 1447b9c3-0043-402c-9901-ed4720fe7926
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 736c2f29-d083-41b7-ba83-e134efb4f129
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 01294256-aaf5-4fcf-bd8b-09b1849ad4fc
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 7543bb02-1e03-4e31-aae4-5a6cc49f36f1
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message ecb5e9d1-fc9f-499d-879b-e3d6b7bd65d1
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message da59981a-d442-41f4-8f09-30675025f051
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message e6e39fb0-c6e9-45e9-89d1-25c5f8c0f559
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 29c09780-1315-4c18-b4ce-025d6f1db17f
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 64ebfc17-c331-49d1-95ef-4c524dfe4fec
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 9c5b5fee-c8ee-4ded-9dbe-02d0d4e4d0d1
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message eb6bc7c2-212a-40aa-9ea6-53c942b70a77
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 9d6fa827-5d0b-4dd8-89e6-afec6cd52bf1
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 9ace1a76-7ad9-4fdd-8a60-ef06d063d25b
+[92mINFO [0m:      Sent reply
+[Node] Starting FedProx Node #0 on cpu
+[FedProx] Proximal term mu = 0.01  (FedProx)
+✅ Found 53 patient files in data/raw
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.002392 | mu=0.01
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.002066 | mu=0.01
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.001919 | mu=0.01
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.001824 | mu=0.01
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.001840 | mu=0.01
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.001927 | mu=0.01
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.002063 | mu=0.01
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.002237 | mu=0.01
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.002370 | mu=0.01
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.002349 | mu=0.01
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.002209 | mu=0.01
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.002044 | mu=0.01
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.001855 | mu=0.01
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.001653 | mu=0.01
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.001440 | mu=0.01
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.001236 | mu=0.01
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.001049 | mu=0.01
+[FedProx] Node 0 | RQI: 0.1000 | ProxTerm: 0.000882 | mu=0.01
+Traceback (most recent call last):
+  File "D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\fedprox_client.py", line 464, in <module>
+    main()
+    ~~~~^^
+  File "D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\fedprox_client.py", line 457, in main
+    fl.client.start_numpy_client(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        server_address="127.0.0.1:8085",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        client=FedProxClient(model, train_loader, val_loader,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                             node_id=args.node_id, mu=args.mu),
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\compat\client\app.py", line 625, in start_numpy_client
+    start_client(
+    ~~~~~~~~~~~~^
+        server_address=server_address,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        transport=transport,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\compat\client\app.py", line 184, in start_client
+    start_client_internal(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        server_address=server_address,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+        max_wait_time=max_wait_time,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\compat\client\app.py", line 395, in start_client_internal
+    message = receive()
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\compat\client\grpc_client\connection.py", line 142, in receive
+    proto = next(server_message_iterator)
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\grpc\_channel.py", line 538, in __next__
+    return self._next()
+           ~~~~~~~~~~^^
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\grpc\_channel.py", line 962, in _next
+    raise self
+grpc._channel._MultiThreadedRendezvous: <_MultiThreadedRendezvous of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = "IOCP/Socket: Connection reset (An existing connection was forcibly closed by the remote host.
+ -- 10054)"
+	debug_error_string = "UNKNOWN:Error received from peer ipv4:127.0.0.1:8085 {grpc_status:14, grpc_message:"IOCP/Socket: Connection reset (An existing connection was forcibly closed by the remote host.\r\n -- 10054)"}"
+>

@@ -12,26 +12,26 @@ from scipy.signal import find_peaks
 from dataset import BidmcDataset
 from model import AttentionBiLSTM, rr_to_anomaly_label, ANOMALY_CLASSES
 
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 # Configuration
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 BATCH_SIZE       = 8
 LEARNING_RATE    = 0.001
 EPOCHS_PER_ROUND = 1
 DEVICE           = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# ── Differential Privacy ─────────────────────────────────────
+# -- Differential Privacy -------------------------------------
 DP_ENABLED       = True
 NOISE_MULTIPLIER = 1.0
 MAX_GRAD_NORM    = 1.0
 TARGET_DELTA     = 1e-5
 
-# ── Multi-task loss weights ───────────────────────────────────
+# -- Multi-task loss weights -----------------------------------
 LAMBDA_ANOMALY   = 0.3   # anomaly loss weight relative to RR regression loss
 
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 # Helpers
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 def get_model_size_mb(model):
     tmp = f"temp_model_{os.getpid()}.p"
     torch.save(model.state_dict(), tmp)
@@ -69,9 +69,9 @@ def set_params(model, parameters):
     )
     base.load_state_dict(state_dict, strict=True)
 
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 # Flower Client
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 class BreathClient(fl.client.NumPyClient):
     def __init__(self, model, train_loader, val_loader, node_id: int):
         self.model        = model
@@ -93,7 +93,7 @@ class BreathClient(fl.client.NumPyClient):
             from opacus.validators import ModuleValidator
 
             if not ModuleValidator.is_valid(self.model):
-                print(f"[DP] Node {self.node_id}: Fixing model for Opacus (LSTM → DPLSTM)...")
+                print(f"[DP] Node {self.node_id}: Fixing model for Opacus (LSTM -> DPLSTM)...")
                 self.model = ModuleValidator.fix(self.model)
                 self.model.to(DEVICE)
                 self.optimizer = optim.Adam(self.model.parameters(), lr=LEARNING_RATE)
@@ -109,7 +109,7 @@ class BreathClient(fl.client.NumPyClient):
                 )
             )
             print(f"[DP] Node {self.node_id}: PrivacyEngine attached "
-                  f"(σ={NOISE_MULTIPLIER}, C={MAX_GRAD_NORM}, δ={TARGET_DELTA})")
+                  f"(sigma={NOISE_MULTIPLIER}, C={MAX_GRAD_NORM}, delta={TARGET_DELTA})")
         except ImportError:
             print("[DP] WARNING: Opacus not installed. Run: pip install opacus")
             self.privacy_engine = None
@@ -132,15 +132,15 @@ class BreathClient(fl.client.NumPyClient):
             inputs, targets = inputs.to(DEVICE), targets.to(DEVICE)
             self.optimizer.zero_grad()
 
-            # ── Multi-task forward pass ──────────────────────────
+            # -- Multi-task forward pass --------------------------
             rr_pred, alpha, anomaly_logits = self.model(
                 inputs, return_attention=True, return_anomaly=True
             )
 
-            # ── Task 1: RR regression loss ───────────────────────
+            # -- Task 1: RR regression loss -----------------------
             rr_loss = self.criterion_rr(rr_pred, targets.unsqueeze(1))
 
-            # ── Task 2: Anomaly classification loss ──────────────
+            # -- Task 2: Anomaly classification loss --------------
             # Pseudo-labels derived from the ground-truth RR values
             pseudo_labels = torch.tensor(
                 [rr_to_anomaly_label(float(t)) for t in targets],
@@ -148,7 +148,7 @@ class BreathClient(fl.client.NumPyClient):
             )
             ano_loss = self.criterion_ano(anomaly_logits, pseudo_labels)
 
-            # ── Combined loss ────────────────────────────────────
+            # -- Combined loss ------------------------------------
             loss = rr_loss + LAMBDA_ANOMALY * ano_loss
             loss.backward()
 
@@ -169,28 +169,28 @@ class BreathClient(fl.client.NumPyClient):
 
         final_rqi = total_rqi / batches if batches > 0 else 0.0
 
-        # ── Print anomaly distribution ───────────────────────────
-        print(f"📊 Node {self.node_id} | RQI: {final_rqi:.4f}")
+        # -- Print anomaly distribution ---------------------------
+        print(f"[Stats] Node {self.node_id} | RQI: {final_rqi:.4f}")
         print(f"   Anomaly distribution this round:")
         for idx, cnt in enumerate(anomaly_counts):
             name = ANOMALY_CLASSES[idx]["name"]
             print(f"   {idx} {name:20s}: {cnt:4d} samples")
 
-        # ── DP budget ────────────────────────────────────────────
+        # -- DP budget --------------------------------------------
         if self.privacy_engine is not None:
             try:
                 self.epsilon = self.privacy_engine.get_epsilon(delta=TARGET_DELTA)
-                print(f"🔒 DP Budget: ε = {self.epsilon:.4f}, δ = {TARGET_DELTA}")
+                print(f"[DP] DP Budget: epsilon = {self.epsilon:.4f}, delta = {TARGET_DELTA}")
             except Exception as e:
                 print(f"[DP] Could not compute epsilon: {e}")
 
-        # ── Edge compression ─────────────────────────────────────
+        # -- Edge compression -------------------------------------
         base_model      = getattr(self.model, '_module', self.model)
         quantized       = quantize_for_edge(base_model)
         fp32_size       = get_model_size_mb(base_model)
         int8_size       = get_model_size_mb(quantized)
         compression_pct = ((fp32_size - int8_size) / fp32_size) * 100
-        print(f"⚙️  Edge: FP32={fp32_size:.3f}MB → INT8={int8_size:.3f}MB ({compression_pct:.1f}%)")
+        print(f"[Edge]  Edge: FP32={fp32_size:.3f}MB -> INT8={int8_size:.3f}MB ({compression_pct:.1f}%)")
 
         metrics = {
             "rqi":              float(final_rqi),
@@ -233,9 +233,9 @@ class BreathClient(fl.client.NumPyClient):
             "rmse": rmse,
         }
 
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 # Entry point
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--node-id",     type=int, required=True)

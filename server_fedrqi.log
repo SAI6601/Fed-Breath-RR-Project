@@ -1,0 +1,329 @@
+[93mWARNING [0m:   DEPRECATED FEATURE: flwr.server.start_server() is deprecated.
+	Instead, use the `flower-superlink` CLI command to start a SuperLink as shown below:
+
+		$ flower-superlink --insecure
+
+	To view usage and all available options, run:
+
+		$ flower-superlink --help
+
+	Using `start_server()` is deprecated.
+
+            This is a deprecated feature. It will be removed
+            entirely in future versions of Flower.
+        
+[92mINFO [0m:      Starting Flower server, config: num_rounds=20, no round_timeout
+[92mINFO [0m:      Flower ECE: gRPC server running (20 rounds), SSL is disabled
+[92mINFO [0m:      [INIT]
+[92mINFO [0m:      Requesting initial parameters from one random client
+[92mINFO [0m:      Received initial parameters from one random client
+[92mINFO [0m:      Starting evaluation of initial global parameters
+[92mINFO [0m:      Evaluation returned no results (`None`)
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 1]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 2]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 3]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 4]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 5]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 6]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 7]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 8]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 9]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 10]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 11]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 12]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 13]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 14]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+Starting Server | strategy=fedrqi | rounds=20 | clients=2 | log=sim_log_fedrqi.csv
+[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
+[Anomaly] Anomaly Distribution (this round):
+   Normal            : 12
+   Bradypnea         : 5
+   Apnea             : 0
+   Tachypnea         : 15
+   SevTachy          : 0
+
+========================================
+--- Round 1 Aggregation Report ---
+[BFT]  BFT Security Scan:
+   [OK] PASS: Client 0 looks benign. (Norm: 26.68)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+   [OK] PASS: Client 1 looks benign. (Norm: 26.68)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
+[Anomaly] Anomaly Distribution (this round):
+   Normal            : 28
+   Bradypnea         : 0
+   Apnea             : 0
+   Tachypnea         : 4
+   SevTachy          : 0
+
+========================================
+--- Round 2 Aggregation Report ---
+[BFT]  BFT Security Scan:
+   [OK] PASS: Client 0 looks benign. (Norm: 26.70)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+   [OK] PASS: Client 1 looks benign. (Norm: 26.70)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
+[Anomaly] Anomaly Distribution (this round):
+   Normal            : 32
+   Bradypnea         : 0
+   Apnea             : 0
+   Tachypnea         : 0
+   SevTachy          : 0
+
+========================================
+--- Round 3 Aggregation Report ---
+[BFT]  BFT Security Scan:
+   [OK] PASS: Client 0 looks benign. (Norm: 26.74)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+   [OK] PASS: Client 1 looks benign. (Norm: 26.74)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
+[Anomaly] Anomaly Distribution (this round):
+   Normal            : 32
+   Bradypnea         : 0
+   Apnea             : 0
+   Tachypnea         : 0
+   SevTachy          : 0
+
+========================================
+--- Round 4 Aggregation Report ---
+[BFT]  BFT Security Scan:
+   [OK] PASS: Client 0 looks benign. (Norm: 26.79)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+   [OK] PASS: Client 1 looks benign. (Norm: 26.79)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
+[Anomaly] Anomaly Distribution (this round):
+   Normal            : 32
+   Bradypnea         : 0
+   Apnea             : 0
+   Tachypnea         : 0
+   SevTachy          : 0
+
+========================================
+--- Round 5 Aggregation Report ---
+[BFT]  BFT Security Scan:
+   [OK] PASS: Client 0 looks benign. (Norm: 26.85)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+   [OK] PASS: Client 1 looks benign. (Norm: 26.85)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
+[Anomaly] Anomaly Distribution (this round):
+   Normal            : 32
+   Bradypnea         : 0
+   Apnea             : 0
+   Tachypnea         : 0
+   SevTachy          : 0
+
+========================================
+--- Round 6 Aggregation Report ---
+[BFT]  BFT Security Scan:
+   [OK] PASS: Client 0 looks benign. (Norm: 26.92)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+   [OK] PASS: Client 1 looks benign. (Norm: 26.92)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
+[Anomaly] Anomaly Distribution (this round):
+   Normal            : 32
+   Bradypnea         : 0
+   Apnea             : 0
+   Tachypnea         : 0
+   SevTachy          : 0
+
+========================================
+--- Round 7 Aggregation Report ---
+[BFT]  BFT Security Scan:
+   [OK] PASS: Client 0 looks benign. (Norm: 27.00)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+   [OK] PASS: Client 1 looks benign. (Norm: 27.00)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
+[Anomaly] Anomaly Distribution (this round):
+   Normal            : 32
+   Bradypnea         : 0
+   Apnea             : 0
+   Tachypnea         : 0
+   SevTachy          : 0
+
+========================================
+--- Round 8 Aggregation Report ---
+[BFT]  BFT Security Scan:
+   [OK] PASS: Client 0 looks benign. (Norm: 27.09)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+   [OK] PASS: Client 1 looks benign. (Norm: 27.09)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
+[Anomaly] Anomaly Distribution (this round):
+   Normal            : 32
+   Bradypnea         : 0
+   Apnea             : 0
+   Tachypnea         : 0
+   SevTachy          : 0
+
+========================================
+--- Round 9 Aggregation Report ---
+[BFT]  BFT Security Scan:
+   [OK] PASS: Client 0 looks benign. (Norm: 27.20)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+   [OK] PASS: Client 1 looks benign. (Norm: 27.20)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
+[Anomaly] Anomaly Distribution (this round):
+   Normal            : 32
+   Bradypnea         : 0
+   Apnea             : 0
+   Tachypnea         : 0
+   SevTachy          : 0
+
+========================================
+--- Round 10 Aggregation Report ---
+[BFT]  BFT Security Scan:
+   [OK] PASS: Client 0 looks benign. (Norm: 27.32)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+   [OK] PASS: Client 1 looks benign. (Norm: 27.32)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
+[Anomaly] Anomaly Distribution (this round):
+   Normal            : 32
+   Bradypnea         : 0
+   Apnea             : 0
+   Tachypnea         : 0
+   SevTachy          : 0
+
+========================================
+--- Round 11 Aggregation Report ---
+[BFT]  BFT Security Scan:
+   [OK] PASS: Client 0 looks benign. (Norm: 27.44)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+   [OK] PASS: Client 1 looks benign. (Norm: 27.44)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
+[Anomaly] Anomaly Distribution (this round):
+   Normal            : 32
+   Bradypnea         : 0
+   Apnea             : 0
+   Tachypnea         : 0
+   SevTachy          : 0
+
+========================================
+--- Round 12 Aggregation Report ---
+[BFT]  BFT Security Scan:
+   [OK] PASS: Client 0 looks benign. (Norm: 27.57)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+   [OK] PASS: Client 1 looks benign. (Norm: 27.57)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
+[Anomaly] Anomaly Distribution (this round):
+   Normal            : 32
+   Bradypnea         : 0
+   Apnea             : 0
+   Tachypnea         : 0
+   SevTachy          : 0
+
+========================================
+--- Round 13 Aggregation Report ---
+[BFT]  BFT Security Scan:
+   [OK] PASS: Client 0 looks benign. (Norm: 27.69)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+   [OK] PASS: Client 1 looks benign. (Norm: 27.69)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
+[Anomaly] Anomaly Distribution (this round):
+   Normal            : 32
+   Bradypnea         : 0
+   Apnea             : 0
+   Tachypnea         : 0
+   SevTachy          : 0
+
+========================================
+--- Round 14 Aggregation Report ---
+[BFT]  BFT Security Scan:
+   [OK] PASS: Client 0 looks benign. (Norm: 27.82)
+   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
+   [OK] PASS: Client 1 looks benign. (Norm: 27.82)[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 15]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 16]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 17]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)

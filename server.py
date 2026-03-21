@@ -12,7 +12,7 @@ LOG_FILE = "simulation_log.csv"   # overridable via --log-file argument
 def weighted_average(metrics: List[Tuple[int, Dict[str, Scalar]]]) -> Dict[str, Scalar]:
     total_samples = sum([num_examples for num_examples, _ in metrics])
     weighted_mae  = sum([num_examples * m["mae"]  for num_examples, m in metrics])
-    # RMSE cannot be linearly averaged — take sqrt of weighted mean of squared errors
+    # RMSE cannot be linearly averaged -- take sqrt of weighted mean of squared errors
     # Proxy: weighted average of per-client RMSE (good enough for monitoring)
     weighted_rmse = sum([num_examples * m.get("rmse", m["mae"])
                          for num_examples, m in metrics])
@@ -69,7 +69,7 @@ class FedRQI(fl.server.strategy.FedAvg):
         self.last_fp32_mb = float(sum(fp32_vals) / len(fp32_vals))
         self.last_int8_mb = float(sum(int8_vals) / len(int8_vals))
 
-        # Capture DP privacy budget (epsilon) — take the MAX across clients
+        # Capture DP privacy budget (epsilon) -- take the MAX across clients
         eps_vals = [res.metrics.get("epsilon", -1.0) for _, res in results]
         valid_eps = [e for e in eps_vals if e >= 0]
         self.last_epsilon    = float(max(valid_eps)) if valid_eps else -1.0
@@ -78,8 +78,8 @@ class FedRQI(fl.server.strategy.FedAvg):
                                        for _, res in results))
 
         if valid_eps:
-            print(f"🔒 Privacy Budget — ε = {self.last_epsilon:.4f}, "
-                  f"δ = {self.last_delta:.0e}  "
+            print(f"[DP] Privacy Budget -- epsilon = {self.last_epsilon:.4f}, "
+                  f"delta = {self.last_delta:.0e}  "
                   f"({'DP-SGD active' if self.last_dp_enabled else 'no DP'})")
 
         # Aggregate anomaly class counts across all clients
@@ -90,7 +90,7 @@ class FedRQI(fl.server.strategy.FedAvg):
             self.last_anomaly_counts[key] = int(total)
 
         if any(v > 0 for v in self.last_anomaly_counts.values()):
-            print("🧠 Anomaly Distribution (this round):")
+            print("[Anomaly] Anomaly Distribution (this round):")
             labels = {0:"Normal",1:"Bradypnea",2:"Apnea",3:"Tachypnea",4:"SevTachy"}
             for idx in range(5):
                 print(f"   {labels[idx]:18s}: {self.last_anomaly_counts[f'anomaly_{idx}']}")
@@ -116,7 +116,7 @@ class FedRQI(fl.server.strategy.FedAvg):
             raw_updates.append({"params": parameters, "weight": custom_weight, "rqi": client_rqi, "samples": num_examples})
 
         # --- PHASE 3 NOVELTY: BYZANTINE SECURITY SHIELD ---
-        print("🛡️  BFT Security Scan:")
+        print("[BFT]  BFT Security Scan:")
         median_norm = np.median(client_norms)
         malicious_threshold = median_norm * 3.0 # If weights are 3x larger than normal, it's a poison attack
         
@@ -128,10 +128,10 @@ class FedRQI(fl.server.strategy.FedAvg):
             
             # Check for Data Poisoning
             if norm > malicious_threshold and norm > 10.0:
-                print(f"   🚨 BLOCKED: Client {i} detected as malicious! (Abnormal Norm: {norm:.2f})")
+                print(f"   [!!] BLOCKED: Client {i} detected as malicious! (Abnormal Norm: {norm:.2f})")
                 update["weight"] = 0.0 # Drop the hacker's update completely
             else:
-                print(f"   ✅ PASS: Client {i} looks benign. (Norm: {norm:.2f})")
+                print(f"   [OK] PASS: Client {i} looks benign. (Norm: {norm:.2f})")
                 
             print(f"   > Update Accepted: {update['samples']} samples | RQI: {update['rqi']:.4f} | Influence: {update['weight']:.2f}")
             
@@ -140,7 +140,7 @@ class FedRQI(fl.server.strategy.FedAvg):
                 total_weight += update["weight"]
 
         if total_weight == 0.0 or not weighted_weights:
-            print("⚠️ WARNING: All clients flagged as malicious! Skipping this round.")
+            print("[WARN] WARNING: All clients flagged as malicious! Skipping this round.")
             return None, {}
 
         # 3. Aggregate
@@ -164,11 +164,13 @@ class FedRQI(fl.server.strategy.FedAvg):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--strategy",   type=str, default="fedrqi")
-    parser.add_argument("--log-file",   type=str, default="simulation_log.csv",
+    parser.add_argument("--strategy",    type=str, default="fedrqi")
+    parser.add_argument("--log-file",    type=str, default="simulation_log.csv",
                         help="CSV log file path (allows per-strategy logs)")
-    parser.add_argument("--num-rounds", type=int, default=5,
+    parser.add_argument("--num-rounds",  type=int, default=5,
                         help="Number of FL rounds (default: 5)")
+    parser.add_argument("--num-clients", type=int, default=2,
+                        help="Number of edge clients to wait for (default: 2)")
     args = parser.parse_args()
 
     # Override global LOG_FILE so strategy comparison can write separate files
@@ -177,14 +179,14 @@ def main():
     if os.path.exists(LOG_FILE):
         os.remove(LOG_FILE)
 
-    print(f"🚀 Starting Server | strategy={args.strategy} | "
-          f"rounds={args.num_rounds} | log={LOG_FILE}")
+    print(f"Starting Server | strategy={args.strategy} | "
+          f"rounds={args.num_rounds} | clients={args.num_clients} | log={LOG_FILE}")
     strategy = FedRQI(
         fraction_fit=1.0,
         fraction_evaluate=1.0,
-        min_fit_clients=2,
-        min_evaluate_clients=2,
-        min_available_clients=2,
+        min_fit_clients=args.num_clients,
+        min_evaluate_clients=args.num_clients,
+        min_available_clients=args.num_clients,
         evaluate_metrics_aggregation_fn=weighted_average,
     )
 

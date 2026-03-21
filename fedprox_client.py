@@ -1,8 +1,8 @@
 """
-fedprox_client.py — FedProx client variant for Fed-Breath
+fedprox_client.py -- FedProx client variant for Fed-Breath
 
 FedProx adds a proximal term to the local loss:
-    L_total = L_task + (μ/2) * ||w - w_global||²
+    L_total = L_task + (mu/2) * ||w - w_global||²
 
 This penalises the local model for drifting too far from the
 global model each round, which directly addresses the client
@@ -16,7 +16,7 @@ Usage:
     python fedprox_client.py --node-id 0 --mu 0.01
     python fedprox_client.py --node-id 1 --mu 0.01
 
-Strategy comparison (runs FedAvg → FedProx → FedRQI sequentially):
+Strategy comparison (runs FedAvg -> FedProx -> FedRQI sequentially):
     python fedprox_client.py --compare
 """
 
@@ -38,24 +38,24 @@ from scipy.signal import find_peaks
 from dataset import BidmcDataset
 from model import AttentionBiLSTM, rr_to_anomaly_label, ANOMALY_CLASSES
 
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 # Configuration
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 BATCH_SIZE       = 8
 LEARNING_RATE    = 0.001
 DEVICE           = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 LAMBDA_ANOMALY   = 0.3
 TARGET_DELTA     = 1e-5
 
-# FedProx proximal term weight — key hyperparameter
-# μ = 0 → reduces to FedAvg
-# μ = 0.01 → mild regularisation (recommended for moderate non-IID)
-# μ = 0.1  → strong regularisation (highly heterogeneous data)
+# FedProx proximal term weight -- key hyperparameter
+# mu = 0 -> reduces to FedAvg
+# mu = 0.01 -> mild regularisation (recommended for moderate non-IID)
+# mu = 0.1  -> strong regularisation (highly heterogeneous data)
 DEFAULT_MU = 0.01
 
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 # Helpers (identical to client.py)
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 def get_params(model):
     base = getattr(model, '_module', model)
     return [val.cpu().numpy() for _, val in base.state_dict().items()]
@@ -80,20 +80,20 @@ def calculate_rqi_for_batch(ppg_batch):
         rqi_sum += max(0.0, 1.0 - cv)
     return rqi_sum / len(signals)
 
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 # FedProx Client
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 class FedProxClient(fl.client.NumPyClient):
     """
     Extends standard FL training with the FedProx proximal term.
 
     The proximal term:
-        (μ/2) * Σ ||w_k - w_global||²
+        (mu/2) * Σ ||w_k - w_global||²
 
     is computed as the squared L2 distance between the current
     local weights and the global weights received at the start
     of each round. This prevents aggressive local updates from
-    pushing the model into a poor global optimum — especially
+    pushing the model into a poor global optimum -- especially
     important when different hospitals have very different
     patient populations (non-IID data).
 
@@ -119,7 +119,7 @@ class FedProxClient(fl.client.NumPyClient):
 
     def _proximal_term(self) -> torch.Tensor:
         """
-        Computes (μ/2) * ||w_local - w_global||²
+        Computes (mu/2) * ||w_local - w_global||²
         Returns scalar tensor on the model's device.
         """
         if self.global_params is None or self.mu == 0.0:
@@ -152,12 +152,12 @@ class FedProxClient(fl.client.NumPyClient):
             inputs, targets = inputs.to(DEVICE), targets.to(DEVICE)
             self.optimizer.zero_grad()
 
-            # ── Multi-task forward pass ──────────────────────────
+            # -- Multi-task forward pass --------------------------
             rr_pred, alpha, anomaly_logits = self.model(
                 inputs, return_attention=True, return_anomaly=True
             )
 
-            # ── Task losses ──────────────────────────────────────
+            # -- Task losses --------------------------------------
             rr_loss  = self.criterion_rr(rr_pred, targets.unsqueeze(1))
             pseudo   = torch.tensor(
                 [rr_to_anomaly_label(float(t)) for t in targets],
@@ -165,10 +165,10 @@ class FedProxClient(fl.client.NumPyClient):
             )
             ano_loss = self.criterion_ano(anomaly_logits, pseudo)
 
-            # ── FedProx proximal term ────────────────────────────
+            # -- FedProx proximal term ----------------------------
             prox_loss = self._proximal_term()
 
-            # ── Combined loss ────────────────────────────────────
+            # -- Combined loss ------------------------------------
             loss = rr_loss + LAMBDA_ANOMALY * ano_loss + prox_loss
             loss.backward()
 
@@ -186,7 +186,7 @@ class FedProxClient(fl.client.NumPyClient):
         prox_val  = self._proximal_term().item()
 
         print(f"[FedProx] Node {self.node_id} | RQI: {final_rqi:.4f} | "
-              f"ProxTerm: {prox_val:.6f} | μ={self.mu}")
+              f"ProxTerm: {prox_val:.6f} | mu={self.mu}")
 
         metrics = {
             "rqi":        float(final_rqi),
@@ -229,9 +229,9 @@ class FedProxClient(fl.client.NumPyClient):
         }
 
 
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 # Strategy comparison runner
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 COMPARISON_LOG = "strategy_comparison.csv"
 
 def _wait_for_log(log_file: str, timeout: int = 300) -> bool:
@@ -260,7 +260,7 @@ def _parse_log(log_file: str) -> tuple:
         for row in reader:
             try:
                 maes.append(float(row["MAE"]))
-                # RMSE column added in updated server.py — fall back to MAE if absent
+                # RMSE column added in updated server.py -- fall back to MAE if absent
                 rmses.append(float(row.get("RMSE") or row["MAE"]))
             except (KeyError, ValueError):
                 pass
@@ -271,12 +271,12 @@ def run_strategy_comparison():
     """
     Runs three FL experiments back-to-back and saves a comparison
     CSV with per-round MAE and RMSE for each strategy:
-      • FedAvg  (μ = 0, no RQI weighting)
-      • FedProx (μ = 0.01, no RQI weighting)
-      • FedRQI  (μ = 0, RQI-weighted + BFT — our full system)
+      • FedAvg  (mu = 0, no RQI weighting)
+      • FedProx (mu = 0.01, no RQI weighting)
+      • FedRQI  (mu = 0, RQI-weighted + BFT -- our full system)
 
     Results are saved to strategy_comparison.csv and printed as a
-    summary table — ready to paste into a paper as Table II.
+    summary table -- ready to paste into a paper as Table II.
 
     Subprocess output is written to per-strategy log files
     (server_fedavg.log, etc.) so errors are always visible.
@@ -301,7 +301,7 @@ def run_strategy_comparison():
     results = {}
     TIMEOUT = 600   # seconds per strategy (10 min is generous for 5 rounds)
 
-    # Force UTF-8 I/O in subprocesses — prevents UnicodeEncodeError on Windows
+    # Force UTF-8 I/O in subprocesses -- prevents UnicodeEncodeError on Windows
     # when print() outputs emoji characters into redirected log files.
     utf8_env = os.environ.copy()
     utf8_env["PYTHONIOENCODING"] = "utf-8"
@@ -313,14 +313,14 @@ def run_strategy_comparison():
         srv_log  = open(f"server_{s['strategy_flag']}.log", "w", encoding="utf-8")
         cli_logs = []
 
-        print(f"\n▶ Running {name} (μ={s['mu']})...")
-        print(f"  Server log  → server_{s['strategy_flag']}.log")
-        print(f"  Results log → {log_file}")
+        print(f"\n>> Running {name} (mu={s['mu']})...")
+        print(f"  Server log  -> server_{s['strategy_flag']}.log")
+        print(f"  Results log -> {log_file}")
 
         if os.path.exists(log_file):
             os.remove(log_file)
 
-        # ── Launch server ────────────────────────────────────
+        # -- Launch server ------------------------------------
         server_proc = subprocess.Popen(
             [sys.executable, "server.py",
              "--strategy",   s["strategy_flag"],
@@ -342,7 +342,7 @@ def run_strategy_comparison():
             continue
         print(" OK")
 
-        # ── Launch clients ───────────────────────────────────
+        # -- Launch clients -----------------------------------
         client_procs = []
         for node_id in range(2):
             cli_log = open(f"client_{s['strategy_flag']}_{node_id}.log", "w", encoding="utf-8")
@@ -354,9 +354,9 @@ def run_strategy_comparison():
             client_procs.append(
                 subprocess.Popen(cmd, stdout=cli_log, stderr=cli_log, env=utf8_env)
             )
-            print(f"  Client {node_id} started → client_{s['strategy_flag']}_{node_id}.log")
+            print(f"  Client {node_id} started -> client_{s['strategy_flag']}_{node_id}.log")
 
-        # ── Wait for results to appear ───────────────────────
+        # -- Wait for results to appear -----------------------
         print(f"  Running FL ({TIMEOUT}s timeout)...", end="", flush=True)
         data_arrived = _wait_for_log(log_file, timeout=TIMEOUT)
 
@@ -366,7 +366,7 @@ def run_strategy_comparison():
         else:
             print(" done")
 
-        # ── Wait for server to finish cleanly ────────────────
+        # -- Wait for server to finish cleanly ----------------
         try:
             server_proc.wait(timeout=60)
         except subprocess.TimeoutExpired:
@@ -383,7 +383,7 @@ def run_strategy_comparison():
         for f in cli_logs:
             f.close()
 
-        # ── Parse results ────────────────────────────────────
+        # -- Parse results ------------------------------------
         maes, rmses = _parse_log(log_file)
         results[name] = {
             "maes":       maes,
@@ -394,9 +394,9 @@ def run_strategy_comparison():
 
         mae_str  = f"{results[name]['final_mae']:.4f}"  if maes  else "nan (no data)"
         rmse_str = f"{results[name]['final_rmse']:.4f}" if rmses else "nan (no data)"
-        print(f"  {name} — Final MAE: {mae_str} | RMSE: {rmse_str}")
+        print(f"  {name} -- Final MAE: {mae_str} | RMSE: {rmse_str}")
 
-    # ── Write comparison CSV ─────────────────────────────────
+    # -- Write comparison CSV ---------------------------------
     with open(COMPARISON_LOG, "w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(["Strategy", "Round", "MAE", "RMSE"])
@@ -404,7 +404,7 @@ def run_strategy_comparison():
             for i, (mae, rmse) in enumerate(zip(data["maes"], data["rmses"]), 1):
                 writer.writerow([name, i, round(mae, 4), round(rmse, 4)])
 
-    # ── Print summary table ──────────────────────────────────
+    # -- Print summary table ----------------------------------
     print("\n" + "="*60)
     print(f"  {'Strategy':<12} {'Final MAE':>12} {'Final RMSE':>12}")
     print("-"*40)
@@ -418,9 +418,9 @@ def run_strategy_comparison():
     print("(Ready to use as Table II in your paper)")
 
 
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 # Entry point
-# ─────────────────────────────────────────────────────────────
+# -------------------------------------------------------------
 def main():
     parser = argparse.ArgumentParser(description="FedProx client for Fed-Breath")
     parser.add_argument("--node-id", type=int, default=0,
@@ -435,8 +435,8 @@ def main():
         run_strategy_comparison()
         return
 
-    print(f"🏥 Starting FedProx Node #{args.node_id} on {DEVICE}")
-    print(f"📐 Proximal term μ = {args.mu}  ({'FedProx' if args.mu > 0 else 'reduces to FedAvg'})")
+    print(f"[Node] Starting FedProx Node #{args.node_id} on {DEVICE}")
+    print(f"[FedProx] Proximal term mu = {args.mu}  ({'FedProx' if args.mu > 0 else 'reduces to FedAvg'})")
 
     full_dataset = BidmcDataset()
     num_clients  = 2

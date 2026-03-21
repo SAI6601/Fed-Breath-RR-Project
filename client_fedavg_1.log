@@ -1,0 +1,435 @@
+[93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated. 
+	Instead, use `flwr.client.start_client()` by ensuring you first call the `.to_client()` method as shown below: 
+	flwr.client.start_client(
+		server_address='<IP>:<PORT>',
+		client=FlowerClient().to_client(), # <-- where FlowerClient is of type flwr.client.NumPyClient object
+	)
+	Using `start_numpy_client()` is deprecated.
+
+            This is a deprecated feature. It will be removed
+            entirely in future versions of Flower.
+        
+[93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
+	Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
+
+		$ flower-supernode --insecure --superlink='<IP>:<PORT>'
+
+	To view all available options, run:
+
+		$ flower-supernode --help
+
+	Using `start_client()` is deprecated.
+
+            This is a deprecated feature. It will be removed
+            entirely in future versions of Flower.
+        
+[92mINFO [0m:      
+[92mINFO [0m:      Received: get_parameters message 79caf4ec-2f3d-4f07-8fb8-c6ebb8edd266
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 6c4a8333-1447-4683-8149-10eeb99b091b
+D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
+For migrations of users: 
+1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
+2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
+3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
+see https://github.com/pytorch/ao/issues/2259 for more details
+  return torch.quantization.quantize_dynamic(
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 69eb2a40-929e-4700-b377-82c977eff12d
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message dccbb144-0128-4871-8e0d-837e0b6ff143
+D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
+For migrations of users: 
+1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
+2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
+3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
+see https://github.com/pytorch/ao/issues/2259 for more details
+  return torch.quantization.quantize_dynamic(
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message db02e45a-6506-4054-90b3-725bc6624f95
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message c8804819-a669-4790-bf8d-96d9bbbde422
+D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
+For migrations of users: 
+1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
+2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
+3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
+see https://github.com/pytorch/ao/issues/2259 for more details
+  return torch.quantization.quantize_dynamic(
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message a0ae5145-693f-4f08-b580-8621155d4af5
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message d51911f0-baa4-4dcb-897d-a328b497ebe9
+D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
+For migrations of users: 
+1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
+2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
+3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
+see https://github.com/pytorch/ao/issues/2259 for more details
+  return torch.quantization.quantize_dynamic(
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 836bb8b6-9cae-4bc7-9b29-52cca010902e
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 9ee4a6ff-b67e-4913-875e-511ba48f3435
+D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
+For migrations of users: 
+1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
+2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
+3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
+see https://github.com/pytorch/ao/issues/2259 for more details
+  return torch.quantization.quantize_dynamic(
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message a1846ed0-6fcc-4128-8ff9-73660d118f87
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 0bbf8a4f-5c32-4341-b9b9-412eedab78b1
+D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
+For migrations of users: 
+1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
+2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
+3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
+see https://github.com/pytorch/ao/issues/2259 for more details
+  return torch.quantization.quantize_dynamic(
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 571de303-a845-41f1-aeab-f6ac3daa3ef3
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 0b53e5a5-443c-4525-aaee-dab6a56a704c
+D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
+For migrations of users: 
+1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
+2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
+3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
+see https://github.com/pytorch/ao/issues/2259 for more details
+  return torch.quantization.quantize_dynamic(
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message d38656ce-e358-4f1d-9322-9c6face14ea8
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message cc6a6513-8707-4023-b917-6cfaa24428e3
+D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
+For migrations of users: 
+1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
+2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
+3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
+see https://github.com/pytorch/ao/issues/2259 for more details
+  return torch.quantization.quantize_dynamic(
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 3550a726-5284-4c37-9b00-8a81adc10545
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 7ed08555-a756-407b-8b9e-edffe949c17f
+D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
+For migrations of users: 
+1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
+2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
+3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
+see https://github.com/pytorch/ao/issues/2259 for more details
+  return torch.quantization.quantize_dynamic(
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message a10b0a07-c791-434f-8b58-29da0bea4dad
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 014c1b84-d1cb-4a07-bbb3-8a8808eb5f2c
+D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
+For migrations of users: 
+1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
+2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
+3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
+see https://github.com/pytorch/ao/issues/2259 for more details
+  return torch.quantization.quantize_dynamic(
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 453bb406-99f2-4657-85f9-06d945157768
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 6a55a36d-1e1f-4d5f-85a2-113d5e13b240
+D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
+For migrations of users: 
+1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
+2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
+3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
+see https://github.com/pytorch/ao/issues/2259 for more details
+  return torch.quantization.quantize_dynamic(
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message d51b8fd0-4dd6-40e2-8129-375489a87950
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 035d72d0-b6bd-4b75-8646-5caccfe57283
+D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
+For migrations of users: 
+1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
+2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
+3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
+see https://github.com/pytorch/ao/issues/2259 for more details
+  return torch.quantization.quantize_dynamic(
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 427e2149-8a04-4022-84b6-947e3b763c7c
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 946964a6-f32b-4200-9eb3-f38fa440c2d9
+D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
+For migrations of users: 
+1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
+2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
+3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
+see https://github.com/pytorch/ao/issues/2259 for more details
+  return torch.quantization.quantize_dynamic(
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message c6d60d54-4d10-4550-a3c8-fae4536fad33
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 9d3cbd59-1144-4f16-a9b7-ed3a498a9021
+D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
+For migrations of users: 
+1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
+2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
+3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
+see https://github.com/pytorch/ao/issues/2259 for more details
+  return torch.quantization.quantize_dynamic(
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 7e0dcb6a-a1c9-408f-911e-00215551899f
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message c78984ff-30bf-4f97-8eac-93a013266c00
+D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
+For migrations of users: 
+1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
+2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
+3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
+see https://github.com/pytorch/ao/issues/2259 for more details
+  return torch.quantization.quantize_dynamic(
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 71ac62ba-4524-4fe8-9518-f33b14b82bb1
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message 1622b61c-fb03-425a-8b19-387ce4f5806f
+D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
+For migrations of users: 
+1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
+2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
+3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
+see https://github.com/pytorch/ao/issues/2259 for more details
+  return torch.quantization.quantize_dynamic(
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: evaluate message 7585f5fb-258b-4217-847f-a4b25464d5c9
+[92mINFO [0m:      Sent reply
+[92mINFO [0m:      
+[92mINFO [0m:      Received: train message b187dde9-202d-4c8c-aa44-a4e05094cb4c
+D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
+For migrations of users: 
+1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
+2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
+3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
+see https://github.com/pytorch/ao/issues/2259 for more details
+  return torch.quantization.quantize_dynamic(
+[92mINFO [0m:      Sent reply
+Starting Hospital Node #1 on cpu
+Differential Privacy : ENABLED
+Anomaly Detection    : ENABLED (lambda=0.3)
+✅ Found 53 patient files in data/raw
+[DP] WARNING: Opacus not installed. Run: pip install opacus
+[Stats] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    4 samples
+   3 Tachypnea           :   12 samples
+   4 Severe Tachypnea    :    0 samples
+[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
+[Stats] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    5 samples
+   3 Tachypnea           :   11 samples
+   4 Severe Tachypnea    :    0 samples
+[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
+[Stats] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :    4 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    2 samples
+   3 Tachypnea           :   10 samples
+   4 Severe Tachypnea    :    0 samples
+[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
+[Stats] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :   15 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    1 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
+[Stats] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :   16 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
+[Stats] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :   16 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
+[Stats] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :   16 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
+[Stats] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :   16 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
+[Stats] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :   16 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
+[Stats] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :   16 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
+[Stats] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :   16 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
+[Stats] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :   16 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
+[Stats] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :   16 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
+[Stats] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :   16 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
+[Stats] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :   16 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
+[Stats] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :   16 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
+[Stats] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :   16 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
+Traceback (most recent call last):
+  File "D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py", line 273, in <module>
+    main()
+    ~~~~^^
+  File "D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py", line 267, in main
+    fl.client.start_numpy_client(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        server_address="127.0.0.1:8085",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        client=BreathClient(model, train_loader, val_loader, node_id=args.node_id),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\compat\client\app.py", line 625, in start_numpy_client
+    start_client(
+    ~~~~~~~~~~~~^
+        server_address=server_address,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        transport=transport,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\compat\client\app.py", line 184, in start_client
+    start_client_internal(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        server_address=server_address,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+        max_wait_time=max_wait_time,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\compat\client\app.py", line 395, in start_client_internal
+    message = receive()
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\compat\client\grpc_client\connection.py", line 142, in receive
+    proto = next(server_message_iterator)
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\grpc\_channel.py", line 538, in __next__
+    return self._next()
+           ~~~~~~~~~~^^
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\grpc\_channel.py", line 945, in _next
+    raise self
+grpc._channel._MultiThreadedRendezvous: <_MultiThreadedRendezvous of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = "IOCP/Socket: Connection reset (An existing connection was forcibly closed by the remote host.
+ -- 10054)"
+	debug_error_string = "UNKNOWN:Error received from peer ipv4:127.0.0.1:8085 {grpc_message:"IOCP/Socket: Connection reset (An existing connection was forcibly closed by the remote host.\r\n -- 10054)", grpc_status:14}"
+>
