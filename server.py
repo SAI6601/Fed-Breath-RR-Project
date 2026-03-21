@@ -7,23 +7,28 @@ from typing import List, Tuple, Dict, Optional
 from flwr.common import Parameters, Scalar, FitRes
 
 # --- GUI LOGGING SETUP ---
-LOG_FILE = "simulation_log.csv"
-if os.path.exists(LOG_FILE):
-    os.remove(LOG_FILE)
+LOG_FILE = "simulation_log.csv"   # overridable via --log-file argument
 
 def weighted_average(metrics: List[Tuple[int, Dict[str, Scalar]]]) -> Dict[str, Scalar]:
     total_samples = sum([num_examples for num_examples, _ in metrics])
-    weighted_sum = sum([num_examples * m["mae"] for num_examples, m in metrics])
-    return {"mae": weighted_sum / total_samples}
+    weighted_mae  = sum([num_examples * m["mae"]  for num_examples, m in metrics])
+    # RMSE cannot be linearly averaged — take sqrt of weighted mean of squared errors
+    # Proxy: weighted average of per-client RMSE (good enough for monitoring)
+    weighted_rmse = sum([num_examples * m.get("rmse", m["mae"])
+                         for num_examples, m in metrics])
+    return {
+        "mae":  weighted_mae  / total_samples,
+        "rmse": weighted_rmse / total_samples,
+    }
 
 class FedRQI(fl.server.strategy.FedAvg):
-    def log_metrics(self, round_num, client_rqis, global_mae):
+    def log_metrics(self, round_num, client_rqis, global_mae, global_rmse=None):
         file_exists = os.path.isfile(LOG_FILE)
         with open(LOG_FILE, mode='a', newline='') as f:
             writer = csv.writer(f)
             if not file_exists:
                 writer.writerow([
-                    'Round', 'MAE',
+                    'Round', 'MAE', 'RMSE',
                     'Client_0_RQI', 'Client_1_RQI',
                     'FP32_MB', 'INT8_MB',
                     'Epsilon', 'Delta', 'DP_Enabled',
@@ -38,7 +43,8 @@ class FedRQI(fl.server.strategy.FedAvg):
             delta      = getattr(self, 'last_delta',     1e-5)
             dp_enabled = getattr(self, 'last_dp_enabled', 0)
             ac         = getattr(self, 'last_anomaly_counts', {})
-            writer.writerow([round_num, global_mae,
+            rmse       = global_rmse if global_rmse is not None else global_mae
+            writer.writerow([round_num, global_mae, rmse,
                              c0_rqi, c1_rqi,
                              fp32, int8,
                              epsilon, delta, dp_enabled,
@@ -152,15 +158,27 @@ class FedRQI(fl.server.strategy.FedAvg):
         loss_agg, metrics_agg = super().aggregate_evaluate(server_round, results, failures)
         if metrics_agg and "mae" in metrics_agg:
             rqis_to_log = getattr(self, 'last_rqis', [])
-            self.log_metrics(server_round, rqis_to_log, metrics_agg["mae"])
+            rmse = metrics_agg.get("rmse", None)
+            self.log_metrics(server_round, rqis_to_log, metrics_agg["mae"], rmse)
         return loss_agg, metrics_agg
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--strategy", type=str, default="fedrqi")
+    parser.add_argument("--strategy",   type=str, default="fedrqi")
+    parser.add_argument("--log-file",   type=str, default="simulation_log.csv",
+                        help="CSV log file path (allows per-strategy logs)")
+    parser.add_argument("--num-rounds", type=int, default=5,
+                        help="Number of FL rounds (default: 5)")
     args = parser.parse_args()
 
-    print("🚀 Starting Server with NOVEL FedRQI Strategy + BFT Shield...")
+    # Override global LOG_FILE so strategy comparison can write separate files
+    global LOG_FILE
+    LOG_FILE = args.log_file
+    if os.path.exists(LOG_FILE):
+        os.remove(LOG_FILE)
+
+    print(f"🚀 Starting Server | strategy={args.strategy} | "
+          f"rounds={args.num_rounds} | log={LOG_FILE}")
     strategy = FedRQI(
         fraction_fit=1.0,
         fraction_evaluate=1.0,
@@ -171,8 +189,8 @@ def main():
     )
 
     fl.server.start_server(
-        server_address="0.0.0.0:8085", # Using our new safe port
-        config=fl.server.ServerConfig(num_rounds=5),
+        server_address="0.0.0.0:8085",
+        config=fl.server.ServerConfig(num_rounds=args.num_rounds),
         strategy=strategy,
     )
 

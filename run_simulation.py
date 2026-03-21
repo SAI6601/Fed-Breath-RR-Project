@@ -1,53 +1,72 @@
 import subprocess
 import time
 import sys
-import matplotlib.pyplot as plt
+import argparse
+import os
 
-# --- CONFIGURATION ---
-NUM_ROUNDS = 5
-NUM_CLIENTS = 2  # We will run 2 clients for this test
+def run_experiment(strategy_name, num_clients, num_rounds):
+    utf8_env = os.environ.copy()
+    utf8_env["PYTHONIOENCODING"] = "utf-8"
+    utf8_env["PYTHONUTF8"]       = "1"
 
-def run_experiment(strategy_name):
-    print(f"\n==================================================")
-    print(f"🚀 LAUNCHING SIMULATION: {strategy_name.upper()}")
-    print(f"==================================================")
+    print(f"\n{'='*52}")
+    print(f"  LAUNCHING: {strategy_name.upper()} | "
+          f"{num_clients} clients | {num_rounds} rounds")
+    print(f"{'='*52}")
 
     processes = []
-    
+
     # 1. Start Server
-    # We pass the strategy name to the server
-    server_cmd = [sys.executable, "server.py", "--strategy", strategy_name]
-    server_proc = subprocess.Popen(server_cmd)
+    server_cmd = [
+        sys.executable, "server.py",
+        "--strategy",   strategy_name,
+        "--num-rounds", str(num_rounds),
+    ]
+    server_proc = subprocess.Popen(server_cmd, env=utf8_env)
     processes.append(server_proc)
-    print("✅ Server started...")
-    time.sleep(3) # Give server time to initialize
+    print("Server started — waiting 5 s for port to open...")
+    time.sleep(5)
+
+    if server_proc.poll() is not None:
+        print(f"Server exited immediately (code {server_proc.returncode}). Aborting.")
+        return
 
     # 2. Start Clients
-    client_procs = []
-    for i in range(NUM_CLIENTS):
-        print(f"   > Launching Client {i}...")
-        client_cmd = [sys.executable, "client.py", "--node-id", str(i)]
-        # We assume client 1 is 'Noisy' for demonstration (RQI logic handles this naturally)
-        c_proc = subprocess.Popen(client_cmd)
-        client_procs.append(c_proc)
-        processes.append(c_proc)
+    for i in range(num_clients):
+        print(f"  > Launching client {i}...")
+        client_proc = subprocess.Popen(
+            [sys.executable, "client.py",
+             "--node-id",    str(i),
+             "--num-clients", str(num_clients)],
+            env=utf8_env
+        )
+        processes.append(client_proc)
 
-    # 3. Wait for completion
-    # In a real script, we'd parse logs. Here we wait for manual Ctrl+C or server exit.
+    # 3. Wait for server to finish (Ctrl+C to stop early)
     try:
         server_proc.wait()
     except KeyboardInterrupt:
-        print("\n🛑 Stopping simulation...")
+        print("\nStopping simulation...")
         for p in processes:
             p.terminate()
 
-    print(f"✅ Simulation {strategy_name} finished.")
+    print(f"Simulation '{strategy_name}' finished.")
+
 
 if __name__ == "__main__":
-    # You can change this to 'fedavg' to see the difference!
-    strategy = "fedrqi"
-    
-    if len(sys.argv) > 1:
-        strategy = sys.argv[1]
-        
-    run_experiment(strategy)
+    parser = argparse.ArgumentParser(description="Fed-Breath simulation launcher")
+    parser.add_argument("--strategy",    type=str, default="fedrqi",
+                        choices=["fedrqi", "fedavg", "fedprox"],
+                        help="Aggregation strategy (default: fedrqi)")
+    parser.add_argument("--num-clients", type=int, default=2,
+                        help="Number of hospital edge clients (default: 2)")
+    parser.add_argument("--num-rounds",  type=int, default=5,
+                        help="Number of FL rounds (default: 5)")
+    args = parser.parse_args()
+
+    print(f"Fed-Breath Simulation")
+    print(f"  Strategy   : {args.strategy}")
+    print(f"  Clients    : {args.num_clients}")
+    print(f"  Rounds     : {args.num_rounds}")
+
+    run_experiment(args.strategy, args.num_clients, args.num_rounds)

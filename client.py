@@ -211,6 +211,7 @@ class BreathClient(fl.client.NumPyClient):
         set_params(self.model, parameters)
         self.model.eval()
         loss, mae, steps = 0.0, 0.0, 0
+        all_preds, all_targets = [], []
 
         with torch.no_grad():
             for inputs, targets in self.val_loader:
@@ -219,24 +220,35 @@ class BreathClient(fl.client.NumPyClient):
                 loss += self.criterion_rr(rr_pred, targets.unsqueeze(1)).item()
                 mae  += torch.abs(rr_pred - targets.unsqueeze(1)).sum().item()
                 steps += 1
+                all_preds.extend(rr_pred.squeeze().cpu().tolist())
+                all_targets.extend(targets.cpu().tolist())
 
-        n = len(self.val_loader.dataset)
-        return float(loss / steps), n, {"mae": float(mae / n)}
+        n          = len(self.val_loader.dataset)
+        preds_np   = np.array(all_preds)
+        targets_np = np.array(all_targets)
+        rmse       = float(np.sqrt(np.mean((preds_np - targets_np) ** 2)))
+
+        return float(loss / steps), n, {
+            "mae":  float(mae / n),
+            "rmse": rmse,
+        }
 
 # ─────────────────────────────────────────────────────────────
 # Entry point
 # ─────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--node-id", type=int, required=True)
+    parser.add_argument("--node-id",     type=int, required=True)
+    parser.add_argument("--num-clients", type=int, default=2,
+                        help="Total number of clients for data partitioning (default: 2)")
     args = parser.parse_args()
 
-    print(f"🏥 Starting Hospital Node #{args.node_id} on {DEVICE}")
-    print(f"🔒 Differential Privacy : {'ENABLED' if DP_ENABLED else 'DISABLED'}")
-    print(f"🧠 Anomaly Detection    : ENABLED (λ={LAMBDA_ANOMALY})")
+    print(f"Starting Hospital Node #{args.node_id} on {DEVICE}")
+    print(f"Differential Privacy : {'ENABLED' if DP_ENABLED else 'DISABLED'}")
+    print(f"Anomaly Detection    : ENABLED (lambda={LAMBDA_ANOMALY})")
 
     full_dataset = BidmcDataset()
-    num_clients  = 2
+    num_clients  = args.num_clients
     split_size   = max(1, len(full_dataset) // num_clients)
     indices      = list(range(len(full_dataset)))
     start, end   = args.node_id * split_size, (args.node_id + 1) * split_size

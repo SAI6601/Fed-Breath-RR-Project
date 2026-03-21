@@ -622,6 +622,30 @@
             </div>
         </div>
 
+        <!-- ⑤b Anomaly Distribution per Round — Full Width -->
+        <div class="card card-full">
+            <div class="card-header">
+                <span class="card-title">📊 FL Anomaly Distribution — per round</span>
+                <span class="card-badge badge-purple">POPULATION HEALTH</span>
+            </div>
+            <div class="chart-wrap" style="height:200px">
+                <canvas id="anomalyStackChart"></canvas>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:11px;color:#64748b">
+                <span style="display:flex;align-items:center;gap:5px"><span
+                        style="width:10px;height:10px;border-radius:2px;background:#22c55e;display:inline-block"></span>Normal</span>
+                <span style="display:flex;align-items:center;gap:5px"><span
+                        style="width:10px;height:10px;border-radius:2px;background:#eab308;display:inline-block"></span>Bradypnea</span>
+                <span style="display:flex;align-items:center;gap:5px"><span
+                        style="width:10px;height:10px;border-radius:2px;background:#ef4444;display:inline-block"></span>Apnea</span>
+                <span style="display:flex;align-items:center;gap:5px"><span
+                        style="width:10px;height:10px;border-radius:2px;background:#f97316;display:inline-block"></span>Tachypnea</span>
+                <span style="display:flex;align-items:center;gap:5px"><span
+                        style="width:10px;height:10px;border-radius:2px;background:#dc2626;display:inline-block"></span>Severe
+                    tachypnea</span>
+            </div>
+        </div>
+
         <!-- ⑤ Respiratory Anomaly Monitor — Full Width -->
         <div class="card card-full" id="anomaly-card" style="border:1px solid rgba(255,255,255,.06)">
             <div class="card-header">
@@ -780,6 +804,40 @@
             }
         });
 
+        // ⑤b Anomaly Distribution stacked bar chart
+        const anomalyStackLabels = [];
+        const anomalyStackData = [[], [], [], [], []];  // one array per class
+        const anomalyStackColors = ['#22c55e', '#eab308', '#ef4444', '#f97316', '#dc2626'];
+        const anomalyClassNames = ['Normal', 'Bradypnea', 'Apnea', 'Tachypnea', 'Severe tachypnea'];
+
+        const anomalyStackChart = new Chart(C('anomalyStackChart'), {
+            type: 'bar',
+            data: {
+                labels: anomalyStackLabels,
+                datasets: anomalyClassNames.map((name, i) => ({
+                    label: name,
+                    data: anomalyStackData[i],
+                    backgroundColor: anomalyStackColors[i],
+                    borderWidth: 0,
+                    borderRadius: i === 4 ? 4 : 0,
+                }))
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: {
+                        stacked: true, grid: { display: false },
+                        ticks: { color: '#64748b', font: { size: 11 } }
+                    },
+                    y: {
+                        stacked: true, grid: { color: 'rgba(255,255,255,.04)' },
+                        ticks: { color: '#64748b', font: { size: 11 } }
+                    }
+                }
+            }
+        });
+
         // ⑤ PPG Chart (Explainable AI Wave)
         let ppgWave = [];
         let ppgLabels = [];
@@ -851,6 +909,16 @@
             if (data.c0_rqi > 0 || data.c1_rqi > 0) {
                 rqiChart.data.datasets[0].data = [data.c0_rqi, data.c1_rqi];
                 rqiChart.update();
+            }
+
+            // 2b. Update Anomaly Distribution stacked bar (new round only)
+            if (data.anomaly_counts && data.round > 0 &&
+                !anomalyStackLabels.includes(`R${data.round}`)) {
+                anomalyStackLabels.push(`R${data.round}`);
+                data.anomaly_counts.forEach((count, i) => {
+                    anomalyStackData[i].push(count);
+                });
+                anomalyStackChart.update();
             }
 
             // 3. Stream the Live Breathing Wave & Real Attention Heatmap

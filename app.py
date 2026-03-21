@@ -177,6 +177,7 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             # ── 1. FL metrics from log ───────────────────────────────
             current_round, mae, c0_rqi, c1_rqi = 0, 0.0, 0.0, 0.0
+            anomaly_counts = [0, 0, 0, 0, 0]   # Normal, Brady, Apnea, Tachy, SevTachy
 
             if os.path.exists("simulation_log.csv"):
                 try:
@@ -184,15 +185,26 @@ async def websocket_endpoint(websocket: WebSocket):
                         lines = list(csv.reader(f))
                     if len(lines) > 1:
                         row           = lines[-1]
+                        # Column order: Round(0) MAE(1) RMSE(2) C0_RQI(3) C1_RQI(4)
+                        #               FP32(5) INT8(6) Epsilon(7) Delta(8) DP(9)
+                        #               Ano_Normal(10) Ano_Brady(11) Ano_Apnea(12)
+                        #               Ano_Tachy(13) Ano_SevTachy(14)
                         current_round = int(row[0])
                         mae           = float(row[1])
-                        c0_rqi        = float(row[2])
-                        c1_rqi        = float(row[3])
-                        fp32_mb       = float(row[4]) if len(row) > 4 else fp32_mb
-                        int8_mb       = float(row[5]) if len(row) > 5 else int8_mb
-                        epsilon       = float(row[6]) if len(row) > 6 else epsilon
-                        delta         = float(row[7]) if len(row) > 7 else delta
-                        dp_enabled    = bool(int(float(row[8]))) if len(row) > 8 else dp_enabled
+                        c0_rqi        = float(row[3]) if len(row) > 3 else c0_rqi
+                        c1_rqi        = float(row[4]) if len(row) > 4 else c1_rqi
+                        fp32_mb       = float(row[5]) if len(row) > 5 else fp32_mb
+                        int8_mb       = float(row[6]) if len(row) > 6 else int8_mb
+                        epsilon       = float(row[7]) if len(row) > 7 else epsilon
+                        delta         = float(row[8]) if len(row) > 8 else delta
+                        dp_enabled    = bool(int(float(row[9]))) if len(row) > 9 else dp_enabled
+                        anomaly_counts = [
+                            int(float(row[10])) if len(row) > 10 else 0,
+                            int(float(row[11])) if len(row) > 11 else 0,
+                            int(float(row[12])) if len(row) > 12 else 0,
+                            int(float(row[13])) if len(row) > 13 else 0,
+                            int(float(row[14])) if len(row) > 14 else 0,
+                        ]
                 except Exception:
                     pass  # CSV mid-write — skip this frame
 
@@ -211,19 +223,20 @@ async def websocket_endpoint(websocket: WebSocket):
 
             # ── 4. Broadcast ─────────────────────────────────────────
             payload = {
-                "round":      current_round,
-                "mae":        mae,
-                "c0_rqi":     c0_rqi,
-                "c1_rqi":     c1_rqi,
-                "wave":       wave_data,
-                "attention":  attention_data,
-                "fp32_mb":    fp32_mb,
-                "int8_mb":    int8_mb,
-                "xai_live":   _model_loaded,
-                "epsilon":    epsilon,
-                "delta":      delta,
-                "dp_enabled": dp_enabled,
-                "anomaly":    anomaly_result,   # dict or None
+                "round":          current_round,
+                "mae":            mae,
+                "c0_rqi":         c0_rqi,
+                "c1_rqi":         c1_rqi,
+                "wave":           wave_data,
+                "attention":      attention_data,
+                "fp32_mb":        fp32_mb,
+                "int8_mb":        int8_mb,
+                "xai_live":       _model_loaded,
+                "epsilon":        epsilon,
+                "delta":          delta,
+                "dp_enabled":     dp_enabled,
+                "anomaly":        anomaly_result,   # live inference dict or None
+                "anomaly_counts": anomaly_counts,   # per-round FL distribution [N,B,A,T,S]
             }
 
             await websocket.send_text(json.dumps(payload))
