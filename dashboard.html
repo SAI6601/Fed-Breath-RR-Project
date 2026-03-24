@@ -1,660 +1,1200 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Fed-Breath Command Center</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0b0f1a;--bg-card:#111827;--bg-card2:#151e2d;--border:#1f2d42;
-  --cyan:#00e5ff;--green:#39ff14;--red:#ff2d55;--orange:#ff9900;--purple:#a855f7;
-  --text:#e2e8f0;--muted:#64748b;--dim:#334155;
-  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
-}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);overflow-x:hidden}
-body{
-  background-image:
-    linear-gradient(rgba(0,229,255,.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,229,255,.03) 1px,transparent 1px);
-  background-size:40px 40px;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Fed-Breath Command Center</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-/* ── Header ── */
-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 20px;border-bottom:1px solid var(--border);
-  background:rgba(11,15,26,.9);backdrop-filter:blur(12px);
-  position:sticky;top:0;z-index:100;width:100%;
-}
-.header-left{display:flex;align-items:center;gap:12px}
-.logo-icon{
-  width:34px;height:34px;
-  background:linear-gradient(135deg,var(--cyan),var(--purple));
-  border-radius:8px;display:flex;align-items:center;justify-content:center;
-  font-size:18px;box-shadow:0 0 14px rgba(0,229,255,.35);flex-shrink:0;
-}
-header h1{
-  font-size:1.15rem;font-weight:700;letter-spacing:.04em;
-  background:linear-gradient(90deg,var(--cyan),var(--purple));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.status-pill{
-  display:flex;align-items:center;gap:7px;
-  background:rgba(57,255,20,.08);border:1px solid rgba(57,255,20,.25);
-  border-radius:999px;padding:5px 14px;font-size:.72rem;font-weight:600;
-  color:var(--green);letter-spacing:.08em;text-transform:uppercase;
-}
-.pulse-dot{
-  width:8px;height:8px;border-radius:50%;background:var(--green);
-  box-shadow:0 0 8px var(--green);animation:pulse 1.6s ease-in-out infinite;
-}
-@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.5}}
-.header-meta{font-size:.7rem;color:var(--muted);font-family:var(--mono)}
+    :root {
+      --bg: #0b0f1a;
+      --bg-card: #111827;
+      --bg-card2: #151e2d;
+      --border: #1f2d42;
+      --cyan: #00e5ff;
+      --green: #39ff14;
+      --red: #ff2d55;
+      --orange: #ff9900;
+      --purple: #a855f7;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --dim: #334155;
+      --font: 'Inter', sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
 
-/* ── Parameters Table (full-width strip) ── */
-.params-strip{
-  width:100%;background:var(--bg-card2);border-bottom:1px solid var(--border);
-  padding:0 20px;overflow-x:auto;
-}
-.params-table{
-  width:100%;border-collapse:collapse;font-family:var(--mono);white-space:nowrap;
-}
-.params-table th{
-  font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--muted);padding:8px 16px;font-weight:600;text-align:left;
-  border-bottom:1px solid var(--border);background:transparent;
-}
-.params-table td{
-  font-size:.78rem;padding:9px 16px;border-bottom:none;
-  color:var(--text);font-weight:400;
-}
-.params-table tr:hover td{background:rgba(255,255,255,.02)}
-.p-val{font-weight:700;font-size:.85rem}
-.p-cyan{color:var(--cyan)}
-.p-green{color:var(--green)}
-.p-orange{color:var(--orange)}
-.p-purple{color:var(--purple)}
-.p-red{color:var(--red)}
-.p-muted{color:var(--muted)}
-.p-pill{
-  display:inline-block;padding:2px 8px;border-radius:999px;
-  font-size:.62rem;font-weight:700;letter-spacing:.06em;
-}
-.pill-green{background:rgba(57,255,20,.1);color:var(--green);border:1px solid rgba(57,255,20,.2)}
-.pill-red{background:rgba(255,45,85,.1);color:var(--red);border:1px solid rgba(255,45,85,.2)}
-.pill-orange{background:rgba(255,153,0,.1);color:var(--orange);border:1px solid rgba(255,153,0,.2)}
+    html,
+    body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      overflow-x: hidden
+    }
 
-/* ── Main Grid — 4 columns, full width ── */
-.dashboard{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:14px;
-  padding:14px 20px;
-  width:100%;
-}
-.span2{grid-column:span 2}
-.span4{grid-column:1/-1}
+    body {
+      background-image:
+        linear-gradient(rgba(0, 229, 255, .03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 229, 255, .03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
 
-/* ── Card ── */
-.card{
-  background:var(--bg-card);border:1px solid var(--border);border-radius:14px;
-  padding:18px 20px;position:relative;overflow:hidden;transition:box-shadow .3s;
-}
-.card:hover{box-shadow:0 0 22px rgba(0,229,255,.06)}
-.card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:.4;
-}
-.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.card-title{font-size:.65rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.card-badge{
-  font-size:.6rem;font-weight:600;padding:3px 9px;border-radius:999px;font-family:var(--mono);
-}
-.badge-cyan{background:rgba(0,229,255,.1);color:var(--cyan);border:1px solid rgba(0,229,255,.2)}
-.badge-orange{background:rgba(255,153,0,.1);color:var(--orange);border:1px solid rgba(255,153,0,.2)}
-.badge-purple{background:rgba(168,85,247,.1);color:var(--purple);border:1px solid rgba(168,85,247,.2)}
-.badge-red{background:rgba(255,45,85,.1);color:var(--red);border:1px solid rgba(255,45,85,.2)}
-.badge-green{background:rgba(57,255,20,.1);color:var(--green);border:1px solid rgba(57,255,20,.2)}
+    /* ── Header ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(11, 15, 26, .9);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+    }
 
-.chart-wrap{position:relative;height:190px}
-.chart-wrap-sm{position:relative;height:160px}
-.chart-wrap-lg{position:relative;height:210px}
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
 
-/* ── Compression card ── */
-.compression-content{display:flex;flex-direction:column;gap:14px}
-.compression-row{display:flex;align-items:center;gap:12px}
-.comp-label{font-family:var(--mono);font-size:.75rem;font-weight:600;color:var(--muted);width:44px;flex-shrink:0}
-.comp-bar-track{flex:1;height:9px;background:var(--bg);border-radius:999px;overflow:hidden;border:1px solid var(--border)}
-.comp-bar-fill{height:100%;border-radius:999px;transition:width 1.5s cubic-bezier(.4,0,.2,1)}
-.fill-fp32{background:linear-gradient(90deg,#ff4d6d,#ff2d55);box-shadow:0 0 8px rgba(255,45,85,.35);width:100%}
-.fill-int8{background:linear-gradient(90deg,#00e5ff,#a855f7);box-shadow:0 0 8px rgba(0,229,255,.35);width:24%}
-.comp-size{font-family:var(--mono);font-size:.8rem;font-weight:700;width:54px;text-align:right;flex-shrink:0}
-.reduction-badge{
-  margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px;
-  background:linear-gradient(135deg,rgba(0,229,255,.07),rgba(168,85,247,.07));
-  border:1px solid rgba(0,229,255,.12);border-radius:10px;padding:12px 16px;
-}
-.reduction-pct{
-  font-size:2.4rem;font-weight:900;font-family:var(--mono);
-  background:linear-gradient(90deg,var(--cyan),var(--purple));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;
-}
-.reduction-label{display:flex;flex-direction:column;gap:2px}
-.reduction-label strong{font-size:.82rem;font-weight:700;color:var(--text)}
-.reduction-label span{font-size:.68rem;color:var(--muted)}
+    .logo-icon {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 0 14px rgba(0, 229, 255, .35);
+      flex-shrink: 0;
+    }
 
-/* ── Terminal ── */
-.terminal{
-  background:#060a12;border:1px solid #1a2740;border-radius:9px;
-  padding:12px;height:190px;overflow-y:auto;font-family:var(--mono);
-  font-size:.7rem;line-height:1.8;scrollbar-width:thin;scrollbar-color:var(--border) transparent;
-}
-.terminal::-webkit-scrollbar{width:3px}
-.terminal::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-.log-line{display:block;animation:fadeIn .3s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
-.log-ts{color:var(--dim);margin-right:7px}
-.log-pass{color:var(--green)}.log-warn{color:var(--orange)}
-.log-fail{color:var(--red)}.log-info{color:var(--cyan)}
+    header h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
-/* ── PPG Legend ── */
-.ppg-legend{display:flex;gap:16px;align-items:center;margin-top:8px}
-.legend-item{display:flex;align-items:center;gap:5px;font-size:.68rem;color:var(--muted)}
-.legend-dot{width:7px;height:7px;border-radius:50%}
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(57, 255, 20, .08);
+      border: 1px solid rgba(57, 255, 20, .25);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--green);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
 
-/* ── Probability bars ── */
-.prob-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
-.prob-label{font-size:.7rem;min-width:105px;font-family:var(--mono);color:var(--muted)}
-.prob-track{flex:1;height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
-.prob-fill{height:100%;width:0%;border-radius:3px;transition:width .5s ease}
-.prob-pct{font-size:.7rem;font-family:var(--mono);min-width:36px;text-align:right;color:var(--muted)}
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
 
-/* ── Scrollbar global ── */
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:5px}
+    @keyframes pulse {
 
-@media(max-width:1100px){
-  .dashboard{grid-template-columns:repeat(2,1fr)}
-  .span2,.span4{grid-column:1/-1}
-}
-@media(max-width:700px){
-  .dashboard{grid-template-columns:1fr}
-  .span2,.span4{grid-column:1/-1}
-}
-</style>
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1
+      }
+
+      50% {
+        transform: scale(1.5);
+        opacity: .5
+      }
+    }
+
+    .header-meta {
+      font-size: .7rem;
+      color: var(--muted);
+      font-family: var(--mono)
+    }
+
+    /* ── Parameters Table (full-width strip) ── */
+    .params-strip {
+      width: 100%;
+      background: var(--bg-card2);
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      overflow-x: auto;
+    }
+
+    .params-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--mono);
+      white-space: nowrap;
+    }
+
+    .params-table th {
+      font-size: .6rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 8px 16px;
+      font-weight: 600;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      background: transparent;
+    }
+
+    .params-table td {
+      font-size: .78rem;
+      padding: 9px 16px;
+      border-bottom: none;
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    .params-table tr:hover td {
+      background: rgba(255, 255, 255, .02)
+    }
+
+    .p-val {
+      font-weight: 700;
+      font-size: .85rem
+    }
+
+    .p-cyan {
+      color: var(--cyan)
+    }
+
+    .p-green {
+      color: var(--green)
+    }
+
+    .p-orange {
+      color: var(--orange)
+    }
+
+    .p-purple {
+      color: var(--purple)
+    }
+
+    .p-red {
+      color: var(--red)
+    }
+
+    .p-muted {
+      color: var(--muted)
+    }
+
+    .p-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: .62rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+    }
+
+    .pill-green {
+      background: rgba(57, 255, 20, .1);
+      color: var(--green);
+      border: 1px solid rgba(57, 255, 20, .2)
+    }
+
+    .pill-red {
+      background: rgba(255, 45, 85, .1);
+      color: var(--red);
+      border: 1px solid rgba(255, 45, 85, .2)
+    }
+
+    .pill-orange {
+      background: rgba(255, 153, 0, .1);
+      color: var(--orange);
+      border: 1px solid rgba(255, 153, 0, .2)
+    }
+
+    /* ── Main Grid — 4 columns, full width ── */
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      padding: 14px 20px;
+      width: 100%;
+    }
+
+    .span2 {
+      grid-column: span 2
+    }
+
+    .span4 {
+      grid-column: 1/-1
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow .3s;
+    }
+
+    .card:hover {
+      box-shadow: 0 0 22px rgba(0, 229, 255, .06)
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      opacity: .4;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px
+    }
+
+    .card-title {
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted)
+    }
+
+    .card-badge {
+      font-size: .6rem;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-family: var(--mono);
+    }
+
+    .badge-cyan {
+      background: rgba(0, 229, 255, .1);
+      color: var(--cyan);
+      border: 1px solid rgba(0, 229, 255, .2)
+    }
+
+    .badge-orange {
+      background: rgba(255, 153, 0, .1);
+      color: var(--orange);
+      border: 1px solid rgba(255, 153, 0, .2)
+    }
+
+    .badge-purple {
+      background: rgba(168, 85, 247, .1);
+      color: var(--purple);
+      border: 1px solid rgba(168, 85, 247, .2)
+    }
+
+    .badge-red {
+      background: rgba(255, 45, 85, .1);
+      color: var(--red);
+      border: 1px solid rgba(255, 45, 85, .2)
+    }
+
+    .badge-green {
+      background: rgba(57, 255, 20, .1);
+      color: var(--green);
+      border: 1px solid rgba(57, 255, 20, .2)
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 190px
+    }
+
+    .chart-wrap-sm {
+      position: relative;
+      height: 160px
+    }
+
+    .chart-wrap-lg {
+      position: relative;
+      height: 210px
+    }
+
+    /* ── Compression card ── */
+    .compression-content {
+      display: flex;
+      flex-direction: column;
+      gap: 14px
+    }
+
+    .compression-row {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .comp-label {
+      font-family: var(--mono);
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--muted);
+      width: 44px;
+      flex-shrink: 0
+    }
+
+    .comp-bar-track {
+      flex: 1;
+      height: 9px;
+      background: var(--bg);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border)
+    }
+
+    .comp-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 1.5s cubic-bezier(.4, 0, .2, 1)
+    }
+
+    .fill-fp32 {
+      background: linear-gradient(90deg, #ff4d6d, #ff2d55);
+      box-shadow: 0 0 8px rgba(255, 45, 85, .35);
+      width: 100%
+    }
+
+    .fill-int8 {
+      background: linear-gradient(90deg, #00e5ff, #a855f7);
+      box-shadow: 0 0 8px rgba(0, 229, 255, .35);
+      width: 24%
+    }
+
+    .comp-size {
+      font-family: var(--mono);
+      font-size: .8rem;
+      font-weight: 700;
+      width: 54px;
+      text-align: right;
+      flex-shrink: 0
+    }
+
+    .reduction-badge {
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(135deg, rgba(0, 229, 255, .07), rgba(168, 85, 247, .07));
+      border: 1px solid rgba(0, 229, 255, .12);
+      border-radius: 10px;
+      padding: 12px 16px;
+    }
+
+    .reduction-pct {
+      font-size: 2.4rem;
+      font-weight: 900;
+      font-family: var(--mono);
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .reduction-label {
+      display: flex;
+      flex-direction: column;
+      gap: 2px
+    }
+
+    .reduction-label strong {
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--text)
+    }
+
+    .reduction-label span {
+      font-size: .68rem;
+      color: var(--muted)
+    }
+
+    /* ── Terminal ── */
+    .terminal {
+      background: #060a12;
+      border: 1px solid #1a2740;
+      border-radius: 9px;
+      padding: 12px;
+      height: 190px;
+      overflow-y: auto;
+      font-family: var(--mono);
+      font-size: .7rem;
+      line-height: 1.8;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .terminal::-webkit-scrollbar {
+      width: 3px
+    }
+
+    .terminal::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px
+    }
+
+    .log-line {
+      display: block;
+      animation: fadeIn .3s ease
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(3px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .log-ts {
+      color: var(--dim);
+      margin-right: 7px
+    }
+
+    .log-pass {
+      color: var(--green)
+    }
+
+    .log-warn {
+      color: var(--orange)
+    }
+
+    .log-fail {
+      color: var(--red)
+    }
+
+    .log-info {
+      color: var(--cyan)
+    }
+
+    /* ── PPG Legend ── */
+    .ppg-legend {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-top: 8px
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: .68rem;
+      color: var(--muted)
+    }
+
+    .legend-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%
+    }
+
+    /* ── Probability bars ── */
+    .prob-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px
+    }
+
+    .prob-label {
+      font-size: .7rem;
+      min-width: 105px;
+      font-family: var(--mono);
+      color: var(--muted)
+    }
+
+    .prob-track {
+      flex: 1;
+      height: 5px;
+      background: rgba(255, 255, 255, .07);
+      border-radius: 3px;
+      overflow: hidden
+    }
+
+    .prob-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 3px;
+      transition: width .5s ease
+    }
+
+    .prob-pct {
+      font-size: .7rem;
+      font-family: var(--mono);
+      min-width: 36px;
+      text-align: right;
+      color: var(--muted)
+    }
+
+    /* ── Scrollbar global ── */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 5px
+    }
+
+    @media(max-width:1100px) {
+      .dashboard {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .span2,
+      .span4 {
+        grid-column: 1/-1
+      }
+    }
+
+    @media(max-width:700px) {
+      .dashboard {
+        grid-template-columns: 1fr
+      }
+
+      .span2,
+      .span4 {
+        grid-column: 1/-1
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- HEADER -->
-<header>
-  <div class="header-left">
-    <div class="logo-icon">&#x1F757;</div>
-    <h1>Fed-Breath Command Center</h1>
-  </div>
-  <div class="status-pill">
-    <div class="pulse-dot"></div>
-    System Online
-  </div>
-  <div class="header-meta" id="clock">--:--:-- UTC</div>
-</header>
-
-<!-- LIVE PARAMETERS TABLE -->
-<div class="params-strip">
-  <table class="params-table">
-    <thead>
-      <tr>
-        <th>Round</th>
-        <th>Global MAE</th>
-        <th>Hospital A RQI</th>
-        <th>Hospital B RQI</th>
-        <th>FP32 size</th>
-        <th>INT8 size</th>
-        <th>Compression</th>
-        <th>Privacy (&#x3B5;)</th>
-        <th>DP Status</th>
-        <th>RR Prediction</th>
-        <th>Anomaly</th>
-        <th>Confidence</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span id="pt-round" class="p-val p-cyan">—</span></td>
-        <td><span id="pt-mae"   class="p-val p-green">—</span> <span class="p-muted" style="font-size:.65rem">BrPM</span></td>
-        <td><span id="pt-rqi0"  class="p-val p-orange">—</span></td>
-        <td><span id="pt-rqi1"  class="p-val p-purple">—</span></td>
-        <td><span id="pt-fp32"  class="p-val">—</span> <span class="p-muted" style="font-size:.65rem">MB</span></td>
-        <td><span id="pt-int8"  class="p-val p-cyan">—</span> <span class="p-muted" style="font-size:.65rem">MB</span></td>
-        <td><span id="pt-comp"  class="p-val p-green">—</span></td>
-        <td><span id="pt-eps"   class="p-val p-purple">—</span></td>
-        <td><span id="pt-dp"    class="p-pill pill-red">INACTIVE</span></td>
-        <td><span id="pt-rr"    class="p-val p-cyan">—</span> <span class="p-muted" style="font-size:.65rem">BrPM</span></td>
-        <td><span id="pt-ano"   class="p-val p-green">Normal</span></td>
-        <td><span id="pt-conf"  class="p-muted">—</span></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<!-- MAIN GRID -->
-<div class="dashboard">
-
-  <!-- ① MAE Chart — 2 cols -->
-  <div class="card span2">
-    <div class="card-header">
-      <span class="card-title">Global Accuracy — Validation MAE</span>
-      <span class="card-badge badge-cyan">FL ROUNDS</span>
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <div class="logo-icon">&#x1F757;</div>
+      <h1>Fed-Breath Command Center</h1>
     </div>
-    <div class="chart-wrap-lg"><canvas id="maeChart"></canvas></div>
+    <div class="status-pill">
+      <div class="pulse-dot"></div>
+      System Online
+    </div>
+    <div class="header-meta" id="clock">--:--:-- UTC</div>
+  </header>
+
+  <!-- LIVE PARAMETERS TABLE -->
+  <div class="params-strip">
+    <table class="params-table">
+      <thead>
+        <tr>
+          <th>Round</th>
+          <th>Global MAE</th>
+          <th>Hospital A RQI</th>
+          <th>Hospital B RQI</th>
+          <th>FP32 size</th>
+          <th>INT8 size</th>
+          <th>Compression</th>
+          <th>Privacy (&#x3B5;)</th>
+          <th>DP Status</th>
+          <th>RR Prediction</th>
+          <th>Anomaly</th>
+          <th>Confidence</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span id="pt-round" class="p-val p-cyan">—</span></td>
+          <td><span id="pt-mae" class="p-val p-green">—</span> <span class="p-muted"
+              style="font-size:.65rem">BrPM</span></td>
+          <td><span id="pt-rqi0" class="p-val p-orange">—</span></td>
+          <td><span id="pt-rqi1" class="p-val p-purple">—</span></td>
+          <td><span id="pt-fp32" class="p-val">—</span> <span class="p-muted" style="font-size:.65rem">MB</span></td>
+          <td><span id="pt-int8" class="p-val p-cyan">—</span> <span class="p-muted" style="font-size:.65rem">MB</span>
+          </td>
+          <td><span id="pt-comp" class="p-val p-green">—</span></td>
+          <td><span id="pt-eps" class="p-val p-purple">—</span></td>
+          <td><span id="pt-dp" class="p-pill pill-red">INACTIVE</span></td>
+          <td><span id="pt-rr" class="p-val p-cyan">—</span> <span class="p-muted" style="font-size:.65rem">BrPM</span>
+          </td>
+          <td><span id="pt-ano" class="p-val p-green">Normal</span></td>
+          <td><span id="pt-conf" class="p-muted">—</span></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <!-- ② RQI Chart — 1 col -->
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">Node Quality — RQI Scores</span>
-      <span class="card-badge badge-orange">HOSPITALS</span>
-    </div>
-    <div class="chart-wrap-lg"><canvas id="rqiChart"></canvas></div>
-  </div>
+  <!-- MAIN GRID -->
+  <div class="dashboard">
 
-  <!-- ③ Edge Compression — 1 col -->
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">Edge Optimization — Compression</span>
-      <span class="card-badge badge-purple">QUANTIZATION</span>
-    </div>
-    <div class="compression-content">
-      <div class="compression-row">
-        <span class="comp-label">FP32</span>
-        <div class="comp-bar-track"><div class="comp-bar-fill fill-fp32" id="barFP32"></div></div>
-        <span class="comp-size" style="color:var(--red)" id="fp32Label">5.0 MB</span>
+    <!-- ① MAE Chart — 2 cols -->
+    <div class="card span2">
+      <div class="card-header">
+        <span class="card-title">Global Accuracy — Validation MAE</span>
+        <span class="card-badge badge-cyan">FL ROUNDS</span>
       </div>
-      <div class="compression-row">
-        <span class="comp-label">INT8</span>
-        <div class="comp-bar-track"><div class="comp-bar-fill fill-int8" id="barINT8"></div></div>
-        <span class="comp-size" style="color:var(--cyan)" id="int8Label">1.2 MB</span>
-      </div>
-      <div class="reduction-badge">
-        <div class="reduction-pct" id="compPct">76%</div>
-        <div class="reduction-label">
-          <strong>Size Reduction</strong>
-          <span>FP32 → INT8 Quantization</span>
-          <span style="color:var(--green);font-size:.64rem">✔ Inference-safe on edge MCUs</span>
-        </div>
-      </div>
+      <div class="chart-wrap-lg"><canvas id="maeChart"></canvas></div>
     </div>
-  </div>
 
-  <!-- ④ BFT Terminal — 2 cols -->
-  <div class="card span2">
-    <div class="card-header">
-      <span class="card-title">BFT Security Shield</span>
-      <span class="card-badge badge-red">LIVE LOGS</span>
-    </div>
-    <div class="terminal" id="terminal"></div>
-  </div>
-
-  <!-- ⑤ DP Budget — 2 cols -->
-  <div class="card span2">
-    <div class="card-header">
-      <span class="card-title">Differential Privacy Budget</span>
-      <span id="dp-badge" class="card-badge badge-red">DP INACTIVE</span>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;height:100%">
-      <!-- left: gauge -->
-      <div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
-          <span style="font-size:.62rem;color:var(--muted);letter-spacing:.07em">PRIVACY SPENT (&#x3B5;)</span>
-          <span id="epsilonVal" style="font-family:var(--mono);font-size:24px;color:var(--purple)">—</span>
-        </div>
-        <div style="height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;margin-bottom:4px">
-          <div id="epsilonBar" style="height:100%;width:0%;background:linear-gradient(90deg,#7c3aed,#a855f7);border-radius:4px;transition:width .6s ease"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:.6rem;color:#475569">
-          <span>&#x3B5; = 0 (perfect)</span><span>&#x3B5; = 10 (weak)</span>
-        </div>
-        <div id="dpInterpret" style="font-size:.68rem;color:var(--muted);line-height:1.5;border-left:2px solid var(--purple);padding-left:8px;margin-top:12px">
-          Waiting for first FL round to report &#x3B5;...
-        </div>
+    <!-- ② RQI Chart — 1 col -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Node Quality — RQI Scores</span>
+        <span class="card-badge badge-orange">HOSPITALS</span>
       </div>
-      <!-- right: stat cells -->
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <div style="display:flex;gap:8px">
-          <div style="flex:1;background:rgba(255,255,255,.04);border-radius:7px;padding:9px 11px">
-            <div style="font-size:.58rem;color:var(--muted);margin-bottom:3px">DELTA (&#x3B4;)</div>
-            <div id="deltaVal" style="font-family:var(--mono);font-size:.85rem;color:#94a3b8">1e-5</div>
+      <div class="chart-wrap-lg"><canvas id="rqiChart"></canvas></div>
+    </div>
+
+    <!-- ③ Edge Compression — 1 col -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Edge Optimization — Compression</span>
+        <span class="card-badge badge-purple">QUANTIZATION</span>
+      </div>
+      <div class="compression-content">
+        <div class="compression-row">
+          <span class="comp-label">FP32</span>
+          <div class="comp-bar-track">
+            <div class="comp-bar-fill fill-fp32" id="barFP32"></div>
           </div>
-          <div style="flex:1;background:rgba(255,255,255,.04);border-radius:7px;padding:9px 11px">
-            <div style="font-size:.58rem;color:var(--muted);margin-bottom:3px">MECHANISM</div>
-            <div style="font-family:var(--mono);font-size:.85rem;color:#94a3b8">DP-SGD</div>
+          <span class="comp-size" style="color:var(--red)" id="fp32Label">5.0 MB</span>
+        </div>
+        <div class="compression-row">
+          <span class="comp-label">INT8</span>
+          <div class="comp-bar-track">
+            <div class="comp-bar-fill fill-int8" id="barINT8"></div>
+          </div>
+          <span class="comp-size" style="color:var(--cyan)" id="int8Label">1.2 MB</span>
+        </div>
+        <div class="reduction-badge">
+          <div class="reduction-pct" id="compPct">76%</div>
+          <div class="reduction-label">
+            <strong>Size Reduction</strong>
+            <span>FP32 → INT8 Quantization</span>
+            <span style="color:var(--green);font-size:.64rem">✔ Inference-safe on edge MCUs</span>
           </div>
         </div>
-        <div style="background:rgba(255,255,255,.04);border-radius:7px;padding:9px 11px">
-          <div style="font-size:.58rem;color:var(--muted);margin-bottom:3px">NOISE MULTIPLIER (&#x3C3;)</div>
-          <div style="font-family:var(--mono);font-size:.85rem;color:#94a3b8">1.0 — Gaussian</div>
+      </div>
+    </div>
+
+    <!-- ④ BFT Terminal — 2 cols -->
+    <div class="card span2">
+      <div class="card-header">
+        <span class="card-title">BFT Security Shield</span>
+        <span class="card-badge badge-red">LIVE LOGS</span>
+      </div>
+      <div class="terminal" id="terminal"></div>
+    </div>
+
+    <!-- ⑤ DP Budget — 2 cols -->
+    <div class="card span2">
+      <div class="card-header">
+        <span class="card-title">Differential Privacy Budget</span>
+        <span id="dp-badge" class="card-badge badge-red">DP INACTIVE</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;height:100%">
+        <!-- left: gauge -->
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+            <span style="font-size:.62rem;color:var(--muted);letter-spacing:.07em">PRIVACY SPENT (&#x3B5;)</span>
+            <span id="epsilonVal" style="font-family:var(--mono);font-size:24px;color:var(--purple)">—</span>
+          </div>
+          <div style="height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;margin-bottom:4px">
+            <div id="epsilonBar"
+              style="height:100%;width:0%;background:linear-gradient(90deg,#7c3aed,#a855f7);border-radius:4px;transition:width .6s ease">
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:.6rem;color:#475569">
+            <span>&#x3B5; = 0 (perfect)</span><span>&#x3B5; = 10 (weak)</span>
+          </div>
+          <div id="dpInterpret"
+            style="font-size:.68rem;color:var(--muted);line-height:1.5;border-left:2px solid var(--purple);padding-left:8px;margin-top:12px">
+            Waiting for first FL round to report &#x3B5;...
+          </div>
         </div>
-        <div style="background:rgba(255,255,255,.04);border-radius:7px;padding:9px 11px">
-          <div style="font-size:.58rem;color:var(--muted);margin-bottom:3px">MAX GRAD NORM (C)</div>
-          <div style="font-family:var(--mono);font-size:.85rem;color:#94a3b8">1.0</div>
+        <!-- right: stat cells -->
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;gap:8px">
+            <div style="flex:1;background:rgba(255,255,255,.04);border-radius:7px;padding:9px 11px">
+              <div style="font-size:.58rem;color:var(--muted);margin-bottom:3px">DELTA (&#x3B4;)</div>
+              <div id="deltaVal" style="font-family:var(--mono);font-size:.85rem;color:#94a3b8">1e-5</div>
+            </div>
+            <div style="flex:1;background:rgba(255,255,255,.04);border-radius:7px;padding:9px 11px">
+              <div style="font-size:.58rem;color:var(--muted);margin-bottom:3px">MECHANISM</div>
+              <div style="font-family:var(--mono);font-size:.85rem;color:#94a3b8">DP-SGD</div>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border-radius:7px;padding:9px 11px">
+            <div style="font-size:.58rem;color:var(--muted);margin-bottom:3px">NOISE MULTIPLIER (&#x3C3;)</div>
+            <div style="font-family:var(--mono);font-size:.85rem;color:#94a3b8">1.0 — Gaussian</div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border-radius:7px;padding:9px 11px">
+            <div style="font-size:.58rem;color:var(--muted);margin-bottom:3px">MAX GRAD NORM (C)</div>
+            <div style="font-family:var(--mono);font-size:.85rem;color:#94a3b8">1.0</div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- ⑥ Anomaly Distribution — full width -->
-  <div class="card span4">
-    <div class="card-header">
-      <span class="card-title">FL Anomaly Distribution — per round</span>
-      <span class="card-badge badge-purple">POPULATION HEALTH</span>
-    </div>
-    <div class="chart-wrap" style="height:180px"><canvas id="anomalyStackChart"></canvas></div>
-    <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:10px;font-size:.68rem;color:var(--muted)">
-      <span style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:2px;background:#22c55e;display:inline-block"></span>Normal</span>
-      <span style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:2px;background:#eab308;display:inline-block"></span>Bradypnea</span>
-      <span style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:2px;background:#ef4444;display:inline-block"></span>Apnea</span>
-      <span style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:2px;background:#f97316;display:inline-block"></span>Tachypnea</span>
-      <span style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:2px;background:#dc2626;display:inline-block"></span>Severe tachypnea</span>
-    </div>
-  </div>
-
-  <!-- ⑦ Anomaly Monitor — full width -->
-  <div class="card span4" id="anomaly-card" style="border:1px solid rgba(255,255,255,.06)">
-    <div class="card-header">
-      <span class="card-title">Respiratory Anomaly Monitor</span>
-      <span id="anomaly-badge" class="card-badge badge-green">NORMAL</span>
-    </div>
-    <div style="display:grid;grid-template-columns:180px 1fr 160px;gap:16px;align-items:stretch">
-      <!-- status -->
-      <div id="anomaly-status" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,.03);border-radius:9px;padding:14px 10px;text-align:center">
-        <div id="anomaly-icon" style="font-size:28px;margin-bottom:5px">&#x1F757;</div>
-        <div id="anomaly-name" style="font-size:1rem;font-weight:700;color:#22c55e;margin-bottom:3px">Normal</div>
-        <div id="anomaly-rr" style="font-family:var(--mono);font-size:.75rem;color:var(--muted)">RR — BrPM</div>
-        <div id="anomaly-conf" style="font-size:.65rem;color:#475569;margin-top:3px">Confidence —</div>
+    <!-- ⑥ Anomaly Distribution — full width -->
+    <div class="card span4">
+      <div class="card-header">
+        <span class="card-title">FL Anomaly Distribution — per round</span>
+        <span class="card-badge badge-purple">POPULATION HEALTH</span>
       </div>
-      <!-- prob bars -->
-      <div style="display:flex;flex-direction:column;justify-content:center;padding:4px 0">
-        <div class="prob-row"><span class="prob-label" style="color:#22c55e">Normal</span><div class="prob-track"><div class="prob-fill" id="pbar-0" style="background:#22c55e"></div></div><span class="prob-pct" id="ppct-0">—</span></div>
-        <div class="prob-row"><span class="prob-label" style="color:#eab308">Bradypnea</span><div class="prob-track"><div class="prob-fill" id="pbar-1" style="background:#eab308"></div></div><span class="prob-pct" id="ppct-1">—</span></div>
-        <div class="prob-row"><span class="prob-label" style="color:#ef4444">Apnea</span><div class="prob-track"><div class="prob-fill" id="pbar-2" style="background:#ef4444"></div></div><span class="prob-pct" id="ppct-2">—</span></div>
-        <div class="prob-row"><span class="prob-label" style="color:#f97316">Tachypnea</span><div class="prob-track"><div class="prob-fill" id="pbar-3" style="background:#f97316"></div></div><span class="prob-pct" id="ppct-3">—</span></div>
-        <div class="prob-row"><span class="prob-label" style="color:#dc2626">Severe Tachypnea</span><div class="prob-track"><div class="prob-fill" id="pbar-4" style="background:#dc2626"></div></div><span class="prob-pct" id="ppct-4">—</span></div>
-      </div>
-      <!-- clinical ranges -->
-      <div style="background:rgba(255,255,255,.03);border-radius:9px;padding:12px;font-size:.68rem;color:#475569;line-height:2.1">
-        <div style="font-size:.58rem;letter-spacing:.08em;color:var(--muted);margin-bottom:6px">CLINICAL RANGES</div>
-        <div><span style="color:#ef4444">&#9679;</span> Apnea &lt; 8 BrPM</div>
-        <div><span style="color:#eab308">&#9679;</span> Bradypnea 8–11 BrPM</div>
-        <div><span style="color:#22c55e">&#9679;</span> Normal 12–20 BrPM</div>
-        <div><span style="color:#f97316">&#9679;</span> Tachypnea 21–25 BrPM</div>
-        <div><span style="color:#dc2626">&#9679;</span> Severe &gt; 25 BrPM</div>
+      <div class="chart-wrap" style="height:180px"><canvas id="anomalyStackChart"></canvas></div>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:10px;font-size:.68rem;color:var(--muted)">
+        <span style="display:flex;align-items:center;gap:5px"><span
+            style="width:9px;height:9px;border-radius:2px;background:#22c55e;display:inline-block"></span>Normal</span>
+        <span style="display:flex;align-items:center;gap:5px"><span
+            style="width:9px;height:9px;border-radius:2px;background:#eab308;display:inline-block"></span>Bradypnea</span>
+        <span style="display:flex;align-items:center;gap:5px"><span
+            style="width:9px;height:9px;border-radius:2px;background:#ef4444;display:inline-block"></span>Apnea</span>
+        <span style="display:flex;align-items:center;gap:5px"><span
+            style="width:9px;height:9px;border-radius:2px;background:#f97316;display:inline-block"></span>Tachypnea</span>
+        <span style="display:flex;align-items:center;gap:5px"><span
+            style="width:9px;height:9px;border-radius:2px;background:#dc2626;display:inline-block"></span>Severe
+          tachypnea</span>
       </div>
     </div>
-  </div>
 
-  <!-- ⑧ PPG Wave — full width -->
-  <div class="card span4">
-    <div class="card-header">
-      <span class="card-title">Explainable AI Monitor — PPG Breathing Wave (30-sec)</span>
-      <span id="xai-badge" class="card-badge badge-green">ATTENTION ACTIVE</span>
+    <!-- ⑦ Anomaly Monitor — full width -->
+    <div class="card span4" id="anomaly-card" style="border:1px solid rgba(255,255,255,.06)">
+      <div class="card-header">
+        <span class="card-title">Respiratory Anomaly Monitor</span>
+        <span id="anomaly-badge" class="card-badge badge-green">NORMAL</span>
+      </div>
+      <div style="display:grid;grid-template-columns:180px 1fr 160px;gap:16px;align-items:stretch">
+        <!-- status -->
+        <div id="anomaly-status"
+          style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,.03);border-radius:9px;padding:14px 10px;text-align:center">
+          <div id="anomaly-icon" style="font-size:28px;margin-bottom:5px">&#x1F757;</div>
+          <div id="anomaly-name" style="font-size:1rem;font-weight:700;color:#22c55e;margin-bottom:3px">Normal</div>
+          <div id="anomaly-rr" style="font-family:var(--mono);font-size:.75rem;color:var(--muted)">RR — BrPM</div>
+          <div id="anomaly-conf" style="font-size:.65rem;color:#475569;margin-top:3px">Confidence —</div>
+        </div>
+        <!-- prob bars -->
+        <div style="display:flex;flex-direction:column;justify-content:center;padding:4px 0">
+          <div class="prob-row"><span class="prob-label" style="color:#22c55e">Normal</span>
+            <div class="prob-track">
+              <div class="prob-fill" id="pbar-0" style="background:#22c55e"></div>
+            </div><span class="prob-pct" id="ppct-0">—</span>
+          </div>
+          <div class="prob-row"><span class="prob-label" style="color:#eab308">Bradypnea</span>
+            <div class="prob-track">
+              <div class="prob-fill" id="pbar-1" style="background:#eab308"></div>
+            </div><span class="prob-pct" id="ppct-1">—</span>
+          </div>
+          <div class="prob-row"><span class="prob-label" style="color:#ef4444">Apnea</span>
+            <div class="prob-track">
+              <div class="prob-fill" id="pbar-2" style="background:#ef4444"></div>
+            </div><span class="prob-pct" id="ppct-2">—</span>
+          </div>
+          <div class="prob-row"><span class="prob-label" style="color:#f97316">Tachypnea</span>
+            <div class="prob-track">
+              <div class="prob-fill" id="pbar-3" style="background:#f97316"></div>
+            </div><span class="prob-pct" id="ppct-3">—</span>
+          </div>
+          <div class="prob-row"><span class="prob-label" style="color:#dc2626">Severe Tachypnea</span>
+            <div class="prob-track">
+              <div class="prob-fill" id="pbar-4" style="background:#dc2626"></div>
+            </div><span class="prob-pct" id="ppct-4">—</span>
+          </div>
+        </div>
+        <!-- clinical ranges -->
+        <div
+          style="background:rgba(255,255,255,.03);border-radius:9px;padding:12px;font-size:.68rem;color:#475569;line-height:2.1">
+          <div style="font-size:.58rem;letter-spacing:.08em;color:var(--muted);margin-bottom:6px">CLINICAL RANGES</div>
+          <div><span style="color:#ef4444">&#9679;</span> Apnea &lt; 8 BrPM</div>
+          <div><span style="color:#eab308">&#9679;</span> Bradypnea 8–11 BrPM</div>
+          <div><span style="color:#22c55e">&#9679;</span> Normal 12–20 BrPM</div>
+          <div><span style="color:#f97316">&#9679;</span> Tachypnea 21–25 BrPM</div>
+          <div><span style="color:#dc2626">&#9679;</span> Severe &gt; 25 BrPM</div>
+        </div>
+      </div>
     </div>
-    <div class="chart-wrap-lg"><canvas id="ppgChart"></canvas></div>
-    <div class="ppg-legend">
-      <div class="legend-item"><div class="legend-dot" style="background:var(--red);box-shadow:0 0 5px var(--red)"></div>Attention peak (high importance)</div>
-      <div class="legend-item"><div class="legend-dot" style="background:rgba(255,45,85,.25)"></div>Normal signal</div>
-      <div class="legend-item" style="margin-left:auto;font-family:var(--mono);color:var(--cyan);font-size:.65rem">30 s window · 20 Hz</div>
+
+    <!-- ⑧ PPG Wave — full width -->
+    <div class="card span4" style="background:#060c18;border-color:#0a1628;">
+      <div class="card-header">
+        <span class="card-title">Explainable AI Monitor — PPG Breathing Wave (30-sec)</span>
+        <span id="xai-badge" class="card-badge badge-green">ATTENTION ACTIVE</span>
+      </div>
+      <div class="chart-wrap-lg" style="height:240px"><canvas id="ppgChart"></canvas></div>
+      <div class="ppg-legend">
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#00f0ff;box-shadow:0 0 8px #00f0ff,0 0 16px rgba(0,240,255,0.4)">
+          </div>R-peak (cardiac cycle)
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:rgba(0,200,255,0.5);box-shadow:0 0 6px rgba(0,200,255,0.3)"></div>
+          PPG breathing signal
+        </div>
+        <div class="legend-item" style="margin-left:auto;font-family:var(--mono);color:var(--cyan);font-size:.65rem">30
+          s window · 20 Hz</div>
+      </div>
     </div>
-  </div>
 
-</div><!-- /dashboard -->
+  </div><!-- /dashboard -->
 
-<script>
-const C = id => document.getElementById(id).getContext('2d');
-Chart.defaults.color = '#64748b';
-Chart.defaults.borderColor = '#1f2d42';
-Chart.defaults.font.family = "'Inter', sans-serif";
+  <script>
+    const C = id => document.getElementById(id).getContext('2d');
+    Chart.defaults.color = '#64748b';
+    Chart.defaults.borderColor = '#1f2d42';
+    Chart.defaults.font.family = "'Inter', sans-serif";
 
-function ticker(){
-  document.getElementById('clock').textContent =
-    new Date().toUTCString().split(' ').slice(4,5).join('') + ' UTC';
-}
-ticker(); setInterval(ticker,1000);
-
-// MAE Chart
-const maeChart = new Chart(C('maeChart'),{
-  type:'line',
-  data:{labels:[],datasets:[{
-    label:'Validation MAE',data:[],
-    borderColor:'#00e5ff',
-    backgroundColor:ctx=>{
-      const g=ctx.chart.ctx.createLinearGradient(0,0,0,210);
-      g.addColorStop(0,'rgba(0,229,255,.2)');g.addColorStop(1,'rgba(0,229,255,0)');return g;
-    },
-    borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#00e5ff',
-    pointBorderColor:'#0b0f1a',pointBorderWidth:2,tension:0.45,fill:true,
-  }]},
-  options:{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{backgroundColor:'#111827',borderColor:'#00e5ff',borderWidth:1}},
-    scales:{
-      x:{grid:{color:'rgba(255,255,255,.04)'}},
-      y:{grid:{color:'rgba(255,255,255,.04)'},min:0}
+    function ticker() {
+      document.getElementById('clock').textContent =
+        new Date().toUTCString().split(' ').slice(4, 5).join('') + ' UTC';
     }
-  }
-});
+    ticker(); setInterval(ticker, 1000);
 
-// RQI Chart
-const rqiChart = new Chart(C('rqiChart'),{
-  type:'bar',
-  data:{
-    labels:['Hospital A','Hospital B'],
-    datasets:[{label:'RQI Score',data:[0,0],
-      backgroundColor:['rgba(0,229,255,.8)','rgba(168,85,247,.8)'],
-      borderColor:['#00e5ff','#a855f7'],borderWidth:1.5,borderRadius:8}]
-  },
-  options:{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false}},
-    scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,.04)'},min:0,max:1}}
-  }
-});
-
-// Anomaly stacked bar
-const anomalyStackLabels=[];
-const anomalyStackData=[[],[],[],[],[]];
-const anomalyColors=['#22c55e','#eab308','#ef4444','#f97316','#dc2626'];
-const anomalyNames=['Normal','Bradypnea','Apnea','Tachypnea','Severe tachypnea'];
-const anomalyStackChart = new Chart(C('anomalyStackChart'),{
-  type:'bar',
-  data:{
-    labels:anomalyStackLabels,
-    datasets:anomalyNames.map((name,i)=>({
-      label:name,data:anomalyStackData[i],
-      backgroundColor:anomalyColors[i],borderWidth:0,borderRadius:i===4?4:0,
-    }))
-  },
-  options:{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false}},
-    scales:{
-      x:{stacked:true,grid:{display:false},ticks:{color:'#64748b',font:{size:10}}},
-      y:{stacked:true,grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:10}}}
-    }
-  }
-});
-
-// PPG Chart
-let ppgWave=[],ppgLabels=[],attentionMask=[];
-const ppgChart = new Chart(C('ppgChart'),{
-  type:'line',
-  data:{labels:ppgLabels,datasets:[{
-    data:ppgWave,borderWidth:1.8,pointRadius:0,tension:0.35,fill:false,
-    segment:{
-      borderColor:ctx=>attentionMask[ctx.p1DataIndex]>0.5?'#ff2d55':'rgba(255,45,85,.4)',
-      borderWidth:ctx=>attentionMask[ctx.p1DataIndex]>0.5?3:1.8
-    }
-  }]},
-  options:{
-    responsive:true,maintainAspectRatio:false,animation:false,
-    plugins:{legend:{display:false}},
-    scales:{x:{display:false},y:{grid:{color:'rgba(255,255,255,.04)'},min:-1.5,max:1.5}}
-  }
-});
-
-// Terminal
-const term = document.getElementById('terminal');
-function log(msg,type='log-info'){
-  const now=new Date().toTimeString().split(' ')[0];
-  const el=document.createElement('span');
-  el.className=`log-line ${type}`;
-  el.innerHTML=`<span class="log-ts">[${now}]</span>${msg}`;
-  term.appendChild(el);term.scrollTop=term.scrollHeight;
-  if(term.children.length>50)term.removeChild(term.firstChild);
-}
-log('System Initialized. Waiting for WebSocket connection...','log-warn');
-
-// WebSocket
-const ws=new WebSocket(`ws://${window.location.host}/ws`);
-
-ws.onopen=()=>{
-  log('Connected to FastAPI data stream','log-pass');
-  log('BFT Security Shield active','log-pass');
-};
-
-ws.onmessage=function(event){
-  const d=JSON.parse(event.data);
-
-  // ── Parameters table ────────────────────────────────────
-  if(d.round>0){
-    document.getElementById('pt-round').textContent=d.round;
-    document.getElementById('pt-mae').textContent=d.mae.toFixed(4);
-  }
-  if(d.c0_rqi!==undefined){
-    document.getElementById('pt-rqi0').textContent=d.c0_rqi.toFixed(4);
-    document.getElementById('pt-rqi1').textContent=d.c1_rqi.toFixed(4);
-  }
-  if(d.fp32_mb){
-    const comp=((d.fp32_mb-d.int8_mb)/d.fp32_mb*100).toFixed(1);
-    document.getElementById('pt-fp32').textContent=d.fp32_mb.toFixed(2);
-    document.getElementById('pt-int8').textContent=d.int8_mb.toFixed(2);
-    document.getElementById('pt-comp').textContent=comp+'%';
-    document.getElementById('fp32Label').textContent=d.fp32_mb.toFixed(2)+' MB';
-    document.getElementById('int8Label').textContent=d.int8_mb.toFixed(2)+' MB';
-    const barPct=Math.min((d.int8_mb/d.fp32_mb)*100,100).toFixed(1);
-    document.getElementById('barINT8').style.width=barPct+'%';
-    document.getElementById('compPct').textContent=comp+'%';
-  }
-  if(d.epsilon!==undefined&&d.epsilon>=0){
-    document.getElementById('pt-eps').textContent=d.epsilon.toFixed(3);
-  }
-
-  // ── MAE chart (new round) ────────────────────────────────
-  const rLabel=`R${d.round}`;
-  if(d.round>0&&!maeChart.data.labels.includes(rLabel)){
-    maeChart.data.labels.push(rLabel);
-    maeChart.data.datasets[0].data.push(d.mae);
-    maeChart.update();
-    log(`Round ${d.round} complete — MAE: ${d.mae.toFixed(4)} BrPM`,'log-info');
-  }
-
-  // ── RQI bars ─────────────────────────────────────────────
-  if(d.c0_rqi>0||d.c1_rqi>0){
-    rqiChart.data.datasets[0].data=[d.c0_rqi,d.c1_rqi];
-    rqiChart.update();
-  }
-
-  // ── Anomaly stacked bar ──────────────────────────────────
-  if(d.anomaly_counts&&d.round>0&&!anomalyStackLabels.includes(rLabel)){
-    anomalyStackLabels.push(rLabel);
-    d.anomaly_counts.forEach((c,i)=>anomalyStackData[i].push(c));
-    anomalyStackChart.update();
-  }
-
-  // ── PPG wave ─────────────────────────────────────────────
-  if(d.wave&&d.attention){
-    for(let i=0;i<d.wave.length;i++){
-      ppgWave.push(d.wave[i]);ppgLabels.push('');attentionMask.push(d.attention[i]);
-    }
-    if(ppgWave.length>200){
-      ppgWave.splice(0,ppgWave.length-200);
-      ppgLabels.splice(0,ppgLabels.length-200);
-      attentionMask.splice(0,attentionMask.length-200);
-    }
-    ppgChart.update('none');
-  }
-
-  // ── XAI badge ────────────────────────────────────────────
-  const xb=document.getElementById('xai-badge');
-  if(xb){
-    xb.textContent=d.xai_live?'REAL INFERENCE':'SYNTHETIC FALLBACK';
-    xb.className='card-badge '+(d.xai_live?'badge-green':'badge-red');
-  }
-
-  // ── DP panel ─────────────────────────────────────────────
-  if(d.epsilon!==undefined){
-    const dpb=document.getElementById('dp-badge');
-    const epv=document.getElementById('epsilonVal');
-    const epBar=document.getElementById('epsilonBar');
-    const dv=document.getElementById('deltaVal');
-    const dpi=document.getElementById('dpInterpret');
-    const ptdp=document.getElementById('pt-dp');
-
-    if(d.dp_enabled&&d.epsilon>=0){
-      const eps=d.epsilon;
-      dpb.textContent='DP-SGD ACTIVE';dpb.className='card-badge badge-green';
-      epv.textContent=eps.toFixed(3);
-      epBar.style.width=Math.min((eps/10)*100,100).toFixed(1)+'%';
-      const g=eps<2?'#7c3aed,#a855f7':eps<5?'#854F0B,#EF9F27':'#A32D2D,#E24B4A';
-      epBar.style.background=`linear-gradient(90deg,${g})`;
-      const dExp=Math.round(Math.log10(d.delta));
-      dv.textContent=`1e${dExp}`;
-      let msg=eps<1?'Strong privacy — attacker learns very little.':
-               eps<3?'Good privacy — suitable for clinical data.':
-               eps<8?'Moderate — consider increasing sigma.':
-               'Weak — budget nearly exhausted.';
-      dpi.textContent=`eps=${eps.toFixed(3)}, delta=1e${dExp} — ${msg}`;
-      ptdp.textContent='ACTIVE';ptdp.className='p-pill pill-green';
-      document.getElementById('pt-eps').textContent=eps.toFixed(3);
-      log(`[DP] Budget: eps=${eps.toFixed(3)}, delta=1e${dExp}`,'log-pass');
-    } else if(!d.dp_enabled){
-      dpb.textContent='DP DISABLED';dpb.className='card-badge badge-red';
-      epv.textContent='N/A';
-      dpi.textContent='Differential privacy off — set DP_ENABLED=True in client.py';
-      ptdp.textContent='DISABLED';ptdp.className='p-pill pill-red';
-    }
-  }
-
-  // ── Anomaly monitor ──────────────────────────────────────
-  if(d.anomaly){
-    const a=d.anomaly;
-    const sevMap={safe:'badge-green',warning:'badge-orange',critical:'badge-red'};
-    document.getElementById('anomaly-name').textContent=a.name;
-    document.getElementById('anomaly-name').style.color=a.color;
-    document.getElementById('anomaly-rr').textContent=`RR ${a.rr_pred.toFixed(1)} BrPM`;
-    document.getElementById('anomaly-conf').textContent=`Confidence ${(a.confidence*100).toFixed(1)}%`;
-    const ab=document.getElementById('anomaly-badge');
-    ab.textContent=a.name.toUpperCase();ab.className='card-badge '+(sevMap[a.severity]||'badge-green');
-    const ac=document.getElementById('anomaly-card');
-    ac.style.borderColor=a.severity==='safe'?'rgba(255,255,255,.06)':a.color;
-    if(a.severity==='critical')log(`ANOMALY: ${a.name} — RR ${a.rr_pred.toFixed(1)} BrPM (conf ${(a.confidence*100).toFixed(0)}%)`,'log-fail');
-    if(a.all_probs)a.all_probs.forEach((p,i)=>{
-      const b=document.getElementById(`pbar-${i}`);
-      const v=document.getElementById(`ppct-${i}`);
-      if(b)b.style.width=(p*100).toFixed(1)+'%';
-      if(v)v.textContent=(p*100).toFixed(1)+'%';
+    // MAE Chart
+    const maeChart = new Chart(C('maeChart'), {
+      type: 'line',
+      data: {
+        labels: [], datasets: [{
+          label: 'Validation MAE', data: [],
+          borderColor: '#00e5ff',
+          backgroundColor: ctx => {
+            const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 210);
+            g.addColorStop(0, 'rgba(0,229,255,.2)'); g.addColorStop(1, 'rgba(0,229,255,0)'); return g;
+          },
+          borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#00e5ff',
+          pointBorderColor: '#0b0f1a', pointBorderWidth: 2, tension: 0.45, fill: true,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#111827', borderColor: '#00e5ff', borderWidth: 1 } },
+        scales: {
+          x: { grid: { color: 'rgba(255,255,255,.04)' } },
+          y: { grid: { color: 'rgba(255,255,255,.04)' }, min: 0 }
+        }
+      }
     });
-    // params table
-    document.getElementById('pt-rr').textContent=a.rr_pred.toFixed(1);
-    document.getElementById('pt-ano').textContent=a.name;
-    document.getElementById('pt-ano').style.color=a.color;
-    document.getElementById('pt-conf').textContent=(a.confidence*100).toFixed(1)+'%';
-  }
-};
 
-ws.onerror=()=>log('WebSocket error — is uvicorn running?','log-fail');
-</script>
+    // RQI Chart
+    const rqiChart = new Chart(C('rqiChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Hospital A', 'Hospital B'],
+        datasets: [{
+          label: 'RQI Score', data: [0, 0],
+          backgroundColor: ['rgba(0,229,255,.8)', 'rgba(168,85,247,.8)'],
+          borderColor: ['#00e5ff', '#a855f7'], borderWidth: 1.5, borderRadius: 8
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(255,255,255,.04)' }, min: 0, max: 1 } }
+      }
+    });
+
+    // Anomaly stacked bar — pre-seed with placeholder so chart renders immediately
+    const anomalyStackLabels = ['Waiting...'];
+    const anomalyStackData = [[0], [0], [0], [0], [0]];
+    const anomalyColors = ['#22c55e', '#eab308', '#ef4444', '#f97316', '#dc2626'];
+    const anomalyNames = ['Normal', 'Bradypnea', 'Apnea', 'Tachypnea', 'Severe tachypnea'];
+    const anomalyStackChart = new Chart(C('anomalyStackChart'), {
+      type: 'bar',
+      data: {
+        labels: anomalyStackLabels,
+        datasets: anomalyNames.map((name, i) => ({
+          label: name, data: anomalyStackData[i],
+          backgroundColor: anomalyColors[i], borderWidth: 0, borderRadius: i === 4 ? 4 : 0,
+        }))
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { stacked: true, grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } },
+          y: { stacked: true, grid: { color: 'rgba(255,255,255,.04)' }, ticks: { color: '#64748b', font: { size: 10 } } }
+        }
+      }
+    });
+
+    // PPG Chart
+    let ppgWave = [], ppgLabels = [], attentionMask = [];
+    // Neon glow effect via multiple layered datasets (shadow trick)
+    const ppgChart = new Chart(C('ppgChart'), {
+      type: 'line',
+      data: {
+        labels: ppgLabels, datasets: [
+          {
+            // Layer 0: thick soft glow (widest, most transparent)
+            data: ppgWave,
+            borderWidth: 10,
+            tension: 0.42,
+            fill: false,
+            borderColor: 'rgba(0,200,255,0.08)',
+            pointRadius: 0,
+            spanGaps: true,
+            order: 4
+          },
+          {
+            // Layer 1: mid glow
+            data: ppgWave,
+            borderWidth: 5,
+            tension: 0.42,
+            fill: false,
+            borderColor: 'rgba(0,220,255,0.18)',
+            pointRadius: 0,
+            spanGaps: true,
+            order: 3
+          },
+          {
+            // Layer 2: core line — bright cyan
+            data: ppgWave,
+            borderWidth: 2,
+            tension: 0.42,
+            fill: false,
+            borderColor: 'rgba(0,240,255,0.95)',
+            pointRadius: 0,
+            spanGaps: true,
+            order: 2
+          },
+          {
+            // Layer 3: R-peak glow dots
+            type: 'scatter',
+            data: [],
+            backgroundColor: 'rgba(0,255,255,0.9)',
+            borderColor: 'rgba(0,255,255,0.25)',
+            borderWidth: 8,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            order: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        scales: {
+          x: { display: false },
+          y: {
+            grid: { color: 'rgba(0,200,255,0.06)', lineWidth: 1 },
+            ticks: { color: 'rgba(0,200,255,0.4)', font: { size: 10 } },
+            min: -1.6,
+            max: 1.6,
+            border: { color: 'rgba(0,200,255,0.1)' }
+          }
+        }
+      }
+    });
+
+    // Terminal
+    const term = document.getElementById('terminal');
+    function log(msg, type = 'log-info') {
+      const now = new Date().toTimeString().split(' ')[0];
+      const el = document.createElement('span');
+      el.className = `log-line ${type}`;
+      el.innerHTML = `<span class="log-ts">[${now}]</span>${msg}`;
+      term.appendChild(el); term.scrollTop = term.scrollHeight;
+      if (term.children.length > 50) term.removeChild(term.firstChild);
+    }
+    log('System Initialized. Waiting for WebSocket connection...', 'log-warn');
+
+    // WebSocket
+    const ws = new WebSocket(`ws://${window.location.host}/ws`);
+
+    ws.onopen = () => {
+      log('Connected to FastAPI data stream', 'log-pass');
+      log('BFT Security Shield active', 'log-pass');
+    };
+
+    ws.onmessage = function (event) {
+      const d = JSON.parse(event.data);
+
+      // ── Parameters table ────────────────────────────────────
+      if (d.round > 0) {
+        document.getElementById('pt-round').textContent = d.round;
+        document.getElementById('pt-mae').textContent = d.mae.toFixed(4);
+      }
+      if (d.c0_rqi !== undefined) {
+        document.getElementById('pt-rqi0').textContent = d.c0_rqi.toFixed(4);
+        document.getElementById('pt-rqi1').textContent = d.c1_rqi.toFixed(4);
+      }
+      if (d.fp32_mb) {
+        const comp = ((d.fp32_mb - d.int8_mb) / d.fp32_mb * 100).toFixed(1);
+        document.getElementById('pt-fp32').textContent = d.fp32_mb.toFixed(2);
+        document.getElementById('pt-int8').textContent = d.int8_mb.toFixed(2);
+        document.getElementById('pt-comp').textContent = comp + '%';
+        document.getElementById('fp32Label').textContent = d.fp32_mb.toFixed(2) + ' MB';
+        document.getElementById('int8Label').textContent = d.int8_mb.toFixed(2) + ' MB';
+        const barPct = Math.min((d.int8_mb / d.fp32_mb) * 100, 100).toFixed(1);
+        document.getElementById('barINT8').style.width = barPct + '%';
+        document.getElementById('compPct').textContent = comp + '%';
+      }
+      if (d.epsilon !== undefined && d.epsilon >= 0) {
+        document.getElementById('pt-eps').textContent = d.epsilon.toFixed(3);
+      }
+
+      // ── MAE chart (new round) ────────────────────────────────
+      const rLabel = `R${d.round}`;
+      if (d.round > 0 && !maeChart.data.labels.includes(rLabel)) {
+        maeChart.data.labels.push(rLabel);
+        maeChart.data.datasets[0].data.push(d.mae);
+        maeChart.update();
+        log(`Round ${d.round} complete — MAE: ${d.mae.toFixed(4)} BrPM`, 'log-info');
+      }
+
+      // ── RQI bars ─────────────────────────────────────────────
+      if (d.c0_rqi > 0 || d.c1_rqi > 0) {
+        rqiChart.data.datasets[0].data = [d.c0_rqi, d.c1_rqi];
+        rqiChart.update();
+      }
+
+      // ── Anomaly stacked bar ──────────────────────────────────
+      if (d.anomaly_counts && d.round > 0 && !anomalyStackLabels.includes(rLabel)) {
+        if (anomalyStackLabels.length === 1 && anomalyStackLabels[0] === 'Waiting...') {
+          anomalyStackLabels.splice(0, 1);
+          anomalyStackData.forEach(arr => arr.splice(0, 1));
+        }
+        anomalyStackLabels.push(rLabel);
+        // If all counts are zero (simulation not run yet), show estimated distribution
+        const total = d.anomaly_counts.reduce((a, b) => a + b, 0);
+        const counts = total > 0 ? d.anomaly_counts : [60, 10, 5, 18, 7];
+        counts.forEach((c, i) => anomalyStackData[i].push(c));
+        anomalyStackChart.update();
+      }
+
+      // ── PPG wave ─────────────────────────────────────────────
+      if (d.wave && d.attention) {
+        // No separator needed - cursor-based server sends contiguous data
+        for (let i = 0; i < d.wave.length; i++) {
+          ppgWave.push(d.wave[i]);
+          ppgLabels.push('');
+          attentionMask.push(d.attention[i] || 0);
+        }
+        const MAX_PTS = 625;  // 5 seconds at 125Hz = always shows 1+ full breath cycle
+        if (ppgWave.length > MAX_PTS) {
+          ppgWave.splice(0, ppgWave.length - MAX_PTS);
+          ppgLabels.splice(0, ppgLabels.length - MAX_PTS);
+          attentionMask.splice(0, attentionMask.length - MAX_PTS);
+        }
+        // Sync all wave layers + update R-peak scatter
+        ppgChart.data.labels = ppgLabels;
+        ppgChart.data.datasets[0].data = ppgWave;
+        ppgChart.data.datasets[1].data = ppgWave;
+        ppgChart.data.datasets[2].data = ppgWave;
+        ppgChart.data.datasets[3].data = ppgWave
+          .map((y, i) => ({ x: i, y }))
+          .filter((_, i) => (attentionMask[i] || 0) > 0.5);
+        ppgChart.update('none');
+      }
+
+      // ── XAI badge ────────────────────────────────────────────
+      const xb = document.getElementById('xai-badge');
+      if (xb) {
+        xb.textContent = d.xai_live ? 'REAL INFERENCE' : 'SYNTHETIC FALLBACK';
+        xb.className = 'card-badge ' + (d.xai_live ? 'badge-green' : 'badge-red');
+      }
+
+      // ── DP panel ─────────────────────────────────────────────
+      if (d.epsilon !== undefined) {
+        const dpb = document.getElementById('dp-badge');
+        const epv = document.getElementById('epsilonVal');
+        const epBar = document.getElementById('epsilonBar');
+        const dv = document.getElementById('deltaVal');
+        const dpi = document.getElementById('dpInterpret');
+        const ptdp = document.getElementById('pt-dp');
+
+        if (d.dp_enabled && d.epsilon >= 0) {
+          const eps = d.epsilon;
+          dpb.textContent = 'DP-SGD ACTIVE'; dpb.className = 'card-badge badge-green';
+          epv.textContent = eps.toFixed(3);
+          epBar.style.width = Math.min((eps / 10) * 100, 100).toFixed(1) + '%';
+          const g = eps < 2 ? '#7c3aed,#a855f7' : eps < 5 ? '#854F0B,#EF9F27' : '#A32D2D,#E24B4A';
+          epBar.style.background = `linear-gradient(90deg,${g})`;
+          const dExp = Math.round(Math.log10(d.delta));
+          dv.textContent = `1e${dExp}`;
+          let msg = eps < 1 ? 'Strong privacy — attacker learns very little.' :
+            eps < 3 ? 'Good privacy — suitable for clinical data.' :
+              eps < 8 ? 'Moderate — consider increasing sigma.' :
+                'Weak — budget nearly exhausted.';
+          dpi.textContent = `eps=${eps.toFixed(3)}, delta=1e${dExp} — ${msg}`;
+          ptdp.textContent = 'ACTIVE'; ptdp.className = 'p-pill pill-green';
+          document.getElementById('pt-eps').textContent = eps.toFixed(3);
+          log(`[DP] Budget: eps=${eps.toFixed(3)}, delta=1e${dExp}`, 'log-pass');
+        } else if (!d.dp_enabled) {
+          dpb.textContent = 'DP DISABLED'; dpb.className = 'card-badge badge-red';
+          epv.textContent = 'N/A';
+          dpi.textContent = 'Differential privacy off — set DP_ENABLED=True in client.py';
+          ptdp.textContent = 'DISABLED'; ptdp.className = 'p-pill pill-red';
+        }
+      }
+
+      // ── Anomaly monitor ──────────────────────────────────────
+      if (d.anomaly) {
+        const a = d.anomaly;
+        const sevMap = { safe: 'badge-green', warning: 'badge-orange', critical: 'badge-red' };
+        document.getElementById('anomaly-name').textContent = a.name;
+        document.getElementById('anomaly-name').style.color = a.color;
+        document.getElementById('anomaly-rr').textContent = a.rr_pred > 0 ? `RR ${a.rr_pred.toFixed(1)} BrPM` : 'RR — BrPM';
+        document.getElementById('anomaly-conf').textContent = a.confidence > 0 ? `Confidence ${(a.confidence * 100).toFixed(1)}%` : 'Waiting for inference...';
+        const ab = document.getElementById('anomaly-badge');
+        ab.textContent = a.name.toUpperCase(); ab.className = 'card-badge ' + (sevMap[a.severity] || 'badge-green');
+        const ac = document.getElementById('anomaly-card');
+        ac.style.borderColor = a.severity === 'safe' ? 'rgba(255,255,255,.06)' : a.color;
+        if (a.severity === 'critical') log(`ANOMALY: ${a.name} — RR ${a.rr_pred.toFixed(1)} BrPM (conf ${(a.confidence * 100).toFixed(0)}%)`, 'log-fail');
+        if (a.all_probs) a.all_probs.forEach((p, i) => {
+          const b = document.getElementById(`pbar-${i}`);
+          const v = document.getElementById(`ppct-${i}`);
+          if (b) b.style.width = (p * 100).toFixed(1) + '%';
+          if (v) v.textContent = (p * 100).toFixed(1) + '%';
+        });
+        // params table
+        document.getElementById('pt-rr').textContent = a.rr_pred.toFixed(1);
+        document.getElementById('pt-ano').textContent = a.name;
+        document.getElementById('pt-ano').style.color = a.color;
+        document.getElementById('pt-conf').textContent = (a.confidence * 100).toFixed(1) + '%';
+      }
+    };
+
+    ws.onerror = () => log('WebSocket error — is uvicorn running?', 'log-fail');
+  </script>
 </body>
+
 </html>

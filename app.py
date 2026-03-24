@@ -42,6 +42,7 @@ def _try_load_model():
 _try_load_model()
 
 _signal_buffer = deque(maxlen=SEGMENT_LEN * 4)
+_read_cursor = 0  # advances each tick to slide the wave window forward
 
 def _bandpass(data):
     nyq = 0.5 * SAMPLE_RATE
@@ -78,17 +79,43 @@ def _try_fill_from_file():
         print(f"[XAI] Could not load real data: {e}")
         return False
 
-def _fill_synthetic(n=SEGMENT_LEN * 2):
-    t = np.linspace(0, n / SAMPLE_RATE, n)
-    sig = (
-        np.sin(2 * np.pi * 0.3 * t)
-        + 0.4 * np.sin(2 * np.pi * 0.6 * t)
-        + 0.15 * np.sin(2 * np.pi * 1.2 * t + 0.5)
-        + 0.05 * np.random.randn(n)
-    ).astype(np.float32)
-    sig = (sig - sig.mean()) / (sig.std() + 1e-6)
+def _fill_synthetic(n=SEGMENT_LEN * 8):
+    """
+    Realistic ECG-style PPG waveform:
+    - 72 BPM cardiac pulses (P-Q-R-S-T morphology, sharp R spike)
+    - 15 BrPM breathing baseline modulation (0.25 Hz)
+    """
+    t      = np.linspace(0, n / SAMPLE_RATE, n)
+    hr_hz  = 1.2    # 72 BPM
+    br_hz  = 0.25   # 15 BrPM
+
+    breath_env    = 0.25 * np.sin(2 * np.pi * br_hz * t)
+    cardiac       = np.zeros(n, dtype=np.float64)
+    beat_period   = int(SAMPLE_RATE / hr_hz)   # ~104 samples
+
+    for beat_start in range(0, n, beat_period):
+        x = np.arange(n) - beat_start
+        p  = int(0.15  * SAMPLE_RATE)
+        q  = int(0.02  * SAMPLE_RATE)
+        s  = int(0.025 * SAMPLE_RATE)
+        tw = int(0.30  * SAMPLE_RATE)
+        w_r  = (0.008 * SAMPLE_RATE)**2
+        w_p  = (0.025 * SAMPLE_RATE)**2
+        w_q  = (0.012 * SAMPLE_RATE)**2
+        w_s  = (0.015 * SAMPLE_RATE)**2
+        w_t  = (0.050 * SAMPLE_RATE)**2
+        cardiac += 0.10 * np.exp(-0.5 * (x + p)**2 / w_p)   # P wave
+        cardiac -= 0.07 * np.exp(-0.5 * (x + q)**2 / w_q)   # Q dip
+        cardiac += 1.20 * np.exp(-0.5 * x**2          / w_r) # R peak (spike)
+        cardiac -= 0.18 * np.exp(-0.5 * (x - s)**2    / w_s) # S dip
+        cardiac += 0.28 * np.exp(-0.5 * (x - tw)**2   / w_t) # T wave
+
+    sig  = (cardiac + breath_env).astype(np.float32)
+    sig += 0.015 * np.random.randn(n).astype(np.float32)
+    sig  = np.clip(sig, -2.5, 2.5)
+    sig  = sig / (np.abs(sig).max() + 1e-6) * 1.35
     _signal_buffer.extend(sig.tolist())
-    print("[XAI] Synthetic PPG buffer initialised.")
+    print("[XAI] ECG-style synthetic PPG buffer initialised.")
 
 if not _try_fill_from_file():
     _fill_synthetic()
@@ -105,11 +132,33 @@ def safe_float(val, precision=4):
 
 def _run_inference():
     buf = list(_signal_buffer)
-    wave_snippet = [safe_float(v) for v in buf[-FRAME_POINTS:]]
+    global _read_cursor
+    # Send CONSECUTIVE raw samples — guaranteed smooth continuity at client
+    ADVANCE      = FRAME_POINTS   # advance by exactly one frame per tick
+    buf_list     = list(buf)
+    buf_len      = len(buf_list)
+    _read_cursor = _read_cursor % max(1, buf_len - FRAME_POINTS)
+    wave_snippet = [safe_float(v) for v in buf_list[_read_cursor:_read_cursor + FRAME_POINTS]]
+    _read_cursor = (_read_cursor + ADVANCE) % max(1, buf_len - FRAME_POINTS)
 
-    if not _model_loaded or len(buf) < SEGMENT_LEN:
-        attn = [safe_float(1.0 if v > 0.6 else 0.05) for v in wave_snippet]
-        return wave_snippet, attn, None
+    if not _model_loaded or len(buf) < min(SEGMENT_LEN, FRAME_POINTS * 4):
+        if wave_snippet:
+            peak_val = max(abs(v) for v in wave_snippet)
+            thresh   = peak_val * 0.72    # mark R-peak spikes (top ~10%)
+            attn     = [safe_float(1.0 if abs(v) >= thresh else 0.03) for v in wave_snippet]
+        else:
+            attn = [0.03] * FRAME_POINTS
+        # Synthetic fallback anomaly result so the monitor/bars always render
+        synthetic_anomaly = {
+            "class_id": 0,
+            "name": ANOMALY_CLASSES[0]["name"],
+            "confidence": 0.0,
+            "severity": ANOMALY_CLASSES[0]["severity"],
+            "color": ANOMALY_CLASSES[0]["color"],
+            "rr_pred": 0.0,
+            "all_probs": [0.0, 0.0, 0.0, 0.0, 0.0],
+        }
+        return wave_snippet, attn, synthetic_anomaly
 
     segment = np.array(buf[-SEGMENT_LEN:], dtype=np.float32)
     segment = np.nan_to_num(segment, nan=0.0)
@@ -186,11 +235,13 @@ async def websocket_endpoint(websocket: WebSocket):
                                 fp32_val      = safe_float(row[4]) if len(row) > 4 else fp32_mb
                                 int8_val      = safe_float(row[5]) if len(row) > 5 else int8_mb
                                 eps_val       = safe_float(row[6]) if len(row) > 6 else epsilon
+                                dp_val        = int(safe_float(row[9])) if len(row) > 9 else 0
+                                dp_enabled    = bool(dp_val)
                                 
                                 hist_payload = {
                                     "round": current_round, "mae": mae, "c0_rqi": c0_rqi, "c1_rqi": c1_rqi,
                                     "fp32_mb": fp32_val, "int8_mb": int8_val, "epsilon": eps_val, "delta": delta,
-                                    "dp_enabled": dp_enabled, "anomaly_counts": [0,0,0,0,0],
+                                    "dp_enabled": dp_enabled, "anomaly_counts": [int(safe_float(row[10])) if len(row)>10 else 0, int(safe_float(row[11])) if len(row)>11 else 0, int(safe_float(row[12])) if len(row)>12 else 0, int(safe_float(row[13])) if len(row)>13 else 0, int(safe_float(row[14])) if len(row)>14 else 0],
                                     "wave": None, "attention": None 
                                 }
                                 await websocket.send_text(json.dumps(hist_payload))
@@ -200,15 +251,18 @@ async def websocket_endpoint(websocket: WebSocket):
                     pass
 
             # --- Live Stream ---
-            if len(_signal_buffer) < FRAME_POINTS * 4:
+            if len(_signal_buffer) < SEGMENT_LEN:
                 if not _try_fill_from_file():
                     _fill_synthetic()
 
             wave_data, attention_data, anomaly_result = _run_inference()
 
-            consume = min(FRAME_POINTS // 2, len(_signal_buffer) - SEGMENT_LEN)
-            for _ in range(max(0, consume)):
-                _signal_buffer.popleft()
+            # Don't drain buffer - sliding window keeps signal healthy
+            # Only trim to keep buffer from growing unbounded
+            if len(_signal_buffer) > SEGMENT_LEN * 3:
+                excess = len(_signal_buffer) - SEGMENT_LEN * 2
+                for _ in range(excess):
+                    _signal_buffer.popleft()
 
             live_payload = {
                 "round":          last_sent_round if last_sent_round > 0 else 0,
