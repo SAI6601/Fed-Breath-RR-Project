@@ -1,200 +1,119 @@
 import flwr as fl
-import numpy as np
-import argparse
 import csv
 import os
-from typing import List, Tuple, Dict, Optional
-from flwr.common import Parameters, Scalar, FitRes
-
-# --- GUI LOGGING SETUP ---
-LOG_FILE = "simulation_log.csv"   # overridable via --log-file argument
-
-def weighted_average(metrics: List[Tuple[int, Dict[str, Scalar]]]) -> Dict[str, Scalar]:
-    total_samples = sum([num_examples for num_examples, _ in metrics])
-    weighted_mae  = sum([num_examples * m["mae"]  for num_examples, m in metrics])
-    # RMSE cannot be linearly averaged -- take sqrt of weighted mean of squared errors
-    # Proxy: weighted average of per-client RMSE (good enough for monitoring)
-    weighted_rmse = sum([num_examples * m.get("rmse", m["mae"])
-                         for num_examples, m in metrics])
-    return {
-        "mae":  weighted_mae  / total_samples,
-        "rmse": weighted_rmse / total_samples,
-    }
+import torch
+import numpy as np
+from collections import OrderedDict
+from model import AttentionBiLSTM
 
 class FedRQI(fl.server.strategy.FedAvg):
-    def log_metrics(self, round_num, client_rqis, global_mae, global_rmse=None):
-        file_exists = os.path.isfile(LOG_FILE)
-        with open(LOG_FILE, mode='a', newline='') as f:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Initialize the upgraded CSV format with Anomaly Columns
+        with open("simulation_log.csv", "w", newline="") as f:
             writer = csv.writer(f)
-            if not file_exists:
-                writer.writerow([
-                    'Round', 'MAE', 'RMSE',
-                    'Client_0_RQI', 'Client_1_RQI',
-                    'FP32_MB', 'INT8_MB',
-                    'Epsilon', 'Delta', 'DP_Enabled',
-                    'Ano_Normal', 'Ano_Brady', 'Ano_Apnea', 'Ano_Tachy', 'Ano_SevTachy'
-                ])
+            writer.writerow(["Round","MAE","RMSE","C0_RQI","C1_RQI","FP32_MB","INT8_MB",
+                             "Epsilon","Delta","DP_Enabled","Ano_0","Ano_1","Ano_2","Ano_3","Ano_4"])
+        self.round_metrics = {}
 
-            c0_rqi     = client_rqis[0] if len(client_rqis) > 0 else 0
-            c1_rqi     = client_rqis[1] if len(client_rqis) > 1 else 0
-            fp32       = getattr(self, 'last_fp32_mb',   5.4)
-            int8       = getattr(self, 'last_int8_mb',   1.2)
-            epsilon    = getattr(self, 'last_epsilon',   -1.0)
-            delta      = getattr(self, 'last_delta',     1e-5)
-            dp_enabled = getattr(self, 'last_dp_enabled', 0)
-            ac         = getattr(self, 'last_anomaly_counts', {})
-            rmse       = global_rmse if global_rmse is not None else global_mae
-            writer.writerow([round_num, global_mae, rmse,
-                             c0_rqi, c1_rqi,
-                             fp32, int8,
-                             epsilon, delta, dp_enabled,
-                             ac.get('anomaly_0', 0), ac.get('anomaly_1', 0),
-                             ac.get('anomaly_2', 0), ac.get('anomaly_3', 0),
-                             ac.get('anomaly_4', 0)])
-
-    def aggregate_fit(
-        self,
-        server_round: int,
-        results: List[Tuple[fl.server.client_proxy.ClientProxy, FitRes]],
-        failures: List[BaseException],
-    ) -> Tuple[Optional[Parameters], Dict[str, Scalar]]:
-        
-        if not results:
-            return None, {}
-
-        self.last_rqis = [res.metrics.get("rqi", 0.0) for _, res in results]
-        # Capture real edge compression metrics from clients
-        fp32_vals = [res.metrics.get("fp32_mb", 5.4) for _, res in results]
-        int8_vals = [res.metrics.get("int8_mb", 1.2) for _, res in results]
-        self.last_fp32_mb = float(sum(fp32_vals) / len(fp32_vals))
-        self.last_int8_mb = float(sum(int8_vals) / len(int8_vals))
-
-        # Capture DP privacy budget (epsilon) -- take the MAX across clients
-        eps_vals = [res.metrics.get("epsilon", -1.0) for _, res in results]
-        valid_eps = [e for e in eps_vals if e >= 0]
-        self.last_epsilon    = float(max(valid_eps)) if valid_eps else -1.0
-        self.last_delta      = float(results[0][1].metrics.get("delta", 1e-5))
-        self.last_dp_enabled = int(any(res.metrics.get("dp_enabled", 0) > 0.5
-                                       for _, res in results))
-
-        if valid_eps:
-            print(f"[DP] Privacy Budget -- epsilon = {self.last_epsilon:.4f}, "
-                  f"delta = {self.last_delta:.0e}  "
-                  f"({'DP-SGD active' if self.last_dp_enabled else 'no DP'})")
-
-        # Aggregate anomaly class counts across all clients
-        self.last_anomaly_counts = {}
-        for idx in range(5):
-            key = f"anomaly_{idx}"
-            total = sum(res.metrics.get(key, 0.0) for _, res in results)
-            self.last_anomaly_counts[key] = int(total)
-
-        if any(v > 0 for v in self.last_anomaly_counts.values()):
-            print("[Anomaly] Anomaly Distribution (this round):")
-            labels = {0:"Normal",1:"Bradypnea",2:"Apnea",3:"Tachypnea",4:"SevTachy"}
-            for idx in range(5):
-                print(f"   {labels[idx]:18s}: {self.last_anomaly_counts[f'anomaly_{idx}']}")
-
-        print(f"\n========================================")
-        print(f"--- Round {server_round} Aggregation Report ---")
-        
-        raw_updates = []
-        client_norms = []
-        
-        # 1. Unpack all client updates
-        for _, fit_res in results:
-            num_examples = fit_res.num_examples
-            client_rqi = fit_res.metrics.get("rqi", 1.0)
-            parameters = fl.common.parameters_to_ndarrays(fit_res.parameters)
+    def aggregate_fit(self, server_round, results, failures):
+        # --- BFT SECURITY SHIELD ---
+        benign_results = []
+        for client, fit_res in results:
+            weights = fl.common.parameters_to_ndarrays(fit_res.parameters)
+            l2_norm = sum(np.linalg.norm(w) for w in weights)
             
-            # --- PHASE 3 NOVELTY: Extract Mathematical Shape for BFT ---
-            # Calculate the L2 Norm (magnitude) of the client's weights
-            norm = np.sqrt(sum(np.sum(p**2) for p in parameters))
-            client_norms.append(norm)
-            
-            custom_weight = num_examples * max(client_rqi, 0.01)
-            raw_updates.append({"params": parameters, "weight": custom_weight, "rqi": client_rqi, "samples": num_examples})
-
-        # --- PHASE 3 NOVELTY: BYZANTINE SECURITY SHIELD ---
-        print("[BFT]  BFT Security Scan:")
-        median_norm = np.median(client_norms)
-        malicious_threshold = median_norm * 3.0 # If weights are 3x larger than normal, it's a poison attack
-        
-        total_weight = 0.0
-        weighted_weights = []
-        
-        for i, update in enumerate(raw_updates):
-            norm = client_norms[i]
-            
-            # Check for Data Poisoning
-            if norm > malicious_threshold and norm > 10.0:
-                print(f"   [!!] BLOCKED: Client {i} detected as malicious! (Abnormal Norm: {norm:.2f})")
-                update["weight"] = 0.0 # Drop the hacker's update completely
+            # Threshold for malicious norm spike
+            if l2_norm < 100.0: 
+                benign_results.append((client, fit_res))
             else:
-                print(f"   [OK] PASS: Client {i} looks benign. (Norm: {norm:.2f})")
-                
-            print(f"   > Update Accepted: {update['samples']} samples | RQI: {update['rqi']:.4f} | Influence: {update['weight']:.2f}")
+                print(f"🚨 BFT SHIELD: Blocked anomalous update! L2 Norm: {l2_norm:.2f}")
+
+        # Aggregate only benign weights
+        aggregated_parameters, _ = super().aggregate_fit(server_round, benign_results, failures)
+        
+        if aggregated_parameters is not None:
+            # --- 1. SAVE GLOBAL MODEL FOR APP.PY (REAL INFERENCE) ---
+            try:
+                weights = fl.common.parameters_to_ndarrays(aggregated_parameters)
+                model = AttentionBiLSTM()
+                state_dict = OrderedDict({k: torch.tensor(v) for k, v in zip(model.state_dict().keys(), weights)})
+                model.load_state_dict(state_dict, strict=True)
+                torch.save(model.state_dict(), "centralized_model.pth")
+            except Exception as e:
+                print(f"Error saving global model: {e}")
             
-            if update["weight"] > 0:
-                weighted_weights.append((update["params"], update["weight"]))
-                total_weight += update["weight"]
+            # --- 2. EXTRACT NEW METRICS ---
+            c0_rqi, c1_rqi = 0.0, 0.0
+            fp32_mb, int8_mb = 5.0, 1.2
+            epsilon, delta, dp_enabled = 0.0, 1e-5, 0
+            ano_counts = [0, 0, 0, 0, 0]
+            
+            for idx, (client, fit_res) in enumerate(benign_results):
+                m = fit_res.metrics
+                if idx == 0: c0_rqi = m.get("rqi", 0.0)
+                if idx == 1: c1_rqi = m.get("rqi", 0.0)
+                fp32_mb = m.get("fp32_mb", fp32_mb)
+                int8_mb = m.get("int8_mb", int8_mb)
+                epsilon = m.get("epsilon", epsilon)
+                delta = m.get("delta", delta)
+                dp_enabled = m.get("dp_enabled", dp_enabled)
+                
+                # Catch the anomaly distribution from clients
+                for i in range(5):
+                    ano_counts[i] += int(m.get(f"anomaly_{i}", 0))
+            
+            # Store metrics temporarily until evaluation phase
+            self.round_metrics[server_round] = {
+                "c0_rqi": c0_rqi, "c1_rqi": c1_rqi,
+                "fp32": fp32_mb, "int8": int8_mb,
+                "eps": epsilon, "delta": delta, "dp": dp_enabled,
+                "anos": ano_counts
+            }
 
-        if total_weight == 0.0 or not weighted_weights:
-            print("[WARN] WARNING: All clients flagged as malicious! Skipping this round.")
-            return None, {}
-
-        # 3. Aggregate
-        aggregated_updates = [np.zeros_like(w) for w in weighted_weights[0][0]]
-        for weights, influence in weighted_weights:
-            for i, layer_weight in enumerate(weights):
-                aggregated_updates[i] += layer_weight * influence
-        
-        aggregated_updates = [w / total_weight for w in aggregated_updates]
-        parameters_aggregated = fl.common.ndarrays_to_parameters(aggregated_updates)
-        
-        return parameters_aggregated, {}
+        return aggregated_parameters, {}
 
     def aggregate_evaluate(self, server_round, results, failures):
-        loss_agg, metrics_agg = super().aggregate_evaluate(server_round, results, failures)
-        if metrics_agg and "mae" in metrics_agg:
-            rqis_to_log = getattr(self, 'last_rqis', [])
-            rmse = metrics_agg.get("rmse", None)
-            self.log_metrics(server_round, rqis_to_log, metrics_agg["mae"], rmse)
-        return loss_agg, metrics_agg
+        loss, metrics = super().aggregate_evaluate(server_round, results, failures)
+        
+        if not results:
+            return loss, metrics
+            
+        # Aggregate MAE & RMSE
+        maes = [r.metrics["mae"] * r.num_examples for _, r in results]
+        rmses = [r.metrics["rmse"] * r.num_examples for _, r in results]
+        total_examples = sum(r.num_examples for _, r in results)
+        
+        agg_mae = sum(maes) / total_examples
+        agg_rmse = sum(rmses) / total_examples
+        
+        # Retrieve fit metrics
+        rm = self.round_metrics.get(server_round, {})
+        anos = rm.get("anos", [0,0,0,0,0])
+        
+        # --- 3. WRITE EVERYTHING TO CSV ---
+        with open("simulation_log.csv", "a", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow([
+                server_round, agg_mae, agg_rmse, 
+                rm.get("c0_rqi", 0.0), rm.get("c1_rqi", 0.0),
+                rm.get("fp32", 5.0), rm.get("int8", 1.2), 
+                rm.get("eps", 0.0), rm.get("delta", 1e-5), rm.get("dp", 0),
+                anos[0], anos[1], anos[2], anos[3], anos[4]
+            ])
+            
+        return loss, {"mae": agg_mae}
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--strategy",    type=str, default="fedrqi")
-    parser.add_argument("--log-file",    type=str, default="simulation_log.csv",
-                        help="CSV log file path (allows per-strategy logs)")
-    parser.add_argument("--num-rounds",  type=int, default=5,
-                        help="Number of FL rounds (default: 5)")
-    parser.add_argument("--num-clients", type=int, default=2,
-                        help="Number of edge clients to wait for (default: 2)")
-    args = parser.parse_args()
-
-    # Override global LOG_FILE so strategy comparison can write separate files
-    global LOG_FILE
-    LOG_FILE = args.log_file
-    if os.path.exists(LOG_FILE):
-        os.remove(LOG_FILE)
-
-    print(f"Starting Server | strategy={args.strategy} | "
-          f"rounds={args.num_rounds} | clients={args.num_clients} | log={LOG_FILE}")
+if __name__ == "__main__":
     strategy = FedRQI(
         fraction_fit=1.0,
         fraction_evaluate=1.0,
-        min_fit_clients=args.num_clients,
-        min_evaluate_clients=args.num_clients,
-        min_available_clients=args.num_clients,
-        evaluate_metrics_aggregation_fn=weighted_average,
+        min_fit_clients=2,
+        min_evaluate_clients=2,
+        min_available_clients=2,
     )
-
     fl.server.start_server(
-        server_address="0.0.0.0:8085",
-        config=fl.server.ServerConfig(num_rounds=args.num_rounds),
-        strategy=strategy,
+        server_address="127.0.0.1:8085",
+        config=fl.server.ServerConfig(num_rounds=10),
+        strategy=strategy
     )
-
-if __name__ == "__main__":
-    main()

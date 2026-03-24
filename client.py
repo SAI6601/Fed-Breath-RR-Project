@@ -36,7 +36,8 @@ def get_model_size_mb(model):
     tmp = f"temp_model_{os.getpid()}.p"
     torch.save(model.state_dict(), tmp)
     size = os.path.getsize(tmp) / 1e6
-    os.remove(tmp)
+    if os.path.exists(tmp):
+        os.remove(tmp)
     return size
 
 def quantize_for_edge(model):
@@ -132,23 +133,22 @@ class BreathClient(fl.client.NumPyClient):
             inputs, targets = inputs.to(DEVICE), targets.to(DEVICE)
             self.optimizer.zero_grad()
 
-            # -- Multi-task forward pass --------------------------
+            # -- THE FIX: Correct 3-variable unpacking in Training --
             rr_pred, alpha, anomaly_logits = self.model(
                 inputs, return_attention=True, return_anomaly=True
             )
 
-            # -- Task 1: RR regression loss -----------------------
+            # -- Task 1: RR regression loss --
             rr_loss = self.criterion_rr(rr_pred, targets.unsqueeze(1))
 
-            # -- Task 2: Anomaly classification loss --------------
-            # Pseudo-labels derived from the ground-truth RR values
+            # -- Task 2: Anomaly classification loss --
             pseudo_labels = torch.tensor(
                 [rr_to_anomaly_label(float(t)) for t in targets],
                 dtype=torch.long, device=DEVICE
             )
             ano_loss = self.criterion_ano(anomaly_logits, pseudo_labels)
 
-            # -- Combined loss ------------------------------------
+            # -- Combined loss --
             loss = rr_loss + LAMBDA_ANOMALY * ano_loss
             loss.backward()
 
@@ -159,7 +159,6 @@ class BreathClient(fl.client.NumPyClient):
 
             self.optimizer.step()
 
-            # Track anomaly distribution this batch
             preds = torch.argmax(anomaly_logits.detach(), dim=1).cpu().tolist()
             for p in preds:
                 anomaly_counts[p] += 1
@@ -169,14 +168,12 @@ class BreathClient(fl.client.NumPyClient):
 
         final_rqi = total_rqi / batches if batches > 0 else 0.0
 
-        # -- Print anomaly distribution ---------------------------
         print(f"[Stats] Node {self.node_id} | RQI: {final_rqi:.4f}")
         print(f"   Anomaly distribution this round:")
         for idx, cnt in enumerate(anomaly_counts):
             name = ANOMALY_CLASSES[idx]["name"]
             print(f"   {idx} {name:20s}: {cnt:4d} samples")
 
-        # -- DP budget --------------------------------------------
         if self.privacy_engine is not None:
             try:
                 self.epsilon = self.privacy_engine.get_epsilon(delta=TARGET_DELTA)
@@ -184,7 +181,6 @@ class BreathClient(fl.client.NumPyClient):
             except Exception as e:
                 print(f"[DP] Could not compute epsilon: {e}")
 
-        # -- Edge compression -------------------------------------
         base_model      = getattr(self.model, '_module', self.model)
         quantized       = quantize_for_edge(base_model)
         fp32_size       = get_model_size_mb(base_model)
@@ -201,7 +197,6 @@ class BreathClient(fl.client.NumPyClient):
             "delta":            float(TARGET_DELTA),
             "dp_enabled":       float(1.0 if self.privacy_engine is not None else 0.0),
         }
-        # Report anomaly class counts (flwr metrics must be scalars)
         for idx, cnt in enumerate(anomaly_counts):
             metrics[f"anomaly_{idx}"] = float(cnt)
 
@@ -216,7 +211,10 @@ class BreathClient(fl.client.NumPyClient):
         with torch.no_grad():
             for inputs, targets in self.val_loader:
                 inputs, targets = inputs.to(DEVICE), targets.to(DEVICE)
-                rr_pred, anomaly_logits = self.model(inputs, return_anomaly=True)
+                
+                # -- THE FIX: Correct 3-variable unpacking in Evaluation --
+                rr_pred, _, anomaly_logits = self.model(inputs, return_anomaly=True)
+                
                 loss += self.criterion_rr(rr_pred, targets.unsqueeze(1)).item()
                 mae  += torch.abs(rr_pred - targets.unsqueeze(1)).sum().item()
                 steps += 1
@@ -258,7 +256,6 @@ def main():
     val_len   = len(subset) - train_len
     train_data, val_data = random_split(subset, [train_len, val_len])
 
-    # drop_last=True required by Opacus
     train_loader = DataLoader(train_data, batch_size=BATCH_SIZE, shuffle=True,  drop_last=True)
     val_loader   = DataLoader(val_data,   batch_size=BATCH_SIZE, shuffle=False)
 
