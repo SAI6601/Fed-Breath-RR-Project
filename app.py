@@ -229,18 +229,20 @@ async def websocket_endpoint(websocket: WebSocket):
                             current_round = int(safe_float(row[0]))
                             if current_round > last_sent_round:
                                 mae           = safe_float(row[1])
-                                # FIX 3: Dynamic index reading so it doesn't crash on old CSV formats
-                                c0_rqi        = safe_float(row[2]) if len(row) > 2 else 0.0
-                                c1_rqi        = safe_float(row[3]) if len(row) > 3 else 0.0
-                                fp32_val      = safe_float(row[4]) if len(row) > 4 else fp32_mb
-                                int8_val      = safe_float(row[5]) if len(row) > 5 else int8_mb
-                                eps_val       = safe_float(row[6]) if len(row) > 6 else epsilon
+                                # CSV: Round,MAE,RMSE,C0_RQI,C1_RQI,FP32_MB,INT8_MB,Epsilon,Delta,DP_Enabled,Ano_0..4
+                                #       0     1   2     3      4       5       6       7       8      9        10..14
+                                c0_rqi        = safe_float(row[3]) if len(row) > 3 else 0.0
+                                c1_rqi        = safe_float(row[4]) if len(row) > 4 else 0.0
+                                fp32_val      = safe_float(row[5]) if len(row) > 5 else fp32_mb
+                                int8_val      = safe_float(row[6]) if len(row) > 6 else int8_mb
+                                eps_val       = safe_float(row[7]) if len(row) > 7 else epsilon
+                                delta_val     = safe_float(row[8]) if len(row) > 8 else delta
                                 dp_val        = int(safe_float(row[9])) if len(row) > 9 else 0
                                 dp_enabled    = bool(dp_val)
                                 
                                 hist_payload = {
                                     "round": current_round, "mae": mae, "c0_rqi": c0_rqi, "c1_rqi": c1_rqi,
-                                    "fp32_mb": fp32_val, "int8_mb": int8_val, "epsilon": eps_val, "delta": delta,
+                                    "fp32_mb": fp32_val, "int8_mb": int8_val, "epsilon": eps_val, "delta": delta_val,
                                     "dp_enabled": dp_enabled, "anomaly_counts": [int(safe_float(row[10])) if len(row)>10 else 0, int(safe_float(row[11])) if len(row)>11 else 0, int(safe_float(row[12])) if len(row)>12 else 0, int(safe_float(row[13])) if len(row)>13 else 0, int(safe_float(row[14])) if len(row)>14 else 0],
                                     "wave": None, "attention": None 
                                 }

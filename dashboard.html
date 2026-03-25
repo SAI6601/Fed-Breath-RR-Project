@@ -851,24 +851,29 @@
       </div>
     </div>
 
-    <!-- ⑧ PPG Wave — full width -->
+    <!-- ⑧ ECG Wave — full width -->
     <div class="card span4" style="background:#060c18;border-color:#0a1628;">
       <div class="card-header">
-        <span class="card-title">Explainable AI Monitor — PPG Breathing Wave (30-sec)</span>
+        <span class="card-title">Explainable AI Monitor — ECG Pulse Signal (Live)</span>
         <span id="xai-badge" class="card-badge badge-green">ATTENTION ACTIVE</span>
       </div>
-      <div class="chart-wrap-lg" style="height:240px"><canvas id="ppgChart"></canvas></div>
+      <div class="chart-wrap-lg" style="height:260px"><canvas id="ppgChart"></canvas></div>
       <div class="ppg-legend">
         <div class="legend-item">
-          <div class="legend-dot" style="background:#00f0ff;box-shadow:0 0 8px #00f0ff,0 0 16px rgba(0,240,255,0.4)">
-          </div>R-peak (cardiac cycle)
+          <div class="legend-dot" style="background:#ff2d55;box-shadow:0 0 8px #ff2d55,0 0 16px rgba(255,45,85,0.5)"></div>
+          R-Peak (Attention Focus)
         </div>
         <div class="legend-item">
-          <div class="legend-dot" style="background:rgba(0,200,255,0.5);box-shadow:0 0 6px rgba(0,200,255,0.3)"></div>
-          PPG breathing signal
+          <div class="legend-dot" style="background:#00e5ff;box-shadow:0 0 6px rgba(0,229,255,0.4)"></div>
+          ECG Signal Trace
         </div>
-        <div class="legend-item" style="margin-left:auto;font-family:var(--mono);color:var(--cyan);font-size:.65rem">30
-          s window · 20 Hz</div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:rgba(255,45,85,0.15);width:28px;border-radius:3px;height:7px"></div>
+          Attention Zone
+        </div>
+        <div class="legend-item" style="margin-left:auto;font-family:var(--mono);color:var(--cyan);font-size:.65rem">
+          ⏱ 125 Hz · <span id="ecg-bpm" style="color:#ff2d55;font-weight:700">72</span> BPM
+        </div>
       </div>
     </div>
 
@@ -953,56 +958,140 @@
       }
     });
 
-    // PPG Chart
-    let ppgWave = [], ppgLabels = [], attentionMask = [];
-    // Neon glow effect via multiple layered datasets (shadow trick)
+    // ═══════════════ ECG Waveform Generator ═══════════════
+    // Generates a single PQRST complex (one heartbeat) as an array of samples
+    function ecgBeat(sr) {
+      const beat = [];
+      const total = Math.round(sr * 0.8);  // ~0.8s per beat at 75 BPM
+      for (let i = 0; i < total; i++) {
+        const t = i / sr;
+        let v = 0;
+        // P wave (small bump at ~0.08-0.16s)
+        v += 0.15 * Math.exp(-Math.pow((t - 0.12) / 0.025, 2));
+        // Q dip (small negative at ~0.19s)
+        v -= 0.12 * Math.exp(-Math.pow((t - 0.19) / 0.008, 2));
+        // R spike (tall sharp peak at ~0.21s)
+        v += 1.8 * Math.exp(-Math.pow((t - 0.215) / 0.009, 2));
+        // S dip (negative at ~0.24s)
+        v -= 0.35 * Math.exp(-Math.pow((t - 0.245) / 0.012, 2));
+        // T wave (rounded bump at ~0.38s)
+        v += 0.28 * Math.exp(-Math.pow((t - 0.38) / 0.045, 2));
+        // Slight baseline wander
+        v += 0.02 * Math.sin(2 * Math.PI * 0.15 * t);
+        // Tiny noise
+        v += (Math.random() - 0.5) * 0.03;
+        beat.push(+v.toFixed(4));
+      }
+      return beat;
+    }
+
+    // Build a continuous ECG strip with slight beat-to-beat variation
+    function generateECGStrip(numBeats, sr) {
+      const strip = [];
+      const peaks = [];   // indices of R-peaks
+      for (let b = 0; b < numBeats; b++) {
+        const beat = ecgBeat(sr);
+        // Slight amplitude variation per beat (±8%)
+        const scale = 0.92 + Math.random() * 0.16;
+        const rIdx = strip.length + Math.round(0.215 * sr);  // R-peak position
+        peaks.push(rIdx);
+        beat.forEach(v => strip.push(+(v * scale).toFixed(4)));
+      }
+      return { strip, peaks };
+    }
+
+    const ECG_SR = 125;        // Hz
+    const ECG_BEATS = 12;      // beats in buffer
+    const ECG_WINDOW = 500;    // visible samples (~4s window)
+    let ecgData = generateECGStrip(ECG_BEATS, ECG_SR);
+    let ecgOffset = 0;
+
+    let ppgWave = ecgData.strip.slice(0, ECG_WINDOW);
+    let ppgLabels = ppgWave.map((_, i) => '');
+    let attentionMask = ppgWave.map((_, i) => {
+      return ecgData.peaks.some(p => Math.abs(i - p) < 4) ? 1 : 0;
+    });
+
+    // ═══════════════ ECG Chart (multi-layer glow) ═══════════════
     const ppgChart = new Chart(C('ppgChart'), {
       type: 'line',
       data: {
-        labels: ppgLabels, datasets: [
+        labels: ppgLabels,
+        datasets: [
           {
-            // Layer 0: thick soft glow (widest, most transparent)
-            data: ppgWave,
-            borderWidth: 10,
-            tension: 0.42,
+            // Layer 0: wide soft glow
+            data: [...ppgWave],
+            borderWidth: 8,
+            tension: 0,
             fill: false,
-            borderColor: 'rgba(0,200,255,0.08)',
+            borderColor: 'rgba(0,200,255,0.06)',
+            pointRadius: 0,
+            spanGaps: true,
+            order: 5
+          },
+          {
+            // Layer 1: mid glow
+            data: [...ppgWave],
+            borderWidth: 4,
+            tension: 0,
+            fill: false,
+            borderColor: 'rgba(0,220,255,0.15)',
             pointRadius: 0,
             spanGaps: true,
             order: 4
           },
           {
-            // Layer 1: mid glow
-            data: ppgWave,
-            borderWidth: 5,
-            tension: 0.42,
+            // Layer 2: core ECG line — bright cyan
+            data: [...ppgWave],
+            borderWidth: 1.8,
+            tension: 0,
             fill: false,
-            borderColor: 'rgba(0,220,255,0.18)',
+            borderColor: 'rgba(0,240,255,0.92)',
             pointRadius: 0,
             spanGaps: true,
-            order: 3
+            order: 3,
+            segment: {
+              borderColor: function(ctx) {
+                const y = ctx.p1.parsed.y;
+                if (y > 1.2) return '#ff2d55';       // R-peak: red
+                if (y > 0.6) return '#ff6b8a';       // QRS transition
+                return 'rgba(0,240,255,0.92)';       // normal
+              },
+              borderWidth: function(ctx) {
+                return ctx.p1.parsed.y > 1.0 ? 2.5 : 1.8;
+              }
+            }
           },
           {
-            // Layer 2: core line — bright cyan
-            data: ppgWave,
-            borderWidth: 2,
-            tension: 0.42,
-            fill: false,
-            borderColor: 'rgba(0,240,255,0.95)',
-            pointRadius: 0,
-            spanGaps: true,
-            order: 2
-          },
-          {
-            // Layer 3: R-peak glow dots
+            // Layer 3: R-peak red glow dots
             type: 'scatter',
             data: [],
-            backgroundColor: 'rgba(0,255,255,0.9)',
-            borderColor: 'rgba(0,255,255,0.25)',
-            borderWidth: 8,
-            pointRadius: 4,
-            pointHoverRadius: 6,
+            backgroundColor: '#ff2d55',
+            borderColor: 'rgba(255,45,85,0.3)',
+            borderWidth: 10,
+            pointRadius: 5,
+            pointHoverRadius: 8,
             order: 1
+          },
+          {
+            // Layer 4: attention zone fill (subtle red under peaks)
+            data: [...ppgWave],
+            borderWidth: 0,
+            tension: 0,
+            fill: true,
+            backgroundColor: function(ctx) {
+              const chart = ctx.chart;
+              const { ctx: c, chartArea } = chart;
+              if (!chartArea) return 'transparent';
+              const g = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+              g.addColorStop(0, 'rgba(255,45,85,0.12)');
+              g.addColorStop(0.4, 'rgba(255,45,85,0.04)');
+              g.addColorStop(1, 'transparent');
+              return g;
+            },
+            pointRadius: 0,
+            spanGaps: true,
+            order: 6
           }
         ]
       },
@@ -1012,17 +1101,66 @@
         animation: false,
         plugins: { legend: { display: false }, tooltip: { enabled: false } },
         scales: {
-          x: { display: false },
+          x: {
+            display: true,
+            grid: { color: 'rgba(0,200,255,0.04)', lineWidth: 0.5 },
+            ticks: { display: false }
+          },
           y: {
-            grid: { color: 'rgba(0,200,255,0.06)', lineWidth: 1 },
-            ticks: { color: 'rgba(0,200,255,0.4)', font: { size: 10 } },
-            min: -1.6,
-            max: 1.6,
-            border: { color: 'rgba(0,200,255,0.1)' }
+            grid: { color: 'rgba(0,200,255,0.06)', lineWidth: 0.5 },
+            ticks: {
+              color: 'rgba(0,200,255,0.35)',
+              font: { size: 10, family: 'JetBrains Mono' },
+              callback: v => v.toFixed(1) + ' mV'
+            },
+            min: -1.0,
+            max: 2.4,
+            border: { color: 'rgba(0,200,255,0.08)' }
           }
         }
       }
     });
+
+    // ═══════ Synthetic scrolling (runs until WebSocket provides real data) ═══════
+    let ecgSynthActive = true;
+    function scrollECG() {
+      if (!ecgSynthActive) return;
+      ecgOffset += 2;  // advance by 2 samples per tick
+      // regenerate buffer when exhausted
+      if (ecgOffset + ECG_WINDOW >= ecgData.strip.length) {
+        const ext = generateECGStrip(ECG_BEATS, ECG_SR);
+        const baseIdx = ecgData.strip.length;
+        ext.peaks.forEach(p => ecgData.peaks.push(p + baseIdx));
+        ecgData.strip.push(...ext.strip);
+        // trim old data to prevent unbounded growth
+        if (ecgData.strip.length > 15000) {
+          const trim = ecgData.strip.length - 10000;
+          ecgData.strip.splice(0, trim);
+          ecgData.peaks = ecgData.peaks.filter(p => p >= trim).map(p => p - trim);
+          ecgOffset -= trim;
+        }
+      }
+      const windowSlice = ecgData.strip.slice(ecgOffset, ecgOffset + ECG_WINDOW);
+      const windowLabels = windowSlice.map(() => '');
+      // Find R-peaks in current window
+      const rPeaks = ecgData.peaks
+        .filter(p => p >= ecgOffset && p < ecgOffset + ECG_WINDOW)
+        .map(p => ({ x: p - ecgOffset, y: ecgData.strip[p] }));
+
+      ppgChart.data.labels = windowLabels;
+      ppgChart.data.datasets[0].data = windowSlice;
+      ppgChart.data.datasets[1].data = windowSlice;
+      ppgChart.data.datasets[2].data = windowSlice;
+      ppgChart.data.datasets[3].data = rPeaks;
+      ppgChart.data.datasets[4].data = windowSlice;
+      ppgChart.update('none');
+
+      // Simulate BPM readout
+      const bpm = 68 + Math.floor(Math.random() * 10);
+      const bpmEl = document.getElementById('ecg-bpm');
+      if (bpmEl) bpmEl.textContent = bpm;
+    }
+    setInterval(scrollECG, 50);  // ~20 fps
 
     // Terminal
     const term = document.getElementById('terminal');
@@ -1100,28 +1238,30 @@
         anomalyStackChart.update();
       }
 
-      // ── PPG wave ─────────────────────────────────────────────
+      // ── ECG / PPG wave ──────────────────────────────────────
       if (d.wave && d.attention) {
-        // No separator needed - cursor-based server sends contiguous data
+        ecgSynthActive = false;  // stop synthetic when real data arrives
         for (let i = 0; i < d.wave.length; i++) {
           ppgWave.push(d.wave[i]);
           ppgLabels.push('');
           attentionMask.push(d.attention[i] || 0);
         }
-        const MAX_PTS = 625;  // 5 seconds at 125Hz = always shows 1+ full breath cycle
+        const MAX_PTS = 625;  // ~5s at 125Hz
         if (ppgWave.length > MAX_PTS) {
           ppgWave.splice(0, ppgWave.length - MAX_PTS);
           ppgLabels.splice(0, ppgLabels.length - MAX_PTS);
           attentionMask.splice(0, attentionMask.length - MAX_PTS);
         }
-        // Sync all wave layers + update R-peak scatter
+        // Build R-peak scatter from attention mask
+        const rPeakPts = ppgWave
+          .map((y, i) => ({ x: i, y }))
+          .filter((_, i) => (attentionMask[i] || 0) > 0.5);
         ppgChart.data.labels = ppgLabels;
         ppgChart.data.datasets[0].data = ppgWave;
         ppgChart.data.datasets[1].data = ppgWave;
         ppgChart.data.datasets[2].data = ppgWave;
-        ppgChart.data.datasets[3].data = ppgWave
-          .map((y, i) => ({ x: i, y }))
-          .filter((_, i) => (attentionMask[i] || 0) > 0.5);
+        ppgChart.data.datasets[3].data = rPeakPts;
+        ppgChart.data.datasets[4].data = ppgWave;
         ppgChart.update('none');
       }
 

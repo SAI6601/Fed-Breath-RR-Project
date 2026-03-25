@@ -75,3 +75,33 @@ class BidmcDataset(Dataset):
         high = 0.5 / nyquist
         b, a = butter(4, [low, high], btype='band')
         return filtfilt(b, a, data)
+
+
+# ─────────────────────────────────────────────────────────────
+# Combined Dataset (BIDMC + CapnoBase)
+# ─────────────────────────────────────────────────────────────
+def get_combined_dataset(include_capnobase=True):
+    """
+    Returns a ConcatDataset wrapping BIDMC and (optionally) CapnoBase.
+    Falls back to BIDMC-only if CapnoBase directory is empty or missing.
+    """
+    from torch.utils.data import ConcatDataset
+
+    datasets = [BidmcDataset()]
+
+    if include_capnobase:
+        try:
+            from capnobase_loader import CapnoBaseDataset
+            capno = CapnoBaseDataset()
+            if len(capno) > 0:
+                datasets.append(capno)
+                print(f"✅ Combined dataset: {len(datasets[0])} BIDMC + {len(capno)} CapnoBase = {len(datasets[0]) + len(capno)} total")
+            else:
+                print(f"⚠️  CapnoBase has 0 files — using BIDMC only")
+        except ImportError:
+            print(f"⚠️  capnobase_loader not found — using BIDMC only")
+
+    if len(datasets) == 1:
+        return datasets[0]
+
+    return ConcatDataset(datasets)
