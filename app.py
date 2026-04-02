@@ -25,9 +25,9 @@ _model_loaded = False
 
 def _try_load_model():
     global _model, _model_loaded
-    path = "centralized_model.pth"
+    path = "model_bidmc_capnobase.pth"
     if not os.path.exists(path):
-        print("[XAI] No model file found — using synthetic waveform fallback.")
+        print(f"[XAI] No model file found at {path} — using synthetic waveform fallback.")
         return
     try:
         m = AttentionBiLSTM().to(DEVICE)
@@ -41,8 +41,10 @@ def _try_load_model():
 
 _try_load_model()
 
+
 _signal_buffer = deque(maxlen=SEGMENT_LEN * 4)
-_read_cursor = 0  # advances each tick to slide the wave window forward
+_visual_buffer = deque(maxlen=SEGMENT_LEN * 4)
+_read_cursor = 0  
 
 def _bandpass(data):
     nyq = 0.5 * SAMPLE_RATE
@@ -62,18 +64,19 @@ def _try_fill_from_file():
         col   = [c for c in df.columns if "PLETH" in c.upper()][0]
         
         raw   = df[col].values.astype(np.float64) 
-        
-        # FIX 1: Scrub NaNs BEFORE they touch the Scipy Filter
         raw   = np.nan_to_num(raw, nan=0.0)
-        clean = _bandpass(raw)
         
-        # Prevent division by zero if signal is entirely flat
-        std = np.nanstd(clean)
-        clean = (clean - np.nanmean(clean)) / (std if std > 1e-6 else 1.0)
-        clean = np.nan_to_num(clean, nan=0.0)
+        # Model buffer
+        _signal_buffer.extend(raw.tolist())
         
-        _signal_buffer.extend(clean.tolist())
-        print(f"[XAI] Loaded real PPG from {files[0]} ({len(clean)} samples).")
+        # Visual buffer (APG ECG-like transform)
+        d1 = np.gradient(raw)
+        apg = -np.gradient(d1)
+        std_apg = np.nanstd(apg)
+        vis = (apg - np.nanmean(apg)) / (std_apg if std_apg > 1e-6 else 1.0)
+        vis = np.nan_to_num(vis, nan=0.0)
+        _visual_buffer.extend(vis.tolist())
+        print(f"[XAI] Loaded real PPG from {files[0]} ({len(vis)} samples).")
         return True
     except Exception as e:
         print(f"[XAI] Could not load real data: {e}")
@@ -134,11 +137,15 @@ def _run_inference():
     buf = list(_signal_buffer)
     global _read_cursor
     # Send CONSECUTIVE raw samples — guaranteed smooth continuity at client
-    ADVANCE      = FRAME_POINTS   # advance by exactly one frame per tick
+    ADVANCE      = FRAME_POINTS   
     buf_list     = list(buf)
+    vis_list     = list(_visual_buffer)
     buf_len      = len(buf_list)
     _read_cursor = _read_cursor % max(1, buf_len - FRAME_POINTS)
-    wave_snippet = [safe_float(v) for v in buf_list[_read_cursor:_read_cursor + FRAME_POINTS]]
+    wave_snippet = [safe_float(v) for v in vis_list[_read_cursor:_read_cursor + FRAME_POINTS]]
+    
+    end_idx = _read_cursor + FRAME_POINTS
+    start_idx = end_idx - SEGMENT_LEN
     _read_cursor = (_read_cursor + ADVANCE) % max(1, buf_len - FRAME_POINTS)
 
     if not _model_loaded or len(buf) < min(SEGMENT_LEN, FRAME_POINTS * 4):
@@ -160,9 +167,19 @@ def _run_inference():
         }
         return wave_snippet, attn, synthetic_anomaly
 
-    segment = np.array(buf[-SEGMENT_LEN:], dtype=np.float32)
+    if start_idx < 0:
+        segment = np.concatenate((np.zeros(-start_idx), buf_list[0:end_idx]))
+    else:
+        segment = np.array(buf_list[start_idx:end_idx], dtype=np.float32)
+        
     segment = np.nan_to_num(segment, nan=0.0)
-    x = torch.tensor(segment).unsqueeze(0).unsqueeze(0).to(DEVICE)
+    
+    # Neural net needs the 0.1-0.5Hz bandpass!
+    inf_segment = _bandpass(segment)
+    inf_std = np.std(inf_segment)
+    inf_segment = (inf_segment - np.mean(inf_segment)) / (inf_std if inf_std > 1e-6 else 1.0)
+    
+    x = torch.tensor(inf_segment, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to(DEVICE)
 
     with torch.no_grad():
         rr_pred, alpha, anomaly_logits = _model(
@@ -170,13 +187,13 @@ def _run_inference():
         )
 
     alpha_np = alpha.squeeze(0).cpu().numpy()
-    block    = SEGMENT_LEN // FRAME_POINTS
-    coarse   = [float(alpha_np[i*block:(i+1)*block].mean()) for i in range(FRAME_POINTS)]
     
-    coarse   = np.nan_to_num(coarse, nan=0.0)
-    lo, hi   = min(coarse), max(coarse)
-    span     = (hi - lo) if (hi - lo) > 1e-8 else 1.0
-    attn     = [safe_float((v - lo) / span) for v in coarse]
+    # Get attention precisely aligned with our 50-point raw wave snippet
+    snippet_alpha = alpha_np[-FRAME_POINTS:]
+    window_max = alpha_np.max()
+    window_min = alpha_np.min()
+    span = (window_max - window_min) if (window_max - window_min) > 1e-8 else 1.0
+    attn = [safe_float((v - window_min) / span) for v in snippet_alpha]
 
     probs      = torch.softmax(anomaly_logits, dim=-1).squeeze(0).cpu().numpy()
     probs      = np.nan_to_num(probs, nan=0.0)
@@ -257,7 +274,11 @@ async def websocket_endpoint(websocket: WebSocket):
                 if not _try_fill_from_file():
                     _fill_synthetic()
 
-            wave_data, attention_data, anomaly_result = _run_inference()
+            try:
+                wave_snippet, attn, anomaly_result = await asyncio.to_thread(_run_inference)
+            except Exception as e:
+                print(f"[WS] Inference error ignored: {e}")
+                wave_snippet, attn, anomaly_result = [], [0.03]*FRAME_POINTS, {}
 
             # Don't drain buffer - sliding window keeps signal healthy
             # Only trim to keep buffer from growing unbounded
@@ -268,8 +289,8 @@ async def websocket_endpoint(websocket: WebSocket):
 
             live_payload = {
                 "round":          last_sent_round if last_sent_round > 0 else 0,
-                "wave":           wave_data,
-                "attention":      attention_data,
+                "wave":           wave_snippet,
+                "attention":      attn,
                 "xai_live":       _model_loaded,
                 "anomaly":        anomaly_result,
             }

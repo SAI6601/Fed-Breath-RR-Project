@@ -1,0 +1,83 @@
+[Eval] Loaded model from model_bidmc_capnobase.pth  (exact architecture match)
+[CapnoBase] 42 patients in data\capnobase
+[Eval] Running temperature calibration...
+[Calibration] Temperature set to 4.5 (target: 95% coverage)
+[Eval] Temperature = 4.50
+
+[KFold] Running 5-fold CV over 42 patients (seed=42)...
+  Fold 1/5: N= 8  MAE=5.519  RMSE=5.731  Bias=+1.824  SD=5.808  AnoAcc=12.5%
+  Fold 2/5: N= 8  MAE=5.048  RMSE=6.617  Bias=+0.717  SD=7.033  AnoAcc=37.5%
+  Fold 3/5: N= 8  MAE=4.905  RMSE=5.673  Bias=+2.670  SD=5.351  AnoAcc=25.0%
+  Fold 4/5: N= 8  MAE=8.689  RMSE=11.778  Bias=-3.295  SD=12.088  AnoAcc=37.5%
+  Fold 5/5: N=10  MAE=4.887  RMSE=5.880  Bias=+0.611  SD=6.165  AnoAcc=40.0%
+
+==============================================================
+  5-FOLD CROSS-VALIDATION RESULTS  (N=42, CAPNOBASE)
+==============================================================
+  Metric              Mean  +/- Std  Unit
+  ----------------------------------------------
+  MAE               5.8097  1.4576   BrPM
+  RMSE              7.1359  2.3454   BrPM
+  MBE               0.5052  2.0457   BrPM
+  Within+/-2       14.5000  9.5394   %
+  Within+/-5       50.0000  7.9057   %
+  BA_Bias           0.5052  2.0457   BrPM
+  BA_SD             7.2889  2.4620   BrPM
+  AnoAcc           30.5000 10.4163   %
+==============================================================
+
+  Paper-ready format:
+  MAE  = 5.81 +/- 1.46 BrPM
+  RMSE = 7.14 +/- 2.35 BrPM
+  Bias = +0.51 BrPM  95% LoA = [-13.78, 14.79] BrPM
+[KFold] Results saved -> evaluation_results\kfold_results_capnobase.csv
+
+[Eval] Single-split val set: 8 samples (seed=42, dataset=capnobase)
+[Eval] Computing regression metrics...
+[Eval] Running Bland-Altman analysis...
+[Eval] Bland-Altman plot saved -> evaluation_results\bland_altman_capnobase.png
+[Eval] MC Dropout uncertainty (20 samples)...
+[Eval] Uncertainty plot saved -> evaluation_results\uncertainty_capnobase.png
+[Eval] Evaluating anomaly detection head...
+[Eval] Convergence plot saved -> evaluation_results\convergence.png
+
+==============================================================
+  FED-BREATH CLINICAL EVALUATION SUMMARY (CAPNOBASE)
+==============================================================
+
+-- Regression Metrics --
+   MAE         : 6.7441 BrPM
+   RMSE        : 8.4501 BrPM
+   R2          : -0.0796
+   MBE         : -2.2943 BrPM
+   Within+/-2  : 12.5%
+   Within+/-5  : 37.5%
+   N           : 8
+
+-- Bland-Altman Agreement --
+   Bias          : -2.2943 BrPM
+   SD            : 8.6942 BrPM
+   95% LoA       : [-19.34, 14.75] BrPM
+   Within LoA    : 100.0%
+   Clinical test : REVIEW  (criterion: LoA width <= 6 BrPM)
+
+-- MC Dropout Uncertainty --
+   MC samples    : 20
+   95% CI coverage: 75.0%  (ideal: ~95%)
+   Mean CI width : 15.5999 BrPM
+   Mean sigma    : 3.9796 BrPM
+
+-- Anomaly Detection (per-class F1) --
+   Class                Prec   Recall     F1     N
+   --------------------------------------------
+   Normal              0.250    1.000  0.400     2
+   Bradypnea           0.000    0.000  0.000     3
+   Apnea               0.000    0.000  0.000     0
+   Tachypnea           0.000    0.000  0.000     2
+   Severe Tachypnea    0.000    0.000  0.000     1
+
+   Overall accuracy: 25.0%
+==============================================================
+[Eval] Summary CSV saved -> evaluation_results\evaluation_summary_capnobase.csv
+
+[Eval] All outputs saved to ./evaluation_results/

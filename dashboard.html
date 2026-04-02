@@ -1052,46 +1052,18 @@
             order: 3,
             segment: {
               borderColor: function(ctx) {
-                const y = ctx.p1.parsed.y;
-                if (y > 1.2) return '#ff2d55';       // R-peak: red
-                if (y > 0.6) return '#ff6b8a';       // QRS transition
+                const idx = ctx.p1DataIndex;
+                const attn = attentionMask[idx] || 0;
+                if (attn > 0.5) return '#ff2d55';       // Highlight: red
+                // if (attn > 0.2) return '#ff6b8a';       // Transition
                 return 'rgba(0,240,255,0.92)';       // normal
               },
               borderWidth: function(ctx) {
-                return ctx.p1.parsed.y > 1.0 ? 2.5 : 1.8;
+                const idx = ctx.p1DataIndex;
+                const attn = attentionMask[idx] || 0;
+                return attn > 0.5 ? 2.5 : 1.8;
               }
             }
-          },
-          {
-            // Layer 3: R-peak red glow dots
-            type: 'scatter',
-            data: [],
-            backgroundColor: '#ff2d55',
-            borderColor: 'rgba(255,45,85,0.3)',
-            borderWidth: 10,
-            pointRadius: 5,
-            pointHoverRadius: 8,
-            order: 1
-          },
-          {
-            // Layer 4: attention zone fill (subtle red under peaks)
-            data: [...ppgWave],
-            borderWidth: 0,
-            tension: 0,
-            fill: true,
-            backgroundColor: function(ctx) {
-              const chart = ctx.chart;
-              const { ctx: c, chartArea } = chart;
-              if (!chartArea) return 'transparent';
-              const g = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-              g.addColorStop(0, 'rgba(255,45,85,0.12)');
-              g.addColorStop(0.4, 'rgba(255,45,85,0.04)');
-              g.addColorStop(1, 'transparent');
-              return g;
-            },
-            pointRadius: 0,
-            spanGaps: true,
-            order: 6
           }
         ]
       },
@@ -1142,17 +1114,15 @@
       }
       const windowSlice = ecgData.strip.slice(ecgOffset, ecgOffset + ECG_WINDOW);
       const windowLabels = windowSlice.map(() => '');
-      // Find R-peaks in current window
-      const rPeaks = ecgData.peaks
-        .filter(p => p >= ecgOffset && p < ecgOffset + ECG_WINDOW)
-        .map(p => ({ x: p - ecgOffset, y: ecgData.strip[p] }));
+      // Update attentionMask for synthetic data
+      attentionMask = windowSlice.map((_, i) => {
+        return ecgData.peaks.some(p => Math.abs((p - ecgOffset) - i) < 5) ? 1 : 0;
+      });
 
       ppgChart.data.labels = windowLabels;
       ppgChart.data.datasets[0].data = windowSlice;
       ppgChart.data.datasets[1].data = windowSlice;
       ppgChart.data.datasets[2].data = windowSlice;
-      ppgChart.data.datasets[3].data = rPeaks;
-      ppgChart.data.datasets[4].data = windowSlice;
       ppgChart.update('none');
 
       // Simulate BPM readout
@@ -1238,7 +1208,6 @@
         anomalyStackChart.update();
       }
 
-      // ── ECG / PPG wave ──────────────────────────────────────
       if (d.wave && d.attention) {
         ecgSynthActive = false;  // stop synthetic when real data arrives
         for (let i = 0; i < d.wave.length; i++) {
@@ -1252,16 +1221,10 @@
           ppgLabels.splice(0, ppgLabels.length - MAX_PTS);
           attentionMask.splice(0, attentionMask.length - MAX_PTS);
         }
-        // Build R-peak scatter from attention mask
-        const rPeakPts = ppgWave
-          .map((y, i) => ({ x: i, y }))
-          .filter((_, i) => (attentionMask[i] || 0) > 0.5);
         ppgChart.data.labels = ppgLabels;
         ppgChart.data.datasets[0].data = ppgWave;
         ppgChart.data.datasets[1].data = ppgWave;
         ppgChart.data.datasets[2].data = ppgWave;
-        ppgChart.data.datasets[3].data = rPeakPts;
-        ppgChart.data.datasets[4].data = ppgWave;
         ppgChart.update('none');
       }
 

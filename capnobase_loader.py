@@ -1,32 +1,38 @@
 """
 capnobase_loader.py -- CapnoBase IEEE TBME Benchmark loader for Fed-Breath
 
-Loads .mat files from the CapnoBase dataset (42 patients, 300 Hz, 8 min each),
-extracts the PPG signal, resamples to 125 Hz, bandpass-filters, and returns
-tensors in the exact same format as BidmcDataset: (1, 3750) with float32.
+Loads .mat files (MATLAB v7.3 / HDF5) from the CapnoBase dataset
+(42 patients, 300 Hz, 8 min each), extracts the PPG signal, resamples
+to 125 Hz, bandpass-filters, and returns tensors in the exact same
+format as BidmcDataset: (1, 3750) with float32.
 
-The ground-truth respiratory rate (RR) label is the mean of the CO2-derived
-instantaneous RR values provided by the dataset.
+The ground-truth respiratory rate (RR) label is the mean of the
+CO2-derived instantaneous RR values provided by the dataset.
+
+HDF5 layout (per file):
+    signal/pleth/y           -> (1, 144001) float64   PPG waveform
+    reference/rr/co2/y       -> (N, 1)      float64   instantaneous RR
+    param/samplingrate/pleth -> (1, 1)      float64   native sample rate
 
 Usage:
     from capnobase_loader import CapnoBaseDataset, mat_probe
     ds = CapnoBaseDataset()
     x, y = ds[0]   # x: (1, 3750), y: scalar RR
 
-Requires: scipy  (for .mat loading + resampling + filtering)
+Requires: h5py, scipy
 """
 
 import os
 import numpy as np
 import torch
 from torch.utils.data import Dataset
-from scipy.io import loadmat
+import h5py
 from scipy.signal import butter, filtfilt, resample
 
 # ─────────────────────────────────────────────────────────────
 # Configuration -- matches BidmcDataset
 # ─────────────────────────────────────────────────────────────
-CAPNO_DIR        = os.path.join("data", "capnobase")
+CAPNO_DIR         = os.path.join("data", "capnobase")
 CAPNO_SAMPLE_RATE = 300       # CapnoBase native sample rate
 TARGET_RATE       = 125       # Fed-Breath model expects 125 Hz
 SEGMENT_SECONDS   = 30
@@ -35,157 +41,99 @@ SEGMENT_LENGTH    = TARGET_RATE * SEGMENT_SECONDS   # 3750
 
 def mat_probe(path: str):
     """
-    Print all top-level keys and nested structures in a .mat file.
-    Useful for figuring out the exact field names in CapnoBase files
-    since naming can vary between versions.
+    Print all groups and datasets in an HDF5 .mat file.
+    Useful for figuring out the exact field names in CapnoBase files.
     """
-    mat = loadmat(path, squeeze_me=True, struct_as_record=False)
     print(f"\n{'='*60}")
-    print(f"  MAT PROBE: {os.path.basename(path)}")
+    print(f"  MAT PROBE (HDF5): {os.path.basename(path)}")
     print(f"{'='*60}")
 
-    for key in sorted(mat.keys()):
-        if key.startswith("__"):
-            continue
-        val = mat[key]
-        _print_nested(key, val, indent=0)
+    with h5py.File(path, 'r') as f:
+        def _visitor(name, obj):
+            if isinstance(obj, h5py.Dataset):
+                print(f"  [DATASET] {name}  shape={obj.shape}  dtype={obj.dtype}")
+            elif isinstance(obj, h5py.Group):
+                print(f"  [GROUP]   {name}/")
+        f.visititems(_visitor)
 
     print(f"{'='*60}\n")
 
 
-def _print_nested(name, obj, indent=0):
-    """Recursively print structure contents."""
-    prefix = "  " * indent
-    if hasattr(obj, '_fieldnames'):
-        # MATLAB struct
-        print(f"{prefix}[STRUCT] {name}  (fields: {obj._fieldnames})")
-        for field in obj._fieldnames:
-            _print_nested(field, getattr(obj, field), indent + 1)
-    elif isinstance(obj, np.ndarray):
-        print(f"{prefix}[ARRAY] {name}  shape={obj.shape}  dtype={obj.dtype}")
-    elif isinstance(obj, (int, float, str)):
-        print(f"{prefix}[VALUE] {name}  = {obj}")
-    else:
-        print(f"{prefix}[??] {name}  type={type(obj).__name__}")
-
-
-def _find_ppg_signal(mat: dict):
+def _find_ppg_signal(f: h5py.File):
     """
-    Auto-discover the PPG signal array from the .mat structure.
+    Extract the PPG signal from the HDF5 structure.
 
-    CapnoBase stores signals under various keys depending on the version:
-      - signal.pleth.y
-      - signal.ppg.y
-      - data.ppg
-      - ppg  (top-level)
+    Known paths:
+      - signal/pleth/y  (primary)
+      - signal/ppg/y    (alternate)
 
     Returns the 1-D numpy array of the PPG signal, or None if not found.
     """
-    # Strategy 1: signal struct -> pleth or ppg sub-struct -> y
-    if "signal" in mat:
-        sig_struct = mat["signal"]
-        if hasattr(sig_struct, '_fieldnames'):
-            for candidate in ("pleth", "ppg", "PLETH", "PPG"):
-                if candidate in sig_struct._fieldnames:
-                    sub = getattr(sig_struct, candidate)
-                    if hasattr(sub, '_fieldnames') and "y" in sub._fieldnames:
-                        return np.asarray(getattr(sub, "y"), dtype=np.float64).ravel()
-                    elif isinstance(sub, np.ndarray):
-                        return sub.astype(np.float64).ravel()
-
-    # Strategy 2: data struct -> ppg
-    if "data" in mat:
-        data_struct = mat["data"]
-        if hasattr(data_struct, '_fieldnames'):
-            for candidate in ("ppg", "pleth", "PPG", "PLETH"):
-                if candidate in data_struct._fieldnames:
-                    arr = getattr(data_struct, candidate)
-                    return np.asarray(arr, dtype=np.float64).ravel()
-
-    # Strategy 3: top-level keys
-    for key in ("ppg", "pleth", "PPG", "PLETH", "signal"):
-        if key in mat and isinstance(mat[key], np.ndarray):
-            arr = mat[key].astype(np.float64).ravel()
-            if len(arr) > 1000:   # must be a signal, not metadata
+    for path in ('signal/pleth/y', 'signal/ppg/y',
+                 'signal/PLETH/y', 'signal/PPG/y'):
+        if path in f:
+            arr = np.array(f[path], dtype=np.float64).ravel()
+            if len(arr) > 1000:
                 return arr
+
+    # Fallback: walk signal group looking for a large 1-D dataset
+    if 'signal' in f:
+        for key in f['signal'].keys():
+            obj = f['signal'][key]
+            if isinstance(obj, h5py.Group) and 'y' in obj:
+                arr = np.array(obj['y'], dtype=np.float64).ravel()
+                if len(arr) > 1000:
+                    return arr
+            elif isinstance(obj, h5py.Dataset):
+                arr = np.array(obj, dtype=np.float64).ravel()
+                if len(arr) > 1000:
+                    return arr
 
     return None
 
 
-def _find_rr_label(mat: dict):
+def _find_rr_label(f: h5py.File):
     """
-    Extract mean respiratory rate (BrPM) from the .mat structure.
+    Extract mean respiratory rate (BrPM) from the HDF5 structure.
 
-    CapnoBase provides CO2-derived instantaneous RR under:
-      - reference.rr.co2  (scalar or array)
-      - reference.rr      (if no sub-keys)
-      - labels.rr         (fallback)
+    The CapnoBase TBME benchmark stores CO2-derived instantaneous RR as:
+        reference/rr/co2/y  ->  (N, 1) array of RR values in BrPM
 
     Returns a float (mean RR in breaths/min), or 0.0 if not found.
     """
-    # Strategy 1: reference struct
-    if "reference" in mat:
-        ref = mat["reference"]
-        if hasattr(ref, '_fieldnames'):
-            # reference.rr -> may be struct with co2, or array directly
-            if "rr" in ref._fieldnames:
-                rr_obj = getattr(ref, "rr")
-                if hasattr(rr_obj, '_fieldnames'):
-                    # reference.rr.co2
-                    for sub_key in ("co2", "CO2", "x", "y", "value"):
-                        if sub_key in rr_obj._fieldnames:
-                            arr = np.asarray(getattr(rr_obj, sub_key), dtype=np.float64).ravel()
-                            arr = arr[np.isfinite(arr)]
-                            if len(arr) > 0:
-                                return float(np.mean(arr))
-                elif isinstance(rr_obj, np.ndarray):
-                    arr = rr_obj.astype(np.float64).ravel()
-                    arr = arr[np.isfinite(arr)]
-                    if len(arr) > 0:
-                        return float(np.mean(arr))
-                elif isinstance(rr_obj, (int, float)):
-                    return float(rr_obj)
+    # Primary: reference/rr/co2/y (the RR values; /x is timestamps)
+    for path in ('reference/rr/co2/y', 'reference/rr/y',
+                 'labels/rr/y', 'labels/rr/co2/y'):
+        if path in f:
+            arr = np.array(f[path], dtype=np.float64).ravel()
+            arr = arr[np.isfinite(arr)]
+            if len(arr) > 0:
+                return float(np.mean(arr))
 
-    # Strategy 2: labels struct
-    if "labels" in mat:
-        labels = mat["labels"]
-        if hasattr(labels, '_fieldnames') and "rr" in labels._fieldnames:
-            rr_obj = getattr(labels, "rr")
-            if isinstance(rr_obj, np.ndarray):
-                arr = rr_obj.astype(np.float64).ravel()
-                arr = arr[np.isfinite(arr)]
-                if len(arr) > 0:
-                    return float(np.mean(arr))
-
-    # Strategy 3: param struct for breathing rate
-    if "param" in mat:
-        param = mat["param"]
-        if hasattr(param, '_fieldnames'):
-            for key in ("rr", "RR", "resp_rate", "breathing_rate"):
-                if key in param._fieldnames:
-                    val = getattr(param, key)
-                    try:
-                        return float(val)
-                    except (TypeError, ValueError):
-                        pass
+    # Fallback: SFresults/Fusion/y (smart-fusion RR estimates)
+    if 'SFresults/Fusion/y' in f:
+        arr = np.array(f['SFresults/Fusion/y'], dtype=np.float64).ravel()
+        arr = arr[np.isfinite(arr)]
+        if len(arr) > 0:
+            return float(np.mean(arr))
 
     return 0.0
 
 
-def _find_sample_rate(mat: dict):
-    """Extract the native sample rate from the .mat metadata."""
-    if "param" in mat:
-        param = mat["param"]
-        if hasattr(param, '_fieldnames'):
-            for key in ("samplingrate", "Fs", "fs", "sr", "SamplingRate",
-                        "sampling_rate", "samplerate"):
-                if key in param._fieldnames:
-                    try:
-                        return int(getattr(param, key))
-                    except (TypeError, ValueError):
-                        pass
+def _find_sample_rate(f: h5py.File):
+    """
+    Extract the native PPG sample rate from the HDF5 metadata.
+    Falls back to CAPNO_SAMPLE_RATE (300 Hz) if not found.
+    """
+    for path in ('param/samplingrate/pleth', 'param/samplingrate/ppg',
+                 'param/Fs', 'param/fs'):
+        if path in f:
+            try:
+                val = np.array(f[path]).ravel()
+                return int(val[0])
+            except (TypeError, ValueError, IndexError):
+                pass
 
-    # Fallback: CapnoBase default
     return CAPNO_SAMPLE_RATE
 
 
@@ -225,23 +173,23 @@ class CapnoBaseDataset(Dataset):
         mat_path = os.path.join(self.data_dir, self.files[idx])
 
         try:
-            mat = loadmat(mat_path, squeeze_me=True, struct_as_record=False)
+            with h5py.File(mat_path, 'r') as f:
+                # -- 1. Extract PPG signal --
+                raw_ppg = _find_ppg_signal(f)
+                if raw_ppg is None:
+                    print(f"[!!] No PPG signal found in {self.files[idx]}")
+                    print(f"     Run: mat_probe('{mat_path}') to inspect")
+                    return torch.zeros(1, SEGMENT_LENGTH), torch.tensor(0.0)
+
+                # -- 2. Extract RR label --
+                true_rr = _find_rr_label(f)
+
+                # -- 3. Get native sample rate --
+                native_sr = _find_sample_rate(f)
+
         except Exception as e:
             print(f"[!!] Error loading {self.files[idx]}: {e}")
             return torch.zeros(1, SEGMENT_LENGTH), torch.tensor(0.0)
-
-        # -- 1. Extract PPG signal --
-        raw_ppg = _find_ppg_signal(mat)
-        if raw_ppg is None:
-            print(f"[!!] No PPG signal found in {self.files[idx]}")
-            print(f"     Run: mat_probe('{mat_path}') to inspect the file structure")
-            return torch.zeros(1, SEGMENT_LENGTH), torch.tensor(0.0)
-
-        # -- 2. Extract RR label --
-        true_rr = _find_rr_label(mat)
-
-        # -- 3. Get native sample rate --
-        native_sr = _find_sample_rate(mat)
 
         # -- 4. Resample to 125 Hz --
         if native_sr != TARGET_RATE:
@@ -251,7 +199,8 @@ class CapnoBaseDataset(Dataset):
             ppg_resampled = raw_ppg.copy()
 
         # -- 5. Scrub NaNs --
-        ppg_resampled = np.nan_to_num(ppg_resampled, nan=0.0)
+        ppg_resampled = np.nan_to_num(ppg_resampled, nan=0.0,
+                                       posinf=0.0, neginf=0.0)
 
         # -- 6. Bandpass filter (0.1-0.5 Hz, matches BIDMC) --
         clean_ppg = self._bandpass(ppg_resampled)

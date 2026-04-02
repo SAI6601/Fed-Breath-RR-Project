@@ -1,0 +1,73 @@
+============================================================
+  FED-BREATH MULTI-DATASET TRAINING
+============================================================
+[OK] Found 53 patient files in data/raw
+[OK] bidmc: 53 samples
+[CapnoBase] 42 patients in data\capnobase
+[OK] capnobase: 42 samples
+
+[Train] Total training samples: 95
+[CapnoBase] 42 patients in data\capnobase
+
+[Train] Training: 76 samples, Validation: 19 samples
+[Train] Device: cpu, Epochs: 25
+[Train] Loss: MSE(RR) + 0.3 * CE(anomaly)
+Epoch  1/25 | Loss: 281.3756 | Val MAE: 17.910  RMSE: 19.018 BrPM
+           -> New best MAE 17.910 -- saved to model_bidmc_capnobase.pth
+Epoch  2/25 | Loss: 239.3397 | Val MAE: 15.244  RMSE: 16.532 BrPM
+           -> New best MAE 15.244 -- saved to model_bidmc_capnobase.pth
+Epoch  3/25 | Loss: 153.9248 | Val MAE: 12.519  RMSE: 13.824 BrPM
+           -> New best MAE 12.519 -- saved to model_bidmc_capnobase.pth
+Epoch  4/25 | Loss: 105.9478 | Val MAE: 10.832  RMSE: 12.184 BrPM
+           -> New best MAE 10.832 -- saved to model_bidmc_capnobase.pth
+Epoch  5/25 | Loss: 66.4478 | Val MAE: 9.550  RMSE: 10.990 BrPM
+           -> New best MAE 9.550 -- saved to model_bidmc_capnobase.pth
+Epoch  6/25 | Loss: 63.9418 | Val MAE: 8.387  RMSE: 9.961 BrPM
+           -> New best MAE 8.387 -- saved to model_bidmc_capnobase.pth
+Epoch  7/25 | Loss: 49.0987 | Val MAE: 7.351  RMSE: 9.049 BrPM
+           -> New best MAE 7.351 -- saved to model_bidmc_capnobase.pth
+Epoch  8/25 | Loss: 40.1505 | Val MAE: 6.421  RMSE: 8.258 BrPM
+           -> New best MAE 6.421 -- saved to model_bidmc_capnobase.pth
+Epoch  9/25 | Loss: 34.9677 | Val MAE: 5.626  RMSE: 7.624 BrPM
+           -> New best MAE 5.626 -- saved to model_bidmc_capnobase.pth
+Epoch 10/25 | Loss: 20.1511 | Val MAE: 5.232  RMSE: 7.283 BrPM
+           -> New best MAE 5.232 -- saved to model_bidmc_capnobase.pth
+Epoch 11/25 | Loss: 29.6356 | Val MAE: 5.042  RMSE: 7.132 BrPM
+           -> New best MAE 5.042 -- saved to model_bidmc_capnobase.pth
+Epoch 12/25 | Loss: 29.8079 | Val MAE: 4.867  RMSE: 7.004 BrPM
+           -> New best MAE 4.867 -- saved to model_bidmc_capnobase.pth
+Epoch 13/25 | Loss: 25.8939 | Val MAE: 4.896  RMSE: 7.025 BrPM
+Epoch 14/25 | Loss: 28.6647 | Val MAE: 4.871  RMSE: 7.007 BrPM
+Epoch 15/25 | Loss: 29.2923 | Val MAE: 4.901  RMSE: 7.028 BrPM
+Epoch 16/25 | Loss: 28.5899 | Val MAE: 4.916  RMSE: 7.039 BrPM
+Epoch 17/25 | Loss: 29.5331 | Val MAE: 4.826  RMSE: 6.976 BrPM
+           -> New best MAE 4.826 -- saved to model_bidmc_capnobase.pth
+Epoch 18/25 | Loss: 21.4721 | Val MAE: 4.889  RMSE: 7.019 BrPM
+Epoch 19/25 | Loss: 29.5759 | Val MAE: 4.930  RMSE: 7.049 BrPM
+Epoch 20/25 | Loss: 29.3842 | Val MAE: 4.937  RMSE: 7.054 BrPM
+Epoch 21/25 | Loss: 29.6920 | Val MAE: 4.836  RMSE: 6.982 BrPM
+Epoch 22/25 | Loss: 26.6326 | Val MAE: 4.951  RMSE: 7.065 BrPM
+Epoch 23/25 | Loss: 20.3974 | Val MAE: 4.992  RMSE: 7.094 BrPM
+Epoch 24/25 | Loss: 29.5624 | Val MAE: 4.972  RMSE: 7.080 BrPM
+Epoch 25/25 | Loss: 29.3403 | Val MAE: 4.922  RMSE: 7.043 BrPM
+
+============================================================
+  CROSS-DATASET EVALUATION
+============================================================
+
+  [Eval (capnobase)] N=42
+    MAE  = 5.7658 BrPM
+    RMSE = 7.4419 BrPM
+    Bias = +0.5102 BrPM
+    95%% LoA = [-14.22, 15.24] BrPM
+[Train] Learning curve saved -> training_curve_bidmc_capnobase.png
+[Train] Results CSV saved -> cross_dataset_results_bidmc_capnobase.csv
+
+============================================================
+  TRAINING COMPLETE
+============================================================
+  Model          : model_bidmc_capnobase.pth
+  Train datasets : bidmc, capnobase
+  Eval datasets  : capnobase
+  capnobase    MAE=5.7658  RMSE=7.4419  Bias=+0.5102
+============================================================

@@ -1,0 +1,126 @@
+============================================================
+  FED-BREATH: CapnoBase Compatibility Test Suite
+============================================================
+
+[TEST 1] Probing 0009_8min.mat...
+
+============================================================
+  MAT PROBE (HDF5): 0009_8min.mat
+============================================================
+  [GROUP]   #refs#/
+  [DATASET] #refs#/a  shape=(2,)  dtype=uint64
+  [GROUP]   SFresults/
+  [GROUP]   SFresults/Fusion/
+  [DATASET] SFresults/Fusion/y  shape=(150, 1)  dtype=float64
+  [GROUP]   SFresults/RIAV/
+  [DATASET] SFresults/RIAV/y  shape=(150, 1)  dtype=float64
+  [GROUP]   SFresults/RIFV/
+  [DATASET] SFresults/RIFV/y  shape=(150, 1)  dtype=float64
+  [GROUP]   SFresults/RIIV/
+  [DATASET] SFresults/RIIV/y  shape=(150, 1)  dtype=float64
+  [GROUP]   SFresults/SmartFusion/
+  [DATASET] SFresults/SmartFusion/y  shape=(150, 1)  dtype=float64
+  [DATASET] SFresults/x  shape=(150, 1)  dtype=float64
+  [GROUP]   labels/
+  [GROUP]   labels/co2/
+  [GROUP]   labels/co2/artif/
+  [DATASET] labels/co2/artif/x  shape=(2,)  dtype=uint64
+  [GROUP]   labels/co2/startexp/
+  [DATASET] labels/co2/startexp/x  shape=(152, 1)  dtype=float64
+  [GROUP]   labels/co2/startinsp/
+  [DATASET] labels/co2/startinsp/x  shape=(152, 1)  dtype=float64
+  [GROUP]   labels/ecg/
+  [GROUP]   labels/ecg/artif/
+  [DATASET] labels/ecg/artif/x  shape=(2,)  dtype=uint64
+  [GROUP]   labels/ecg/peak/
+  [DATASET] labels/ecg/peak/x  shape=(815, 1)  dtype=float64
+  [GROUP]   labels/pleth/
+  [GROUP]   labels/pleth/artif/
+  [DATASET] labels/pleth/artif/x  shape=(2,)  dtype=uint64
+  [GROUP]   labels/pleth/peak/
+  [DATASET] labels/pleth/peak/x  shape=(816, 1)  dtype=float64
+  [GROUP]   labels/units/
+  [DATASET] labels/units/x  shape=(7, 1)  dtype=uint16
+  [GROUP]   meta/
+  [DATASET] meta/persistentID  shape=(34, 1)  dtype=uint16
+  [GROUP]   meta/subject/
+  [DATASET] meta/subject/age  shape=(1, 1)  dtype=float64
+  [DATASET] meta/subject/gender  shape=(2,)  dtype=uint64
+  [DATASET] meta/subject/weight  shape=(1, 1)  dtype=float64
+  [GROUP]   meta/treatment/
+  [DATASET] meta/treatment/ventilation  shape=(11, 1)  dtype=uint16
+  [GROUP]   param/
+  [GROUP]   param/case/
+  [DATASET] param/case/id  shape=(9, 1)  dtype=uint16
+  [DATASET] param/case/ventilation  shape=(11, 1)  dtype=uint16
+  [GROUP]   param/samplingrate/
+  [DATASET] param/samplingrate/co2  shape=(1, 1)  dtype=float64
+  [DATASET] param/samplingrate/ecg  shape=(1, 1)  dtype=float64
+  [DATASET] param/samplingrate/pleth  shape=(1, 1)  dtype=float64
+  [GROUP]   reference/
+  [GROUP]   reference/hr/
+  [GROUP]   reference/hr/ecg/
+  [DATASET] reference/hr/ecg/x  shape=(814, 1)  dtype=float64
+  [DATASET] reference/hr/ecg/y  shape=(814, 1)  dtype=float64
+  [GROUP]   reference/hr/pleth/
+  [DATASET] reference/hr/pleth/x  shape=(815, 1)  dtype=float64
+  [DATASET] reference/hr/pleth/y  shape=(815, 1)  dtype=float64
+  [GROUP]   reference/rr/
+  [GROUP]   reference/rr/co2/
+  [DATASET] reference/rr/co2/x  shape=(151, 1)  dtype=float64
+  [DATASET] reference/rr/co2/y  shape=(151, 1)  dtype=float64
+  [GROUP]   reference/units/
+  [GROUP]   reference/units/hr/
+  [DATASET] reference/units/hr/y  shape=(9, 1)  dtype=uint16
+  [GROUP]   reference/units/rr/
+  [DATASET] reference/units/rr/y  shape=(11, 1)  dtype=uint16
+  [DATASET] reference/units/x  shape=(1, 1)  dtype=uint16
+  [GROUP]   signal/
+  [GROUP]   signal/co2/
+  [DATASET] signal/co2/y  shape=(1, 144001)  dtype=float64
+  [GROUP]   signal/ecg/
+  [DATASET] signal/ecg/y  shape=(1, 144001)  dtype=float64
+  [DATASET] signal/id  shape=(9, 1)  dtype=uint16
+  [GROUP]   signal/pleth/
+  [DATASET] signal/pleth/y  shape=(1, 144001)  dtype=float64
+============================================================
+
+[OK] TEST 1 PASS: .mat probe completed
+
+[TEST 2] Loading CapnoBaseDataset...
+[CapnoBase] 42 patients in data\capnobase
+[OK] TEST 2 PASS: Loaded 42 patients
+
+[TEST 3] Checking tensor shapes and values...
+
+  Samples checked : 42
+  Shape errors    : 0
+  RR range        : 7.0 -- 40.6 BrPM
+  RR mean +/- std : 15.2 +/- 7.4 BrPM
+  RR = 0 (missing): 0 files
+  Has bradypnea   : YES
+  Has tachypnea   : YES
+
+[OK] TEST 3 PASS: All 42 samples valid
+
+[TEST 4] Model forward-pass compatibility...
+  Input shape      : torch.Size([1, 1, 3750])
+  RR prediction    : -0.03 BrPM  (true: 19.16)
+  Attention shape  : torch.Size([1, 3750])  (expected: [1, 3750])
+  Anomaly logits   : torch.Size([1, 5])  (expected: [1, 5])
+  Anomaly class    : 1
+
+[OK] TEST 4 PASS: Model fully compatible
+
+[TEST 5] Combined dataset (BIDMC + CapnoBase)...
+[OK] Found 53 patient files in data/raw
+[CapnoBase] 42 patients in data\capnobase
+[OK] Combined dataset: 53 BIDMC + 42 CapnoBase = 95 total
+  Total samples: 95
+  Last sample shape: torch.Size([1, 3750]), RR: 11.42 BrPM
+
+[OK] TEST 5 PASS: Combined dataset works
+
+============================================================
+  ALL TESTS COMPLETE
+============================================================

@@ -12,6 +12,9 @@ from scipy.signal import find_peaks
 from dataset import BidmcDataset
 from model import AttentionBiLSTM, rr_to_anomaly_label, ANOMALY_CLASSES
 
+import warnings
+warnings.filterwarnings("ignore", message=".*Full backward hook is firing.*")
+
 # -------------------------------------------------------------
 # Configuration
 # -------------------------------------------------------------
