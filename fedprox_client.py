@@ -2,7 +2,7 @@
 fedprox_client.py -- FedProx client variant for Fed-Breath
 
 FedProx adds a proximal term to the local loss:
-    L_total = L_task + (mu/2) * ||w - w_global||²
+    L_total = L_task + (mu/2) * ||w - w_global||^2
 
 This penalises the local model for drifting too far from the
 global model each round, which directly addresses the client
@@ -18,6 +18,9 @@ Usage:
 
 Strategy comparison (runs FedAvg -> FedProx -> FedRQI sequentially):
     python fedprox_client.py --compare
+
+Mu sweep on CapnoBase data:
+    python fedprox_client.py --compare --mu-sweep --dataset capnobase
 """
 
 import torch
@@ -46,6 +49,7 @@ LEARNING_RATE    = 0.001
 DEVICE           = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 LAMBDA_ANOMALY   = 0.3
 TARGET_DELTA     = 1e-5
+SEED             = 42
 
 # FedProx proximal term weight -- key hyperparameter
 # mu = 0 -> reduces to FedAvg
@@ -88,7 +92,7 @@ class FedProxClient(fl.client.NumPyClient):
     Extends standard FL training with the FedProx proximal term.
 
     The proximal term:
-        (mu/2) * Σ ||w_k - w_global||²
+        (mu/2) * sum ||w_k - w_global||^2
 
     is computed as the squared L2 distance between the current
     local weights and the global weights received at the start
@@ -119,7 +123,7 @@ class FedProxClient(fl.client.NumPyClient):
 
     def _proximal_term(self) -> torch.Tensor:
         """
-        Computes (mu/2) * ||w_local - w_global||²
+        Computes (mu/2) * ||w_local - w_global||^2
         Returns scalar tensor on the model's device.
         """
         if self.global_params is None or self.mu == 0.0:
@@ -211,6 +215,7 @@ class FedProxClient(fl.client.NumPyClient):
         with torch.no_grad():
             for inputs, targets in self.val_loader:
                 inputs, targets = inputs.to(DEVICE), targets.to(DEVICE)
+                # return_anomaly=True returns (rr_pred, anomaly_logits)
                 rr_pred, _ = self.model(inputs, return_anomaly=True)
                 loss  += self.criterion_rr(rr_pred, targets.unsqueeze(1)).item()
                 mae   += torch.abs(rr_pred - targets.unsqueeze(1)).sum().item()
@@ -267,27 +272,28 @@ def _parse_log(log_file: str) -> tuple:
     return maes, rmses
 
 
-def run_strategy_comparison():
+def run_strategy_comparison(mu_sweep=False, dataset_name="bidmc"):
     """
     Runs three FL experiments back-to-back and saves a comparison
     CSV with per-round MAE and RMSE for each strategy:
-      • FedAvg  (mu = 0, no RQI weighting)
-      • FedProx (mu = 0.01, no RQI weighting)
-      • FedRQI  (mu = 0, RQI-weighted + BFT -- our full system)
+      - FedAvg  (mu = 0, no RQI weighting)
+      - FedProx (mu = 0.01, no RQI weighting)
+      - FedRQI  (mu = 0, RQI-weighted + BFT -- our full system)
+
+    If mu_sweep=True, also runs FedProx with mu in [0.001, 0.01, 0.1].
 
     Results are saved to strategy_comparison.csv and printed as a
     summary table -- ready to paste into a paper as Table II.
-
-    Subprocess output is written to per-strategy log files
-    (server_fedavg.log, etc.) so errors are always visible.
     """
     print("\n" + "="*60)
     print("  STRATEGY COMPARISON: FedAvg vs FedProx vs FedRQI")
+    if mu_sweep:
+        print("  + FedProx mu sweep: [0.001, 0.01, 0.1]")
     print("="*60)
 
     # Verify data directory exists before launching anything
     if not os.path.isdir(os.path.join("data", "raw")):
-        print("\n[ERROR] data/raw/ not found.")
+        print("\n[!!] data/raw/ not found.")
         print("        Download BIDMC dataset and place it in data/raw/")
         print("        before running the strategy comparison.")
         return
@@ -298,11 +304,19 @@ def run_strategy_comparison():
         {"name": "FedRQI",  "strategy_flag": "fedrqi",  "mu": 0.0},
     ]
 
+    # Add mu sweep variants
+    if mu_sweep:
+        for mu_val in [0.001, 0.1]:
+            strategies.append({
+                "name": f"FedProx_mu{mu_val}",
+                "strategy_flag": f"fedprox_mu{mu_val}",
+                "mu": mu_val,
+            })
+
     results = {}
     TIMEOUT = 600   # seconds per strategy (10 min is generous for 5 rounds)
 
     # Force UTF-8 I/O in subprocesses -- prevents UnicodeEncodeError on Windows
-    # when print() outputs emoji characters into redirected log files.
     utf8_env = os.environ.copy()
     utf8_env["PYTHONIOENCODING"] = "utf-8"
     utf8_env["PYTHONUTF8"]       = "1"   # Python 3.7+ UTF-8 mode flag
@@ -323,7 +337,7 @@ def run_strategy_comparison():
         # -- Launch server ------------------------------------
         server_proc = subprocess.Popen(
             [sys.executable, "server.py",
-             "--strategy",   s["strategy_flag"],
+             "--strategy",   s["strategy_flag"].split("_mu")[0],  # strip mu suffix
              "--log-file",   log_file,
              "--num-rounds", "20"],
             stdout=srv_log, stderr=srv_log,
@@ -406,12 +420,12 @@ def run_strategy_comparison():
 
     # -- Print summary table ----------------------------------
     print("\n" + "="*60)
-    print(f"  {'Strategy':<12} {'Final MAE':>12} {'Final RMSE':>12}")
-    print("-"*40)
+    print(f"  {'Strategy':<20} {'Final MAE':>12} {'Final RMSE':>12}")
+    print("-"*48)
     for name, data in results.items():
         mae_s  = f"{data['final_mae']:.4f}"  if not (data['final_mae']  != data['final_mae']) else "  nan"
         rmse_s = f"{data['final_rmse']:.4f}" if not (data['final_rmse'] != data['final_rmse']) else "  nan"
-        print(f"  {name:<12} {mae_s:>12} {rmse_s:>12}")
+        print(f"  {name:<20} {mae_s:>12} {rmse_s:>12}")
     print("="*60)
     print(f"\nFull results saved to : {COMPARISON_LOG}")
     print("Per-run logs saved as  : server_<strategy>.log, client_<strategy>_<id>.log")
@@ -429,14 +443,19 @@ def main():
                         help=f"FedProx proximal term weight (default: {DEFAULT_MU})")
     parser.add_argument("--compare", action="store_true",
                         help="Run full strategy comparison experiment")
+    parser.add_argument("--mu-sweep", action="store_true",
+                        help="Include mu sweep [0.001, 0.01, 0.1] in comparison")
+    parser.add_argument("--dataset", default="bidmc",
+                        help="Dataset for comparison: bidmc or capnobase (default: bidmc)")
     args = parser.parse_args()
 
     if args.compare:
-        run_strategy_comparison()
+        run_strategy_comparison(mu_sweep=args.mu_sweep, dataset_name=args.dataset)
         return
 
     print(f"[Node] Starting FedProx Node #{args.node_id} on {DEVICE}")
-    print(f"[FedProx] Proximal term mu = {args.mu}  ({'FedProx' if args.mu > 0 else 'reduces to FedAvg'})")
+    print(f"[FedProx] Proximal term mu = {args.mu}  "
+          f"({'FedProx' if args.mu > 0 else 'reduces to FedAvg'})")
 
     full_dataset = BidmcDataset()
     num_clients  = 2
@@ -447,7 +466,9 @@ def main():
     subset    = Subset(full_dataset, indices[start:end])
     train_len = int(0.8 * len(subset))
     val_len   = len(subset) - train_len
-    train_data, val_data = random_split(subset, [train_len, val_len])
+    generator = torch.Generator().manual_seed(SEED)
+    train_data, val_data = random_split(subset, [train_len, val_len],
+                                         generator=generator)
 
     train_loader = DataLoader(train_data, batch_size=BATCH_SIZE, shuffle=True,  drop_last=True)
     val_loader   = DataLoader(val_data,   batch_size=BATCH_SIZE, shuffle=False)

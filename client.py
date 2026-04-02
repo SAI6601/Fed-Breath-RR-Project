@@ -19,6 +19,7 @@ BATCH_SIZE       = 8
 LEARNING_RATE    = 0.001
 EPOCHS_PER_ROUND = 1
 DEVICE           = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+SEED             = 42
 
 # -- Differential Privacy -------------------------------------
 DP_ENABLED       = True
@@ -133,7 +134,7 @@ class BreathClient(fl.client.NumPyClient):
             inputs, targets = inputs.to(DEVICE), targets.to(DEVICE)
             self.optimizer.zero_grad()
 
-            # -- THE FIX: Correct 3-variable unpacking in Training --
+            # Multi-task forward pass (3 outputs)
             rr_pred, alpha, anomaly_logits = self.model(
                 inputs, return_attention=True, return_anomaly=True
             )
@@ -168,7 +169,7 @@ class BreathClient(fl.client.NumPyClient):
 
         final_rqi = total_rqi / batches if batches > 0 else 0.0
 
-        print(f"[Stats] Node {self.node_id} | RQI: {final_rqi:.4f}")
+        print(f"[Node] Node {self.node_id} | RQI: {final_rqi:.4f}")
         print(f"   Anomaly distribution this round:")
         for idx, cnt in enumerate(anomaly_counts):
             name = ANOMALY_CLASSES[idx]["name"]
@@ -186,7 +187,7 @@ class BreathClient(fl.client.NumPyClient):
         fp32_size       = get_model_size_mb(base_model)
         int8_size       = get_model_size_mb(quantized)
         compression_pct = ((fp32_size - int8_size) / fp32_size) * 100
-        print(f"[Edge]  Edge: FP32={fp32_size:.3f}MB -> INT8={int8_size:.3f}MB ({compression_pct:.1f}%)")
+        print(f"[Edge] FP32={fp32_size:.3f}MB -> INT8={int8_size:.3f}MB ({compression_pct:.1f}%)")
 
         metrics = {
             "rqi":              float(final_rqi),
@@ -211,10 +212,10 @@ class BreathClient(fl.client.NumPyClient):
         with torch.no_grad():
             for inputs, targets in self.val_loader:
                 inputs, targets = inputs.to(DEVICE), targets.to(DEVICE)
-                
-                # -- THE FIX: Correct 3-variable unpacking in Evaluation --
-                rr_pred, _, anomaly_logits = self.model(inputs, return_anomaly=True)
-                
+
+                # return_anomaly=True returns (rr_pred, anomaly_logits)
+                rr_pred, _ = self.model(inputs, return_anomaly=True)
+
                 loss += self.criterion_rr(rr_pred, targets.unsqueeze(1)).item()
                 mae  += torch.abs(rr_pred - targets.unsqueeze(1)).sum().item()
                 steps += 1
@@ -230,6 +231,72 @@ class BreathClient(fl.client.NumPyClient):
             "mae":  float(mae / n),
             "rmse": rmse,
         }
+
+    def personalize(self, local_loader, epochs=3, lr=1e-4):
+        """
+        Personalized FL (pFL): Fine-tune only the prediction heads
+        while keeping the shared BiLSTM encoder frozen.
+
+        This adapts the model to local patient demographics after
+        global convergence, improving per-hospital accuracy without
+        sharing head-layer gradients with the server.
+
+        Args:
+            local_loader: DataLoader with local hospital data
+            epochs: number of fine-tuning epochs
+            lr: learning rate for head layers
+        """
+        base_model = getattr(self.model, '_module', self.model)
+
+        # Freeze shared encoder
+        for p in base_model.lstm.parameters():
+            p.requires_grad = False
+        for p in base_model.attention_layer.parameters():
+            p.requires_grad = False
+
+        # Fine-tune heads only
+        optimizer = optim.Adam([
+            *base_model.fc_rr.parameters(),
+            *base_model.fc_anomaly.parameters(),
+        ], lr=lr)
+
+        criterion_rr  = nn.MSELoss()
+        criterion_ano = nn.CrossEntropyLoss()
+
+        base_model.train()
+        for epoch in range(epochs):
+            total_loss = 0.0
+            for inputs, targets in local_loader:
+                inputs, targets = inputs.to(DEVICE), targets.to(DEVICE)
+                optimizer.zero_grad()
+
+                rr_pred, anomaly_logits = base_model(
+                    inputs, return_anomaly=True
+                )
+
+                rr_loss = criterion_rr(rr_pred, targets.unsqueeze(1))
+                pseudo = torch.tensor(
+                    [rr_to_anomaly_label(float(t)) for t in targets],
+                    dtype=torch.long, device=DEVICE
+                )
+                ano_loss = criterion_ano(anomaly_logits, pseudo)
+                loss = rr_loss + LAMBDA_ANOMALY * ano_loss
+                loss.backward()
+                optimizer.step()
+                total_loss += loss.item()
+
+            n_batches = max(len(local_loader), 1)
+            print(f"[pFL] Node {self.node_id} | Epoch {epoch+1}/{epochs} | "
+                  f"Loss: {total_loss/n_batches:.4f}")
+
+        # Unfreeze for next global round
+        for p in base_model.lstm.parameters():
+            p.requires_grad = True
+        for p in base_model.attention_layer.parameters():
+            p.requires_grad = True
+
+        print(f"[pFL] Personalization complete (Node {self.node_id})")
+
 
 # -------------------------------------------------------------
 # Entry point
@@ -254,7 +321,9 @@ def main():
     subset    = Subset(full_dataset, indices[start:end])
     train_len = int(0.8 * len(subset))
     val_len   = len(subset) - train_len
-    train_data, val_data = random_split(subset, [train_len, val_len])
+    generator = torch.Generator().manual_seed(SEED)
+    train_data, val_data = random_split(subset, [train_len, val_len],
+                                         generator=generator)
 
     train_loader = DataLoader(train_data, batch_size=BATCH_SIZE, shuffle=True,  drop_last=True)
     val_loader   = DataLoader(val_data,   batch_size=BATCH_SIZE, shuffle=False)

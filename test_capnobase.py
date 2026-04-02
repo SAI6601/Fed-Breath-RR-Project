@@ -1,5 +1,5 @@
 """
-test_capnobase.py — Diagnostic test for CapnoBase dataset integration
+test_capnobase.py -- Diagnostic test for CapnoBase dataset integration
 
 Run after placing .mat files in data/capnobase/:
     python test_capnobase.py
@@ -25,13 +25,13 @@ def test_probe():
 
     files = [f for f in os.listdir(CAPNO_DIR) if f.endswith(".mat")] if os.path.isdir(CAPNO_DIR) else []
     if not files:
-        print("❌ TEST 1 SKIP: No .mat files found in data/capnobase/")
+        print("[SKIP] TEST 1: No .mat files found in data/capnobase/")
         return False
 
     path = os.path.join(CAPNO_DIR, files[0])
-    print(f"\n🔬 TEST 1: Probing {files[0]}...")
+    print(f"\n[TEST 1] Probing {files[0]}...")
     mat_probe(path)
-    print("✅ TEST 1 PASS: .mat probe completed\n")
+    print("[OK] TEST 1 PASS: .mat probe completed\n")
     return True
 
 
@@ -41,14 +41,14 @@ def test_probe():
 def test_load_dataset():
     from capnobase_loader import CapnoBaseDataset
 
-    print("📂 TEST 2: Loading CapnoBaseDataset...")
+    print("[TEST 2] Loading CapnoBaseDataset...")
     ds = CapnoBaseDataset()
 
     if len(ds) == 0:
-        print("❌ TEST 2 FAIL: Dataset is empty")
+        print("[!!] TEST 2 FAIL: Dataset is empty")
         return None
 
-    print(f"✅ TEST 2 PASS: Loaded {len(ds)} patients\n")
+    print(f"[OK] TEST 2 PASS: Loaded {len(ds)} patients\n")
     return ds
 
 
@@ -56,7 +56,7 @@ def test_load_dataset():
 # 3. Verify tensor shapes and values
 # ─────────────────────────────────────────────────────────────
 def test_tensors(ds):
-    print("📐 TEST 3: Checking tensor shapes and values...")
+    print("[TEST 3] Checking tensor shapes and values...")
     errors = 0
     rr_values = []
 
@@ -65,35 +65,35 @@ def test_tensors(ds):
         rr_values.append(y.item())
 
         if x.shape != (1, 3750):
-            print(f"  ❌ Sample {i}: x shape = {x.shape} (expected [1, 3750])")
+            print(f"  [!!] Sample {i}: x shape = {x.shape} (expected [1, 3750])")
             errors += 1
 
         if torch.isnan(x).any():
-            print(f"  ❌ Sample {i}: contains NaN values")
+            print(f"  [!!] Sample {i}: contains NaN values")
             errors += 1
 
         if torch.isinf(x).any():
-            print(f"  ❌ Sample {i}: contains Inf values")
+            print(f"  [!!] Sample {i}: contains Inf values")
             errors += 1
 
     rr_arr = np.array(rr_values)
 
     print(f"\n  Samples checked : {len(ds)}")
     print(f"  Shape errors    : {errors}")
-    print(f"  RR range        : {rr_arr.min():.1f} – {rr_arr.max():.1f} BrPM")
-    print(f"  RR mean ± std   : {rr_arr.mean():.1f} ± {rr_arr.std():.1f} BrPM")
+    print(f"  RR range        : {rr_arr.min():.1f} -- {rr_arr.max():.1f} BrPM")
+    print(f"  RR mean +/- std : {rr_arr.mean():.1f} +/- {rr_arr.std():.1f} BrPM")
     print(f"  RR = 0 (missing): {np.sum(rr_arr == 0.0)} files")
 
     # Clinical range check
     has_low  = np.any(rr_arr < 12)
     has_high = np.any(rr_arr > 25)
-    print(f"  Has bradypnea   : {'YES ✅' if has_low else 'NO'}")
-    print(f"  Has tachypnea   : {'YES ✅' if has_high else 'NO'}")
+    print(f"  Has bradypnea   : {'YES' if has_low else 'NO'}")
+    print(f"  Has tachypnea   : {'YES' if has_high else 'NO'}")
 
     if errors == 0:
-        print(f"\n✅ TEST 3 PASS: All {len(ds)} samples valid\n")
+        print(f"\n[OK] TEST 3 PASS: All {len(ds)} samples valid\n")
     else:
-        print(f"\n⚠️  TEST 3 WARN: {errors} errors found\n")
+        print(f"\n[WARN] TEST 3: {errors} errors found\n")
 
     return rr_values
 
@@ -104,7 +104,7 @@ def test_tensors(ds):
 def test_model_compat(ds):
     from model import AttentionBiLSTM
 
-    print("🧠 TEST 4: Model forward-pass compatibility...")
+    print("[TEST 4] Model forward-pass compatibility...")
 
     model = AttentionBiLSTM()
     model.eval()
@@ -129,9 +129,9 @@ def test_model_compat(ds):
           not torch.isnan(rr_pred).any())
 
     if ok:
-        print(f"\n✅ TEST 4 PASS: Model fully compatible\n")
+        print(f"\n[OK] TEST 4 PASS: Model fully compatible\n")
     else:
-        print(f"\n❌ TEST 4 FAIL: Shape mismatch or NaN output\n")
+        print(f"\n[!!] TEST 4 FAIL: Shape mismatch or NaN output\n")
 
 
 # ─────────────────────────────────────────────────────────────
@@ -140,14 +140,14 @@ def test_model_compat(ds):
 def test_combined():
     from dataset import get_combined_dataset
 
-    print("🔗 TEST 5: Combined dataset (BIDMC + CapnoBase)...")
+    print("[TEST 5] Combined dataset (BIDMC + CapnoBase)...")
     combined = get_combined_dataset()
     print(f"  Total samples: {len(combined)}")
 
     # Spot-check last sample (should be from CapnoBase partition)
     x, y = combined[len(combined) - 1]
     print(f"  Last sample shape: {x.shape}, RR: {y.item():.2f} BrPM")
-    print(f"\n✅ TEST 5 PASS: Combined dataset works\n")
+    print(f"\n[OK] TEST 5 PASS: Combined dataset works\n")
 
 
 # ─────────────────────────────────────────────────────────────
@@ -160,7 +160,7 @@ if __name__ == "__main__":
 
     # Test 1: Probe
     if not test_probe():
-        print("\n⚠️  Place CapnoBase .mat files in data/capnobase/ and re-run.")
+        print("\n[WARN] Place CapnoBase .mat files in data/capnobase/ and re-run.")
         sys.exit(1)
 
     # Test 2: Load
@@ -178,5 +178,5 @@ if __name__ == "__main__":
     test_combined()
 
     print("=" * 60)
-    print("  ALL TESTS COMPLETE ✅")
+    print("  ALL TESTS COMPLETE")
     print("=" * 60)
