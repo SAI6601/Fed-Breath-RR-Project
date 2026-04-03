@@ -37,18 +37,21 @@ LAMBDA_ANOMALY   = 0.3   # anomaly loss weight relative to RR regression loss
 # Helpers
 # -------------------------------------------------------------
 def get_model_size_mb(model):
-    tmp = f"temp_model_{os.getpid()}.p"
-    torch.save(model.state_dict(), tmp)
-    size = os.path.getsize(tmp) / 1e6
-    if os.path.exists(tmp):
-        os.remove(tmp)
-    return size
+    """Estimate model size in MB without writing to disk."""
+    param_size = sum(p.nelement() * p.element_size() for p in model.parameters())
+    buffer_size = sum(b.nelement() * b.element_size() for b in model.buffers())
+    return (param_size + buffer_size) / 1e6
 
 def quantize_for_edge(model):
-    model.to("cpu")
-    return torch.quantization.quantize_dynamic(
-        model, {nn.LSTM, nn.Linear}, dtype=torch.qint8
-    )
+    import copy
+    m = copy.deepcopy(model)
+    m.to("cpu")
+    import warnings as _w
+    with _w.catch_warnings():
+        _w.simplefilter("ignore", DeprecationWarning)
+        return torch.quantization.quantize_dynamic(
+            m, {nn.LSTM, nn.Linear}, dtype=torch.qint8
+        )
 
 def calculate_rqi_for_batch(ppg_batch):
     rqi_sum = 0.0
@@ -83,6 +86,7 @@ class BreathClient(fl.client.NumPyClient):
         self.train_loader = train_loader
         self.val_loader   = val_loader
         self.node_id      = node_id
+        self._edge_stats   = None  # cache quantization stats (computed once)
         self.criterion_rr = nn.MSELoss()
         self.criterion_ano = nn.CrossEntropyLoss()
         self.optimizer    = optim.Adam(model.parameters(), lr=LEARNING_RATE)
@@ -185,12 +189,15 @@ class BreathClient(fl.client.NumPyClient):
             except Exception as e:
                 print(f"[DP] Could not compute epsilon: {e}")
 
-        base_model      = getattr(self.model, '_module', self.model)
-        quantized       = quantize_for_edge(base_model)
-        fp32_size       = get_model_size_mb(base_model)
-        int8_size       = get_model_size_mb(quantized)
-        compression_pct = ((fp32_size - int8_size) / fp32_size) * 100
-        print(f"[Edge] FP32={fp32_size:.3f}MB -> INT8={int8_size:.3f}MB ({compression_pct:.1f}%)")
+        base_model = getattr(self.model, '_module', self.model)
+        if self._edge_stats is None:
+            quantized       = quantize_for_edge(base_model)
+            fp32_size       = get_model_size_mb(base_model)
+            int8_size       = get_model_size_mb(quantized)
+            compression_pct = ((fp32_size - int8_size) / fp32_size) * 100
+            self._edge_stats = (fp32_size, int8_size, compression_pct)
+            print(f"[Edge] FP32={fp32_size:.3f}MB -> INT8={int8_size:.3f}MB ({compression_pct:.1f}%)")
+        fp32_size, int8_size, compression_pct = self._edge_stats
 
         metrics = {
             "rqi":              float(final_rqi),

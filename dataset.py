@@ -114,35 +114,79 @@ class BidmcDataset(Dataset):
 
 
 # ─────────────────────────────────────────────────────────────
-# Combined Dataset (BIDMC + CapnoBase)
+# CapnoBase Dataset (imported from dedicated loader)
 # ─────────────────────────────────────────────────────────────
-def get_combined_dataset(include_capnobase=True):
+try:
+    from capnobase_loader import CapnoBaseDataset
+except ImportError:
+    class CapnoBaseDataset(Dataset):
+        def __init__(self): self.files = []
+        def __len__(self): return 0
+
+# ─────────────────────────────────────────────────────────────
+# Apnea-ECG Dataset (Stub for Phase 5)
+# ─────────────────────────────────────────────────────────────
+class ApneaECGDataset(Dataset):
     """
-    Returns a ConcatDataset wrapping BIDMC and (optionally) CapnoBase.
-    Falls back to BIDMC-only if CapnoBase directory is empty or missing.
+    Stub for the PhysioNet Apnea-ECG dataset.
+    Requires downloading .dat files to data/apnea/
     """
-    from torch.utils.data import ConcatDataset
+    def __init__(self, data_dir='data/apnea'):
+        self.data_dir = data_dir
+        self.files = []
+        if os.path.isdir(data_dir):
+            self.files = [f for f in os.listdir(data_dir) if f.endswith('.dat')]
+        else:
+            print(f"[WARN] Apnea-ECG directory not found: {data_dir}")
 
-    datasets = [BidmcDataset()]
+    def __len__(self):
+        return len(self.files)
 
-    if include_capnobase:
-        try:
-            from capnobase_loader import CapnoBaseDataset
-            capno = CapnoBaseDataset()
-            if len(capno) > 0:
-                datasets.append(capno)
-                print(f"[OK] Combined dataset: {len(datasets[0])} BIDMC "
-                      f"+ {len(capno)} CapnoBase = "
-                      f"{len(datasets[0]) + len(capno)} total")
-            else:
-                print(f"[WARN] CapnoBase has 0 files -- using BIDMC only")
-        except ImportError:
-            print(f"[WARN] capnobase_loader not found -- using BIDMC only")
+    def __getitem__(self, idx):
+        # Dummy return until properly loaded
+        return torch.zeros(1, SEGMENT_LENGTH), torch.tensor(0.0)
 
-    if len(datasets) == 1:
-        return datasets[0]
+# ─────────────────────────────────────────────────────────────
+# Combined Dataset & Utilities
+# ─────────────────────────────────────────────────────────────
+from torch.utils.data import ConcatDataset
 
-    return ConcatDataset(datasets)
+class CombinedDataset(ConcatDataset):
+    """Wraps Pytorch ConcatDataset to instantiate requested datasets automatically."""
+    def __init__(self, dataset_names):
+        datasets = []
+        ds_map = {
+            "bidmc": BidmcDataset,
+            "capnobase": CapnoBaseDataset,
+            "apnea": ApneaECGDataset
+        }
+        for name in dataset_names:
+            name = name.lower()
+            if name in ds_map:
+                ds = ds_map[name]()
+                if len(ds) > 0:
+                    datasets.append(ds)
+        super().__init__(datasets)
+
+def available_datasets():
+    """Returns a dictionary mapping dataset names to their availability status."""
+    status = {}
+    
+    # Check BIDMC
+    bidmc_files = len([f for f in os.listdir(DATA_DIR) if f.endswith('Signals.csv')]) if os.path.isdir(DATA_DIR) else 0
+    status["bidmc"] = {"ready": bidmc_files > 0, "files": bidmc_files}
+    
+    # Check CapnoBase
+    capno_dir = os.path.join("data", "capnobase")
+    capno_files = len([f for f in os.listdir(capno_dir) if f.endswith('.mat')]) if os.path.isdir(capno_dir) else 0
+    status["capnobase"] = {"ready": capno_files > 0, "files": capno_files}
+    
+    # Check Apnea-ECG
+    apnea_dir = os.path.join("data", "apnea")
+    apnea_files = len([f for f in os.listdir(apnea_dir) if f.endswith('.dat')]) if os.path.isdir(apnea_dir) else 0
+    status["apnea"] = {"ready": apnea_files > 0, "files": apnea_files}
+    
+    return status
 
 
 if __name__ == "__main__":

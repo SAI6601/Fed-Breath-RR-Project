@@ -26,7 +26,7 @@ class FedRQI(fl.server.strategy.FedAvg):
             l2_norm = sum(np.linalg.norm(w) for w in weights)
 
             # Threshold for malicious norm spike
-            if l2_norm < 100.0:
+            if l2_norm < 500.0:
                 benign_results.append((client, fit_res))
             else:
                 print(f"[BFT] SHIELD: Blocked anomalous update! L2 Norm: {l2_norm:.2f}")

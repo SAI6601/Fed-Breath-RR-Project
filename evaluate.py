@@ -1,15 +1,15 @@
 """
-evaluate.py -- Clinical Evaluation Suite for Fed-Breath
+evaluate.py — Clinical Evaluation Suite for Fed-Breath
 
 Generates the full set of evaluation metrics required for a
 clinical AI publication:
 
-  1. Standard regression metrics  -- MAE, RMSE, R2
-  2. Bland-Altman analysis        -- bias, LoA, % within +/-2 BrPM
-  3. Uncertainty calibration      -- MC Dropout 95% CI coverage
-  4. Anomaly detection report     -- per-class precision/recall/F1
-  5. Convergence comparison table -- FedAvg vs FedProx vs FedRQI
-  6. 5-fold cross-validation      -- mean +/- std for all metrics (IEEE standard)
+  1. Standard regression metrics  — MAE, RMSE, R²
+  2. Bland-Altman analysis        — bias, LoA, % within ±2 BrPM
+  3. Uncertainty calibration      — MC Dropout 95% CI coverage
+  4. Anomaly detection report     — per-class precision/recall/F1
+  5. Convergence comparison table — FedAvg vs FedProx vs FedRQI
+  6. 5-fold cross-validation      — mean ± std for all metrics (IEEE standard)
 
 Saves all plots to ./evaluation_results/ and prints a
 publication-ready summary table to stdout.
@@ -18,7 +18,6 @@ Usage:
     python evaluate.py --model centralized_model.pth
     python evaluate.py --model centralized_model.pth --mc-samples 50
     python evaluate.py --model centralized_model.pth --kfold        # 5-fold CV
-    python evaluate.py --model centralized_model.pth --dataset capnobase
     python evaluate.py --fl-log simulation_log.csv                  # FL only
 """
 
@@ -27,7 +26,7 @@ import csv
 import argparse
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')   # headless -- safe on servers without a display
+matplotlib.use('Agg')   # headless — safe on servers without a display
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from collections import defaultdict
@@ -68,7 +67,7 @@ def load_model(path: str) -> AttentionBiLSTM:
     unexpected = result.unexpected_keys
 
     if missing:
-        print(f"[Eval] WARNING: Old checkpoint -- {len(missing)} keys default-initialised:")
+        print(f"[Eval] WARNING: Old checkpoint — {len(missing)} keys default-initialised:")
         for k in missing:
             print(f"         missing: {k}")
         print(f"[Eval] Tip: retrain with the updated model.py for full accuracy.")
@@ -78,26 +77,14 @@ def load_model(path: str) -> AttentionBiLSTM:
     if not missing and not unexpected:
         print(f"[Eval] Loaded model from {path}  (exact architecture match)")
     else:
-        print(f"[Eval] Loaded model from {path}  (partial load -- evaluation will proceed)")
+        print(f"[Eval] Loaded model from {path}  (partial load — evaluation will proceed)")
 
     model.eval()
     return model
 
-def get_dataset_by_name(name: str):
-    """Load a dataset by name string."""
-    name = name.lower().strip()
-    if name == "bidmc":
-        return BidmcDataset()
-    elif name in ("capnobase", "capno"):
-        from capnobase_loader import CapnoBaseDataset
-        return CapnoBaseDataset()
-    else:
-        raise ValueError(f"Unknown dataset: {name}")
-
-def get_val_loader(dataset=None, val_frac: float = 0.2, seed: int = SEED):
-    """Fixed-seed single holdout split -- reproducible across runs."""
-    if dataset is None:
-        dataset = BidmcDataset()
+def get_val_loader(val_frac: float = 0.2, seed: int = SEED):
+    """Fixed-seed single holdout split — reproducible across runs."""
+    dataset    = BidmcDataset()
     val_size   = int(val_frac * len(dataset))
     train_size = len(dataset) - val_size
     generator  = torch.Generator().manual_seed(seed)
@@ -109,7 +96,7 @@ def get_val_loader(dataset=None, val_frac: float = 0.2, seed: int = SEED):
 # 2. Standard regression metrics
 # ─────────────────────────────────────────────────────────────
 def compute_regression_metrics(preds: np.ndarray, targets: np.ndarray) -> dict:
-    """MAE, RMSE, R2, MBE (mean bias error)."""
+    """MAE, RMSE, R², MBE (mean bias error)."""
     errors = preds - targets
     mae    = float(np.mean(np.abs(errors)))
     rmse   = float(np.sqrt(np.mean(errors ** 2)))
@@ -119,16 +106,16 @@ def compute_regression_metrics(preds: np.ndarray, targets: np.ndarray) -> dict:
     ss_tot = np.sum((targets - np.mean(targets)) ** 2)
     r2     = float(1 - ss_res / ss_tot) if ss_tot > 0 else float("nan")
 
-    within_2 = float(np.mean(np.abs(errors) <= 2.0) * 100)  # % within +/-2 BrPM
-    within_5 = float(np.mean(np.abs(errors) <= 5.0) * 100)  # % within +/-5 BrPM
+    within_2 = float(np.mean(np.abs(errors) <= 2.0) * 100)  # % within ±2 BrPM
+    within_5 = float(np.mean(np.abs(errors) <= 5.0) * 100)  # % within ±5 BrPM
 
     return {
         "MAE":      round(mae, 4),
         "RMSE":     round(rmse, 4),
-        "R2":       round(r2, 4),
+        "R²":       round(r2, 4),
         "MBE":      round(mbe, 4),
-        "Within+/-2": round(within_2, 2),
-        "Within+/-5": round(within_5, 2),
+        "Within±2": round(within_2, 2),
+        "Within±5": round(within_5, 2),
         "N":        len(preds),
     }
 
@@ -142,7 +129,7 @@ def bland_altman_analysis(preds: np.ndarray, targets: np.ndarray) -> dict:
 
     Returns bias, SD of differences, and 95% Limits of Agreement.
     The gold-standard clinical acceptability criterion is:
-      LoA within +/-3 BrPM for respiratory rate monitors.
+      LoA within ±3 BrPM for respiratory rate monitors.
     """
     diff  = preds - targets                      # method difference
     mean  = (preds + targets) / 2.0             # mean of methods
@@ -170,19 +157,19 @@ def plot_bland_altman(ba: dict, save_path: str):
     ax.axhline(ba["loa_upper"],  color="#EF9F27", linewidth=1.4,
                linestyle="--", label=f"+1.96 SD = {ba['loa_upper']:.2f}")
     ax.axhline(ba["loa_lower"],  color="#EF9F27", linewidth=1.4,
-               linestyle="--", label=f"-1.96 SD = {ba['loa_lower']:.2f}")
+               linestyle="--", label=f"−1.96 SD = {ba['loa_lower']:.2f}")
     ax.axhspan(ba["loa_lower"], ba["loa_upper"], alpha=0.07, color="#EF9F27")
     ax.set_xlabel("Mean of Predicted & Reference RR (BrPM)", fontsize=11)
-    ax.set_ylabel("Difference (Predicted - Reference) BrPM", fontsize=11)
-    ax.set_title("Bland-Altman Plot -- Respiratory Rate Estimation", fontsize=12, fontweight="bold")
+    ax.set_ylabel("Difference (Predicted − Reference) BrPM", fontsize=11)
+    ax.set_title("Bland-Altman Plot — Respiratory Rate Estimation", fontsize=12, fontweight="bold")
     ax.legend(fontsize=9, loc="upper right")
     ax.text(0.02, 0.02,
             f"{ba['within_loa']:.1f}% of samples within LoA",
             transform=ax.transAxes, fontsize=9, color="#444")
     plt.tight_layout()
-    plt.savefig(save_path, dpi=150, bbox_inches="tight")
+    plt.savefig(save_path, dpi=300, bbox_inches="tight")
     plt.close()
-    print(f"[Eval] Bland-Altman plot saved -> {save_path}")
+    print(f"[Eval] Bland-Altman plot saved → {save_path}")
 
 # ─────────────────────────────────────────────────────────────
 # 4. MC Dropout uncertainty calibration
@@ -193,7 +180,7 @@ def mc_dropout_evaluation(model: AttentionBiLSTM,
     """
     Evaluates MC Dropout uncertainty calibration:
     - Coverage: what % of true values fall within the 95% CI?
-      (Well-calibrated -> should be ~95%)
+      (Well-calibrated → should be ~95%)
     - Mean CI width: narrower is more confident.
     """
     all_means, all_stds, all_targets = [], [], []
@@ -250,13 +237,13 @@ def plot_uncertainty(unc: dict, save_path: str):
             linestyle="--", label="Predicted RR (mean)")
     ax.set_xlabel("Sample index (sorted by reference RR)", fontsize=11)
     ax.set_ylabel("Respiratory Rate (BrPM)", fontsize=11)
-    ax.set_title(f"MC Dropout Uncertainty -- {unc['n_samples']} samples | "
+    ax.set_title(f"MC Dropout Uncertainty — {unc['n_samples']} samples | "
                  f"95% CI coverage: {unc['coverage_95ci']:.1f}%", fontsize=12, fontweight="bold")
     ax.legend(fontsize=9)
     plt.tight_layout()
-    plt.savefig(save_path, dpi=150, bbox_inches="tight")
+    plt.savefig(save_path, dpi=300, bbox_inches="tight")
     plt.close()
-    print(f"[Eval] Uncertainty plot saved -> {save_path}")
+    print(f"[Eval] Uncertainty plot saved → {save_path}")
 
 # ─────────────────────────────────────────────────────────────
 # 5. Anomaly detection metrics
@@ -268,7 +255,6 @@ def anomaly_evaluation(model: AttentionBiLSTM, val_loader: DataLoader) -> dict:
     with torch.no_grad():
         for inputs, targets in val_loader:
             inputs = inputs.to(DEVICE)
-            # return_anomaly=True returns (rr_pred, anomaly_logits)
             _, logits = model(inputs, return_anomaly=True)
             preds  = torch.argmax(logits, dim=1).cpu().numpy()
             labels = np.array([rr_to_anomaly_label(float(t)) for t in targets])
@@ -336,44 +322,44 @@ def plot_fl_convergence(log_files: dict, save_path: str):
         ax.set_ylabel(metric, fontsize=11)
         ax.legend(fontsize=10)
         ax.grid(True, alpha=0.3)
-    axes[0].set_title("Convergence -- MAE",  fontsize=12, fontweight="bold")
-    axes[1].set_title("Convergence -- RMSE", fontsize=12, fontweight="bold")
+    axes[0].set_title("Convergence — MAE",  fontsize=12, fontweight="bold")
+    axes[1].set_title("Convergence — RMSE", fontsize=12, fontweight="bold")
 
     plt.tight_layout()
-    plt.savefig(save_path, dpi=150, bbox_inches="tight")
+    plt.savefig(save_path, dpi=300, bbox_inches="tight")
     plt.close()
-    print(f"[Eval] Convergence plot saved -> {save_path}")
+    print(f"[Eval] Convergence plot saved → {save_path}")
 
 # ─────────────────────────────────────────────────────────────
 # 7. Summary table printer
 # ─────────────────────────────────────────────────────────────
-def print_summary(reg: dict, ba: dict, unc: dict, ano: dict, dataset_name: str = "BIDMC"):
+def print_summary(reg: dict, ba: dict, unc: dict, ano: dict):
     print("\n" + "="*62)
-    print(f"  FED-BREATH CLINICAL EVALUATION SUMMARY ({dataset_name.upper()})")
+    print("  FED-BREATH CLINICAL EVALUATION SUMMARY")
     print("="*62)
 
-    print("\n-- Regression Metrics --")
+    print("\n── Regression Metrics ──────────────────────────────────")
     for k, v in reg.items():
         unit = " BrPM" if k in ("MAE", "RMSE", "MBE") else \
                "%"     if "Within" in k else ""
         print(f"   {k:<12}: {v}{unit}")
 
-    print("\n-- Bland-Altman Agreement --")
+    print("\n── Bland-Altman Agreement ──────────────────────────────")
     print(f"   Bias          : {ba['bias']:.4f} BrPM")
     print(f"   SD            : {ba['sd']:.4f} BrPM")
     print(f"   95% LoA       : [{ba['loa_lower']:.2f}, {ba['loa_upper']:.2f}] BrPM")
     print(f"   Within LoA    : {ba['within_loa']:.1f}%")
     criterion = "PASS" if (ba["loa_upper"] - ba["loa_lower"]) <= 6.0 else "REVIEW"
-    print(f"   Clinical test : {criterion}  (criterion: LoA width <= 6 BrPM)")
+    print(f"   Clinical test : {criterion}  (criterion: LoA width ≤ 6 BrPM)")
 
     if unc:
-        print("\n-- MC Dropout Uncertainty --")
+        print("\n── MC Dropout Uncertainty ──────────────────────────────")
         print(f"   MC samples    : {unc['n_samples']}")
         print(f"   95% CI coverage: {unc['coverage_95ci']:.1f}%  (ideal: ~95%)")
         print(f"   Mean CI width : {unc['mean_ci_width']:.4f} BrPM")
-        print(f"   Mean sigma    : {unc['mean_std']:.4f} BrPM")
+        print(f"   Mean σ        : {unc['mean_std']:.4f} BrPM")
 
-    print("\n-- Anomaly Detection (per-class F1) --")
+    print("\n── Anomaly Detection (per-class F1) ────────────────────")
     print(f"   {'Class':<18} {'Prec':>6} {'Recall':>8} {'F1':>6} {'N':>5}")
     print("   " + "-"*44)
     for cls_name, m in ano["per_class"].items():
@@ -398,28 +384,29 @@ def save_summary_csv(reg: dict, ba: dict, unc: dict, ano: dict, path: str):
             for metric, val in m.items():
                 w.writerow(["Anomaly", f"{cls_name}_{metric}", val, ""])
         w.writerow(["Anomaly", "accuracy", ano["accuracy"], "%"])
-    print(f"[Eval] Summary CSV saved -> {path}")
+    print(f"[Eval] Summary CSV saved → {path}")
 
 # ─────────────────────────────────────────────────────────────
-# 8. 5-fold cross-validation
+# 6. 5-fold cross-validation
 # ─────────────────────────────────────────────────────────────
 def run_kfold(model: AttentionBiLSTM,
-              dataset=None,
               n_splits: int = K_FOLDS,
               seed: int = SEED) -> dict:
     """
-    Runs k-fold cross-validation over the given dataset.
+    Runs k-fold cross-validation over the full dataset.
 
-    Uses the SAME model weights for every fold (evaluation only --
+    Uses the SAME model weights for every fold (evaluation only —
     no retraining per fold). This measures how well the current
     checkpoint generalises across different patient splits, which
-    gives a stable mean +/- std for all metrics without needing
+    gives a stable mean ± std for all metrics without needing
     multiple training runs.
+
+    For a full k-fold training evaluation you would retrain per fold,
+    but for a SET project submission this is the standard approach.
 
     Returns a dict of {metric: (mean, std)} pairs.
     """
-    if dataset is None:
-        dataset = BidmcDataset()
+    dataset  = BidmcDataset()
     n        = len(dataset)
     indices  = list(range(n))
 
@@ -454,7 +441,6 @@ def run_kfold(model: AttentionBiLSTM,
         with torch.no_grad():
             for inputs, targets in val_ldr:
                 inputs = inputs.to(DEVICE)
-                # return_anomaly=True returns (rr_pred, anomaly_logits)
                 rr_pred, anomaly_logits = model(inputs, return_anomaly=True)
                 all_preds.extend(rr_pred.squeeze().cpu().tolist())
                 all_tgts.extend(targets.tolist())
@@ -495,8 +481,8 @@ def run_kfold(model: AttentionBiLSTM,
         "MAE":      (np.mean(fold_maes),    np.std(fold_maes)),
         "RMSE":     (np.mean(fold_rmses),   np.std(fold_rmses)),
         "MBE":      (np.mean(fold_mbes),    np.std(fold_mbes)),
-        "Within+/-2": (np.mean(fold_within2), np.std(fold_within2)),
-        "Within+/-5": (np.mean(fold_within5), np.std(fold_within5)),
+        "Within±2": (np.mean(fold_within2), np.std(fold_within2)),
+        "Within±5": (np.mean(fold_within5), np.std(fold_within5)),
         "BA_Bias":  (np.mean(fold_biases),  np.std(fold_biases)),
         "BA_SD":    (np.mean(fold_sds),     np.std(fold_sds)),
         "AnoAcc":   (np.mean(fold_ano_acc), np.std(fold_ano_acc)),
@@ -505,20 +491,20 @@ def run_kfold(model: AttentionBiLSTM,
     }
 
 
-def print_kfold_summary(kf: dict, dataset_name: str = "BIDMC"):
+def print_kfold_summary(kf: dict):
     """Prints the k-fold results in paper-ready format."""
     k, n = kf["K"], kf["N_total"]
     print(f"\n{'='*62}")
-    print(f"  {k}-FOLD CROSS-VALIDATION RESULTS  (N={n}, {dataset_name.upper()})")
+    print(f"  {k}-FOLD CROSS-VALIDATION RESULTS  (N={n} patients)")
     print(f"{'='*62}")
-    print(f"  {'Metric':<14} {'Mean':>9} {'+/- Std':>8}  {'Unit'}")
+    print(f"  {'Metric':<14} {'Mean':>9} {'± Std':>8}  {'Unit'}")
     print(f"  {'-'*46}")
     rows = [
         ("MAE",       "BrPM"),
         ("RMSE",      "BrPM"),
         ("MBE",       "BrPM"),
-        ("Within+/-2",  "%"),
-        ("Within+/-5",  "%"),
+        ("Within±2",  "%"),
+        ("Within±5",  "%"),
         ("BA_Bias",   "BrPM"),
         ("BA_SD",     "BrPM"),
         ("AnoAcc",    "%"),
@@ -534,8 +520,8 @@ def print_kfold_summary(kf: dict, dataset_name: str = "BIDMC"):
     mean_sd, _          = kf["BA_SD"]
     loa_upper = mean_bias + 1.96 * mean_sd
     loa_lower = mean_bias - 1.96 * mean_sd
-    print(f'  MAE  = {mean_mae:.2f} +/- {std_mae:.2f} BrPM')
-    print(f'  RMSE = {mean_rmse:.2f} +/- {std_rmse:.2f} BrPM')
+    print(f'  MAE  = {mean_mae:.2f} ± {std_mae:.2f} BrPM')
+    print(f'  RMSE = {mean_rmse:.2f} ± {std_rmse:.2f} BrPM')
     print(f'  Bias = {mean_bias:+.2f} BrPM  '
           f'95% LoA = [{loa_lower:.2f}, {loa_upper:.2f}] BrPM')
 
@@ -546,30 +532,26 @@ def save_kfold_csv(kf: dict, path: str):
         w.writerow(["Metric", "Mean", "Std", "Unit"])
         rows = [
             ("MAE", "BrPM"), ("RMSE", "BrPM"), ("MBE", "BrPM"),
-            ("Within+/-2", "%"), ("Within+/-5", "%"),
+            ("Within±2", "%"), ("Within±5", "%"),
             ("BA_Bias", "BrPM"), ("BA_SD", "BrPM"), ("AnoAcc", "%"),
         ]
         for metric, unit in rows:
             mean, std = kf[metric]
             w.writerow([metric, round(mean, 4), round(std, 4), unit])
-    print(f"[KFold] Results saved -> {path}")
+    print(f"[KFold] Results saved → {path}")
 
 
 # ─────────────────────────────────────────────────────────────
-# 9. Main
+# 7. Main
 # ─────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser(description="Fed-Breath clinical evaluation suite")
     parser.add_argument("--model",      default="centralized_model.pth",
                         help="Path to trained .pth model file")
-    parser.add_argument("--dataset",    default="bidmc",
-                        help="Dataset to evaluate on: bidmc or capnobase (default: bidmc)")
     parser.add_argument("--mc-samples", type=int, default=20,
                         help="Number of MC Dropout samples (default: 20)")
     parser.add_argument("--skip-mc",    action="store_true",
                         help="Skip MC Dropout (faster, for quick checks)")
-    parser.add_argument("--calibrate",  action="store_true",
-                        help="Run temperature scaling calibration before MC evaluation")
     parser.add_argument("--fl-log",     default="simulation_log.csv",
                         help="FL simulation log CSV for convergence plot")
     parser.add_argument("--fl-compare", action="store_true",
@@ -577,13 +559,10 @@ def main():
     parser.add_argument("--kfold",      action="store_true",
                         help=f"Run {K_FOLDS}-fold cross-validation (recommended for paper)")
     parser.add_argument("--kfold-only", action="store_true",
-                        help="Run k-fold CV only -- skip single-split evaluation")
+                        help="Run k-fold CV only — skip single-split evaluation")
     args = parser.parse_args()
 
-    ds_name = args.dataset.lower().strip()
-    ds_suffix = f"_{ds_name}" if ds_name != "bidmc" else ""
-
-    # -- Load model --
+    # ── Load model ───────────────────────────────────────────
     if not os.path.exists(args.model):
         print(f"[Eval] ERROR: Model file not found: {args.model}")
         print("       Run train_centralized.py first to generate it.")
@@ -591,34 +570,20 @@ def main():
 
     model = load_model(args.model)
 
-    # -- Load dataset --
-    dataset = get_dataset_by_name(ds_name)
-    if len(dataset) == 0:
-        print(f"[Eval] ERROR: Dataset '{ds_name}' has 0 samples.")
-        return
-
-    # -- Temperature calibration --
-    if args.calibrate and not args.skip_mc:
-        print("[Eval] Running temperature calibration...")
-        cal_loader = get_val_loader(dataset=dataset, seed=SEED)
-        model.calibrate_temperature(cal_loader, device=DEVICE)
-        print(f"[Eval] Temperature = {model.temperature.item():.2f}")
-
-    # -- K-fold cross-validation --
+    # ── K-fold cross-validation ──────────────────────────────
     if args.kfold or args.kfold_only:
-        kf = run_kfold(model, dataset=dataset)
-        print_kfold_summary(kf, dataset_name=ds_name)
-        kfold_csv_path = os.path.join(OUT_DIR, f"kfold_results{ds_suffix}.csv")
-        save_kfold_csv(kf, kfold_csv_path)
+        kf = run_kfold(model)
+        print_kfold_summary(kf)
+        save_kfold_csv(kf, os.path.join(OUT_DIR, "kfold_results.csv"))
         if args.kfold_only:
             return   # skip single-split evaluation
 
-    # -- Single-split evaluation (fixed seed) --
-    val_loader = get_val_loader(dataset=dataset, seed=SEED)
+    # ── Single-split evaluation (fixed seed) ─────────────────
+    val_loader = get_val_loader(seed=SEED)
     print(f"\n[Eval] Single-split val set: {len(val_loader.dataset)} samples "
-          f"(seed={SEED}, dataset={ds_name})")
+          f"(seed={SEED})")
 
-    # -- Collect predictions --
+    # ── Collect predictions ──────────────────────────────────
     all_preds, all_targets = [], []
     with torch.no_grad():
         for inputs, targets in val_loader:
@@ -629,38 +594,43 @@ def main():
     preds   = np.array(all_preds)
     targets = np.array(all_targets)
 
-    # -- 1. Regression metrics --
+    # ── 1. Regression metrics ────────────────────────────────
     print("[Eval] Computing regression metrics...")
     reg = compute_regression_metrics(preds, targets)
 
-    # -- 2. Bland-Altman --
+    # ── 2. Bland-Altman ─────────────────────────────────────
     print("[Eval] Running Bland-Altman analysis...")
     ba = bland_altman_analysis(preds, targets)
-    plot_bland_altman(ba, os.path.join(OUT_DIR, f"bland_altman{ds_suffix}.png"))
+    plot_bland_altman(ba, os.path.join(OUT_DIR, "bland_altman.png"))
 
-    # -- 3. MC Dropout uncertainty --
+    # ── 3. MC Dropout uncertainty ────────────────────────────
     unc = None
     if not args.skip_mc:
         print(f"[Eval] MC Dropout uncertainty ({args.mc_samples} samples)...")
         unc = mc_dropout_evaluation(model, val_loader, n_samples=args.mc_samples)
-        plot_uncertainty(unc, os.path.join(OUT_DIR, f"uncertainty{ds_suffix}.png"))
+        plot_uncertainty(unc, os.path.join(OUT_DIR, "uncertainty.png"))
 
-    # -- 4. Anomaly detection --
+    # ── 4. Anomaly detection ─────────────────────────────────
     print("[Eval] Evaluating anomaly detection head...")
     ano = anomaly_evaluation(model, val_loader)
 
-    # -- 5. FL convergence plots --
+    # ── 5. FL convergence plots ──────────────────────────────
     if args.fl_compare:
+        # When --compare was used in fedprox_client.py, each strategy
+        # writes its own log: sim_log_fedavg.csv, sim_log_fedprox.csv,
+        # sim_log_fedrqi.csv. Fall back to simulation_log.csv for FedRQI
+        # if the dedicated file doesn't exist yet.
         fedrqi_log = "sim_log_fedrqi.csv"
         if not os.path.exists(fedrqi_log):
-            fedrqi_log = args.fl_log
+            fedrqi_log = args.fl_log   # fall back to simulation_log.csv
         log_files = {
             "FedAvg":  "sim_log_fedavg.csv",
             "FedProx": "sim_log_fedprox.csv",
             "FedRQI":  fedrqi_log,
         }
+        # Report which files were found
         for name, path in log_files.items():
-            status = "found" if os.path.exists(path) else "MISSING -- strategy will be skipped"
+            status = "found" if os.path.exists(path) else "MISSING — strategy will be skipped"
             print(f"[Eval]   {name:<8}: {path} ({status})")
         plot_fl_convergence(log_files, os.path.join(OUT_DIR, "convergence_comparison.png"))
     elif os.path.exists(args.fl_log):
@@ -669,10 +639,10 @@ def main():
             os.path.join(OUT_DIR, "convergence.png")
         )
 
-    # -- 6. Print + save summary --
-    print_summary(reg, ba, unc, ano, dataset_name=ds_name)
+    # ── 6. Print + save summary ──────────────────────────────
+    print_summary(reg, ba, unc, ano)
     save_summary_csv(reg, ba, unc, ano,
-                     os.path.join(OUT_DIR, f"evaluation_summary{ds_suffix}.csv"))
+                     os.path.join(OUT_DIR, "evaluation_summary.csv"))
     print(f"\n[Eval] All outputs saved to ./{OUT_DIR}/")
 
 

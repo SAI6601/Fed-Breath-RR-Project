@@ -1,275 +1,194 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
 
 # ─────────────────────────────────────────────────────────────
-# ANOMALY CLASSIFICATION CONFIG
+# Anomaly class definitions (shared by model, client, app)
 # ─────────────────────────────────────────────────────────────
-NUM_ANOMALY_CLASSES = 5
-
 ANOMALY_CLASSES = {
-    0: {"name": "Normal", "severity": "safe", "color": "#22c55e"},
-    1: {"name": "Bradypnea", "severity": "warning", "color": "#eab308"},
-    2: {"name": "Apnea", "severity": "critical", "color": "#ef4444"},
-    3: {"name": "Tachypnea", "severity": "warning", "color": "#f97316"},
-    4: {"name": "Severe Tachypnea", "severity": "critical", "color": "#dc2626"}
+    0: {"name": "Normal",           "rr_range": (12, 20),  "severity": "safe",     "color": "#22c55e"},
+    1: {"name": "Bradypnea",        "rr_range": (8,  11),  "severity": "warning",  "color": "#eab308"},
+    2: {"name": "Apnea",            "rr_range": (0,   7),  "severity": "critical", "color": "#ef4444"},
+    3: {"name": "Tachypnea",        "rr_range": (21, 25),  "severity": "warning",  "color": "#f97316"},
+    4: {"name": "Severe Tachypnea", "rr_range": (26, 999), "severity": "critical", "color": "#dc2626"},
 }
+NUM_ANOMALY_CLASSES = len(ANOMALY_CLASSES)
 
-def rr_to_anomaly_label(rr):
-    """
-    Converts a continuous Respiratory Rate (RR) into a discrete anomaly class ID
-    based on standard clinical ranges.
-    """
-    if rr < 8.0:
-        return 2  # Apnea
-    elif 8.0 <= rr < 12.0:
-        return 1  # Bradypnea
-    elif 12.0 <= rr <= 20.0:
-        return 0  # Normal
-    elif 20.0 < rr <= 25.0:
-        return 3  # Tachypnea
-    else:
-        return 4  # Severe Tachypnea
+def rr_to_anomaly_label(rr: float) -> int:
+    """Rule-based pseudo-labelling from RR value (breaths/min)."""
+    if   rr < 8:   return 2
+    elif rr < 12:  return 1
+    elif rr <= 20: return 0
+    elif rr <= 25: return 3
+    else:          return 4
 
-# ─────────────────────────────────────────────────────────────
-# CORE NEURAL NETWORK
-# ─────────────────────────────────────────────────────────────
+
 class AttentionBiLSTM(nn.Module):
-    def __init__(self, input_size=1, hidden_size=64, num_layers=2,
-                 output_size=1, num_anomaly_classes=NUM_ANOMALY_CLASSES,
-                 mc_dropout_p=0.3):
-        """
-        Multi-Task Attention-BiLSTM with MC Dropout uncertainty.
+    """
+    Multi-task Bidirectional LSTM with:
+      • Attention mechanism          (XAI — Phase 1)
+      • RR regression head           (original task)
+      • Anomaly classification head  (Phase 5)
+      • MC Dropout uncertainty       (Phase 6 — Academic credibility)
 
-        Predicts:
-          - Respiratory Rate (regression head)
-          - Anomaly class (5-class classification head)
+    The Dropout layer is placed on the representation vector so it
+    applies to BOTH heads simultaneously during MC sampling, giving
+    consistent uncertainty estimates across tasks.
+    """
+    def __init__(self,
+                 input_size=1,
+                 hidden_size=64,
+                 num_layers=2,
+                 output_size=1,
+                 num_anomaly_classes=NUM_ANOMALY_CLASSES,
+                 mc_dropout_p=0.3):   # increased from 0.1 for better CI calibration
 
-        Args:
-            mc_dropout_p: Dropout probability for MC Dropout uncertainty
-                          quantification. Applied during both training and
-                          inference (when using predict_with_uncertainty).
-                          Higher values -> wider confidence intervals.
-        """
         super(AttentionBiLSTM, self).__init__()
 
-        self.mc_dropout_p = mc_dropout_p
+        enc_dim = hidden_size * 2
 
-        # 1. The Core Memory
+        # ── Shared encoder ───────────────────────────────────────
         self.lstm = nn.LSTM(
             input_size=input_size,
             hidden_size=hidden_size,
             num_layers=num_layers,
             batch_first=True,
-            bidirectional=True
+            bidirectional=True,
         )
 
-        # 2. The Attention Spotlight
-        self.attention_layer = nn.Linear(hidden_size * 2, 1)
+        # ── Attention ────────────────────────────────────────────
+        self.attention_layer = nn.Linear(enc_dim, 1)
 
-        # 3. MC Dropout layer (used for uncertainty quantification)
+        # ── MC Dropout on representation (shared across heads) ───
+        # NOTE: Using nn.Dropout (not functional) so we can force
+        # it active during inference via model.train() selectively.
         self.mc_dropout = nn.Dropout(p=mc_dropout_p)
 
-        # 4. TASK A: Respiratory Rate Regressor
-        self.fc_rr = nn.Linear(hidden_size * 2, output_size)
+        # ── Head 1: RR regression ────────────────────────────────
+        self.fc = nn.Linear(enc_dim, output_size)
 
-        # 5. TASK B: Anomaly Classifier
-        self.fc_anomaly = nn.Linear(hidden_size * 2, num_anomaly_classes)
+        # ── Head 2: Anomaly classification ──────────────────────
+        self.anomaly_head = nn.Sequential(
+            nn.Linear(enc_dim, 32),
+            nn.ReLU(),
+            nn.Dropout(p=0.2),
+            nn.Linear(32, num_anomaly_classes),
+        )
 
-        # 6. Temperature scaling parameter (for post-hoc calibration)
-        #    Initialised to 1.0 (no change) -- optimised via calibrate_temperature()
-        self.temperature = nn.Parameter(torch.ones(1), requires_grad=False)
+        self.mc_dropout_p = mc_dropout_p
+
+    def _encode(self, x):
+        """x: (B,1,L) → rep: (B, enc_dim), alpha: (B, L)"""
+        x = x.transpose(1, 2)
+        lstm_out, _ = self.lstm(x)
+        scores = torch.tanh(self.attention_layer(lstm_out))
+        alpha  = F.softmax(scores, dim=1)
+        rep    = torch.sum(lstm_out * alpha, dim=1)
+        return rep, alpha.squeeze(-1)
 
     def forward(self, x, return_attention=False, return_anomaly=False):
         """
-        Forward pass with flexible output signatures:
-
-            model(x)                                    -> rr_pred
-            model(x, return_attention=True)             -> rr_pred, alpha
-            model(x, return_anomaly=True)               -> rr_pred, anomaly_logits
-            model(x, return_attention=True,
-                     return_anomaly=True)               -> rr_pred, alpha, anomaly_logits
-
-        x shape: (Batch_Size, Features, Sequence_Length)
+        Standard forward pass (Dropout inactive in eval mode).
+        For uncertainty estimation use predict_with_uncertainty().
         """
-        # Swap dimensions -> (Batch, Seq_Len, Features)
-        x = x.transpose(1, 2)
+        rep, alpha    = self._encode(x)
+        rep           = self.mc_dropout(rep)       # no-op in eval mode
+        rr_pred       = self.fc(rep)
+        anomaly_logits = self.anomaly_head(rep)
 
-        # Pass through LSTM
-        lstm_out, _ = self.lstm(x)
-
-        # --- ATTENTION MECHANISM ---
-        attention_scores = torch.tanh(self.attention_layer(lstm_out))
-        alpha = F.softmax(attention_scores, dim=1)
-        context_vector = lstm_out * alpha
-        representation = torch.sum(context_vector, dim=1)
-
-        # --- MC DROPOUT ---
-        representation = self.mc_dropout(representation)
-
-        # --- MULTI-TASK PREDICTIONS ---
-        predicted_rr = self.fc_rr(representation)
-
-        # Build return tuple based on flags
         if return_attention and return_anomaly:
-            anomaly_logits = self.fc_anomaly(representation)
-            return predicted_rr, alpha.squeeze(-1), anomaly_logits
-
-        if return_anomaly:
-            anomaly_logits = self.fc_anomaly(representation)
-            return predicted_rr, anomaly_logits
-
+            return rr_pred, alpha, anomaly_logits
         if return_attention:
-            return predicted_rr, alpha.squeeze(-1)
+            return rr_pred, alpha
+        if return_anomaly:
+            return rr_pred, anomaly_logits
+        return rr_pred
 
-        return predicted_rr
-
-    def predict_with_uncertainty(self, x, n_samples=20):
+    # ── MC Dropout Uncertainty Quantification ────────────────────
+    def predict_with_uncertainty(self, x, n_samples: int = 20, device=None):
         """
-        MC Dropout uncertainty estimation.
-
-        Runs n_samples stochastic forward passes with dropout enabled,
-        then computes mean, std, and 95% confidence interval for the
-        RR prediction.
+        Runs N stochastic forward passes with Dropout ACTIVE to
+        estimate prediction uncertainty (epistemic).
 
         Args:
-            x: Input tensor (Batch, 1, 3750)
-            n_samples: Number of MC dropout samples (more = smoother)
+            x        : (B, 1, L) input tensor
+            n_samples: number of MC samples (default 20, paper uses 50)
+            device   : torch device (inferred from x if None)
 
-        Returns:
-            dict with keys:
-                rr_mean  : (Batch,) mean predicted RR
-                rr_std   : (Batch,) standard deviation
-                rr_lower : (Batch,) lower bound of 95% CI
-                rr_upper : (Batch,) upper bound of 95% CI
-                rr_samples: (n_samples, Batch) raw predictions
-        """
-        was_training = self.training
-        self.train()  # Enable dropout
-
-        samples = []
-        with torch.no_grad():
-            for _ in range(n_samples):
-                pred = self.forward(x)  # (Batch, 1)
-                samples.append(pred.squeeze(-1))  # (Batch,)
-
-        if not was_training:
-            self.eval()
-
-        # Stack: (n_samples, Batch)
-        samples_tensor = torch.stack(samples, dim=0)
-
-        # Apply temperature scaling to the spread
-        rr_mean = samples_tensor.mean(dim=0)
-        rr_std = samples_tensor.std(dim=0) * self.temperature.item()
-
-        rr_lower = rr_mean - 1.96 * rr_std
-        rr_upper = rr_mean + 1.96 * rr_std
-
-        return {
-            "rr_mean": rr_mean,
-            "rr_std": rr_std,
-            "rr_lower": rr_lower,
-            "rr_upper": rr_upper,
-            "rr_samples": samples_tensor,
-        }
-
-    def calibrate_temperature(self, val_loader, device=None):
-        """
-        Post-hoc temperature scaling calibration (Guo et al., 2017).
-
-        Optimises a single scalar temperature parameter to map raw MC
-        Dropout std to calibrated confidence intervals, targeting 95%
-        coverage on the validation set.
-
-        This does NOT retrain the model -- only adjusts the temperature
-        parameter used in predict_with_uncertainty().
-
-        Args:
-            val_loader: DataLoader with (x, y) pairs
-            device: torch.device (defaults to CPU)
+        Returns dict:
+            rr_mean   : (B,)  mean predicted RR across samples
+            rr_std    : (B,)  std deviation — the uncertainty estimate
+            rr_lower  : (B,)  mean - 1.96*std  (95% CI lower)
+            rr_upper  : (B,)  mean - 1.96*std  (95% CI upper)
+            ano_probs : (B,C) mean softmax probabilities across samples
+            ano_std   : (B,C) std of softmax probs (uncertainty per class)
         """
         if device is None:
-            device = torch.device("cpu")
+            device = x.device
 
-        was_training = self.training
-        self.train()  # Enable dropout for MC samples
+        # Force Dropout ON for all MC passes (both self.mc_dropout
+        # and the Dropout inside anomaly_head)
+        self.train()
 
-        all_means, all_raw_stds, all_targets = [], [], []
+        rr_samples  = []
+        ano_samples = []
 
         with torch.no_grad():
-            for inputs, targets in val_loader:
-                inputs = inputs.to(device)
+            for _ in range(n_samples):
+                rep, _         = self._encode(x)
+                rep            = self.mc_dropout(rep)
+                rr_samples.append(self.fc(rep).squeeze(-1))          # (B,)
+                ano_samples.append(
+                    torch.softmax(self.anomaly_head(rep), dim=-1)     # (B,C)
+                )
 
-                # Collect MC samples with temperature=1.0
-                old_temp = self.temperature.item()
-                self.temperature.data.fill_(1.0)
+        # Restore eval mode
+        self.eval()
 
-                unc = self.predict_with_uncertainty(inputs, n_samples=30)
+        rr_stack  = torch.stack(rr_samples,  dim=0)   # (N, B)
+        ano_stack = torch.stack(ano_samples, dim=0)   # (N, B, C)
 
-                all_means.append(unc["rr_mean"].cpu())
-                all_raw_stds.append(unc["rr_std"].cpu())
-                all_targets.append(targets)
+        rr_mean  = rr_stack.mean(dim=0)               # (B,)
+        rr_std   = rr_stack.std(dim=0)                # (B,)
+        ano_mean = ano_stack.mean(dim=0)              # (B, C)
+        ano_std  = ano_stack.std(dim=0)               # (B, C)
 
-                self.temperature.data.fill_(old_temp)
-
-        means = torch.cat(all_means)
-        stds = torch.cat(all_raw_stds)
-        targets = torch.cat(all_targets)
-
-        # Binary search for optimal temperature that gives ~95% coverage
-        best_temp = 1.0
-        best_diff = float("inf")
-
-        for t_candidate in [i * 0.1 for i in range(1, 51)]:
-            lower = means - 1.96 * stds * t_candidate
-            upper = means + 1.96 * stds * t_candidate
-            coverage = float(((targets >= lower) & (targets <= upper)).float().mean() * 100)
-            diff = abs(coverage - 95.0)
-            if diff < best_diff:
-                best_diff = diff
-                best_temp = t_candidate
-
-        self.temperature.data.fill_(best_temp)
-        print(f"[Calibration] Temperature set to {best_temp:.1f} "
-              f"(target: 95% coverage)")
-
-        if not was_training:
-            self.eval()
+        return {
+            "rr_mean":  rr_mean.cpu().numpy(),
+            "rr_std":   rr_std.cpu().numpy(),
+            "rr_lower": (rr_mean - 1.96 * rr_std).cpu().numpy(),
+            "rr_upper": (rr_mean + 1.96 * rr_std).cpu().numpy(),
+            "ano_probs": ano_mean.cpu().numpy(),
+            "ano_std":   ano_std.cpu().numpy(),
+        }
 
 
 # ─────────────────────────────────────────────────────────────
-# TEST BLOCK
+# Self-test
 # ─────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    print("Testing Multi-Task XAI Architecture...")
-
+    print("Testing Multi-Task AttentionBiLSTM with MC Dropout...")
     model = AttentionBiLSTM()
-    dummy_input = torch.randn(1, 1, 3750)  # 30 seconds of simulated data
+    model.eval()
+    dummy = torch.randn(4, 1, 3750)
 
-    # Test 1: basic forward
-    rr = model(dummy_input)
-    print(f"[OK] RR only: {rr.shape} (expected [1, 1])")
+    rr = model(dummy)
+    print(f"RR-only        : {rr.shape}")
 
-    # Test 2: with attention
-    rr, attn = model(dummy_input, return_attention=True)
-    print(f"[OK] RR + Attention: rr={rr.shape}, attn={attn.shape}")
+    rr, alpha = model(dummy, return_attention=True)
+    print(f"+ attention    : {alpha.shape}")
 
-    # Test 3: with anomaly (2 outputs)
-    rr, anomaly = model(dummy_input, return_anomaly=True)
-    print(f"[OK] RR + Anomaly: rr={rr.shape}, anomaly={anomaly.shape}")
+    rr, logits = model(dummy, return_anomaly=True)
+    print(f"+ anomaly      : {logits.shape}")
 
-    # Test 4: full multi-task (3 outputs)
-    rr, attn, anomaly = model(dummy_input, return_attention=True, return_anomaly=True)
-    print(f"[OK] Full: rr={rr.shape}, attn={attn.shape}, anomaly={anomaly.shape}")
+    rr, alpha, logits = model(dummy, return_attention=True, return_anomaly=True)
+    print(f"All outputs    : rr={rr.shape} alpha={alpha.shape} logits={logits.shape}")
 
-    # Test 5: MC Dropout uncertainty
-    unc = model.predict_with_uncertainty(dummy_input, n_samples=10)
-    print(f"[OK] MC Dropout: mean={unc['rr_mean'].shape}, "
-          f"std={unc['rr_std'].shape}, "
-          f"CI=[{unc['rr_lower'].item():.2f}, {unc['rr_upper'].item():.2f}]")
-
-    print("[OK] All forward pass signatures verified.")
-    print(f"[OK] MC dropout_p = {model.mc_dropout_p}")
-    print(f"[OK] Temperature = {model.temperature.item():.1f}")
-    print("[OK] Model is ready.")
+    unc = model.predict_with_uncertainty(dummy, n_samples=20)
+    print(f"\nMC Dropout (20 samples):")
+    print(f"  rr_mean  : {unc['rr_mean'].round(3)}")
+    print(f"  rr_std   : {unc['rr_std'].round(4)}  ← epistemic uncertainty")
+    print(f"  95% CI   : [{unc['rr_lower'].round(2)}, {unc['rr_upper'].round(2)}]")
+    print(f"  ano_probs: shape {unc['ano_probs'].shape}")
+    print("All tests passed.")

@@ -4,7 +4,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, random_split
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')   # headless -- safe on Windows/servers
+matplotlib.use('Agg')   # headless — safe on Windows/servers
 import matplotlib.pyplot as plt
 
 from dataset import BidmcDataset
@@ -17,20 +17,17 @@ BATCH_SIZE    = 8
 LEARNING_RATE = 0.001
 EPOCHS        = 20
 LAMBDA_ANOMALY = 0.3   # anomaly loss weight (matches client.py)
-SEED          = 42
 DEVICE        = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def train_centralized():
     print(f"Starting centralized training on {DEVICE}...")
     print(f"Multi-task loss: MSE(RR) + {LAMBDA_ANOMALY} x CE(anomaly)")
 
-    # -- Data --
+    # ── Data ────────────────────────────────────────────────────
     full_dataset = BidmcDataset()
     train_size   = int(0.8 * len(full_dataset))
     val_size     = len(full_dataset) - train_size
-    generator    = torch.Generator().manual_seed(SEED)
-    train_ds, val_ds = random_split(full_dataset, [train_size, val_size],
-                                     generator=generator)
+    train_ds, val_ds = random_split(full_dataset, [train_size, val_size])
 
     # drop_last=True keeps batch size consistent (needed if Opacus is used later)
     train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True,  drop_last=True)
@@ -38,13 +35,13 @@ def train_centralized():
 
     print(f"Data: {len(train_ds)} train / {len(val_ds)} val samples")
 
-    # -- Model + losses --
+    # ── Model + losses ───────────────────────────────────────────
     model         = AttentionBiLSTM().to(DEVICE)
     criterion_rr  = nn.MSELoss()
     criterion_ano = nn.CrossEntropyLoss()
     optimizer     = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
-    # -- Training history --
+    # ── Training history ─────────────────────────────────────────
     history = {
         "train_loss": [], "train_rr_loss": [], "train_ano_loss": [],
         "val_mae": [],    "val_rmse": [],
@@ -53,7 +50,7 @@ def train_centralized():
     best_path = "centralized_model.pth"
 
     for epoch in range(EPOCHS):
-        # -- Train --
+        # ── Train ───────────────────────────────────────────────
         model.train()
         total_loss = rr_loss_sum = ano_loss_sum = 0.0
 
@@ -61,7 +58,7 @@ def train_centralized():
             inputs, targets = inputs.to(DEVICE), targets.to(DEVICE)
             optimizer.zero_grad()
 
-            # Multi-task forward pass (3 outputs)
+            # Multi-task forward pass
             rr_pred, _, anomaly_logits = model(
                 inputs, return_attention=True, return_anomaly=True
             )
@@ -85,7 +82,7 @@ def train_centralized():
             rr_loss_sum  += rr_loss.item()
             ano_loss_sum += ano_loss.item()
 
-        # -- Validate --
+        # ── Validate ─────────────────────────────────────────────
         model.eval()
         all_preds, all_targets = [], []
         with torch.no_grad():
@@ -112,16 +109,16 @@ def train_centralized():
               f"(RR: {rr_loss_sum/n:.4f}  Ano: {ano_loss_sum/n:.4f}) | "
               f"Val MAE: {val_mae:.3f}  RMSE: {val_rmse:.3f} BrPM")
 
-        # -- Save best checkpoint --
+        # ── Save best checkpoint ──────────────────────────────────
         if val_mae < best_mae:
             best_mae = val_mae
             torch.save(model.state_dict(), best_path)
-            print(f"           -> New best MAE {best_mae:.3f} -- saved to {best_path}")
+            print(f"           -> New best MAE {best_mae:.3f} — saved to {best_path}")
 
     print(f"\nTraining complete. Best Val MAE: {best_mae:.4f} BrPM")
     print(f"Model saved to: {best_path}")
 
-    # -- Learning curve plot --
+    # ── Learning curve plot ───────────────────────────────────────
     fig, axes = plt.subplots(1, 2, figsize=(11, 4))
 
     axes[0].plot(history["train_rr_loss"],  label="RR loss (MSE)",      color="#378ADD", linewidth=1.8)
@@ -143,7 +140,7 @@ def train_centralized():
 
     plt.tight_layout()
     out = "training_curve.png"
-    plt.savefig(out, dpi=150, bbox_inches="tight")
+    plt.savefig(out, dpi=300, bbox_inches="tight")
     plt.close()
     print(f"Learning curve saved to: {out}")
 
