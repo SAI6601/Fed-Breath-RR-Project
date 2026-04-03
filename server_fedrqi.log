@@ -1,3 +1,6 @@
+[Server] Strategy: fedrqi
+[Server] Rounds: 20
+[Server] Log: simulation_log.csv
 [93mWARNING [0m:   DEPRECATED FEATURE: flwr.server.start_server() is deprecated.
 	Instead, use the `flower-superlink` CLI command to start a SuperLink as shown below:
 
@@ -23,307 +26,330 @@
 [92mINFO [0m:      [ROUND 1]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+[93mWARNING [0m:   No fit_metrics_aggregation_fn provided
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:13:25:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:13:31:INFO:aggregate_evaluate: received 2 results and 0 failures
+[93mWARNING [0m:   No evaluate_metrics_aggregation_fn provided
+04/03/2026 14:13:31:WARNING:No evaluate_metrics_aggregation_fn provided
 [92mINFO [0m:      
+04/03/2026 14:13:31:INFO:
 [92mINFO [0m:      [ROUND 2]
+04/03/2026 14:13:31:INFO:[ROUND 2]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:13:31:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:15:14:INFO:aggregate_fit: received 2 results and 0 failures
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:15:14:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:15:20:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
+04/03/2026 14:15:20:INFO:
 [92mINFO [0m:      [ROUND 3]
+04/03/2026 14:15:20:INFO:[ROUND 3]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:15:20:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:17:16:INFO:aggregate_fit: received 2 results and 0 failures
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:17:16:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:17:23:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
+04/03/2026 14:17:23:INFO:
 [92mINFO [0m:      [ROUND 4]
+04/03/2026 14:17:23:INFO:[ROUND 4]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:17:23:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:19:05:INFO:aggregate_fit: received 2 results and 0 failures
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:19:05:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:19:11:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
+04/03/2026 14:19:11:INFO:
 [92mINFO [0m:      [ROUND 5]
+04/03/2026 14:19:11:INFO:[ROUND 5]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:19:11:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:21:05:INFO:aggregate_fit: received 2 results and 0 failures
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:21:05:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:21:12:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
+04/03/2026 14:21:12:INFO:
 [92mINFO [0m:      [ROUND 6]
+04/03/2026 14:21:12:INFO:[ROUND 6]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:21:12:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:23:15:INFO:aggregate_fit: received 2 results and 0 failures
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:23:15:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:23:24:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
+04/03/2026 14:23:24:INFO:
 [92mINFO [0m:      [ROUND 7]
+04/03/2026 14:23:24:INFO:[ROUND 7]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:23:24:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:25:39:INFO:aggregate_fit: received 2 results and 0 failures
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:25:40:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:25:47:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
+04/03/2026 14:25:47:INFO:
 [92mINFO [0m:      [ROUND 8]
+04/03/2026 14:25:47:INFO:[ROUND 8]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:25:47:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:27:59:INFO:aggregate_fit: received 2 results and 0 failures
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:27:59:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:28:07:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
+04/03/2026 14:28:07:INFO:
 [92mINFO [0m:      [ROUND 9]
+04/03/2026 14:28:07:INFO:[ROUND 9]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:28:07:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:30:03:INFO:aggregate_fit: received 2 results and 0 failures
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:30:03:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:30:09:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
+04/03/2026 14:30:09:INFO:
 [92mINFO [0m:      [ROUND 10]
+04/03/2026 14:30:09:INFO:[ROUND 10]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:30:09:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:32:00:INFO:aggregate_fit: received 2 results and 0 failures
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:32:00:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:32:07:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
+04/03/2026 14:32:07:INFO:
 [92mINFO [0m:      [ROUND 11]
+04/03/2026 14:32:07:INFO:[ROUND 11]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:32:07:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:33:58:INFO:aggregate_fit: received 2 results and 0 failures
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:33:58:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:34:05:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
+04/03/2026 14:34:05:INFO:
 [92mINFO [0m:      [ROUND 12]
+04/03/2026 14:34:05:INFO:[ROUND 12]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:34:05:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:35:53:INFO:aggregate_fit: received 2 results and 0 failures
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:35:53:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:36:00:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
+04/03/2026 14:36:00:INFO:
 [92mINFO [0m:      [ROUND 13]
+04/03/2026 14:36:00:INFO:[ROUND 13]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:36:00:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:37:49:INFO:aggregate_fit: received 2 results and 0 failures
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:37:49:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:38:00:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
+04/03/2026 14:38:00:INFO:
 [92mINFO [0m:      [ROUND 14]
+04/03/2026 14:38:00:INFO:[ROUND 14]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:38:00:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
-Starting Server | strategy=fedrqi | rounds=20 | clients=2 | log=sim_log_fedrqi.csv
-[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
-[Anomaly] Anomaly Distribution (this round):
-   Normal            : 12
-   Bradypnea         : 5
-   Apnea             : 0
-   Tachypnea         : 15
-   SevTachy          : 0
-
-========================================
---- Round 1 Aggregation Report ---
-[BFT]  BFT Security Scan:
-   [OK] PASS: Client 0 looks benign. (Norm: 26.68)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-   [OK] PASS: Client 1 looks benign. (Norm: 26.68)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
-[Anomaly] Anomaly Distribution (this round):
-   Normal            : 28
-   Bradypnea         : 0
-   Apnea             : 0
-   Tachypnea         : 4
-   SevTachy          : 0
-
-========================================
---- Round 2 Aggregation Report ---
-[BFT]  BFT Security Scan:
-   [OK] PASS: Client 0 looks benign. (Norm: 26.70)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-   [OK] PASS: Client 1 looks benign. (Norm: 26.70)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
-[Anomaly] Anomaly Distribution (this round):
-   Normal            : 32
-   Bradypnea         : 0
-   Apnea             : 0
-   Tachypnea         : 0
-   SevTachy          : 0
-
-========================================
---- Round 3 Aggregation Report ---
-[BFT]  BFT Security Scan:
-   [OK] PASS: Client 0 looks benign. (Norm: 26.74)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-   [OK] PASS: Client 1 looks benign. (Norm: 26.74)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
-[Anomaly] Anomaly Distribution (this round):
-   Normal            : 32
-   Bradypnea         : 0
-   Apnea             : 0
-   Tachypnea         : 0
-   SevTachy          : 0
-
-========================================
---- Round 4 Aggregation Report ---
-[BFT]  BFT Security Scan:
-   [OK] PASS: Client 0 looks benign. (Norm: 26.79)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-   [OK] PASS: Client 1 looks benign. (Norm: 26.79)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
-[Anomaly] Anomaly Distribution (this round):
-   Normal            : 32
-   Bradypnea         : 0
-   Apnea             : 0
-   Tachypnea         : 0
-   SevTachy          : 0
-
-========================================
---- Round 5 Aggregation Report ---
-[BFT]  BFT Security Scan:
-   [OK] PASS: Client 0 looks benign. (Norm: 26.85)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-   [OK] PASS: Client 1 looks benign. (Norm: 26.85)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
-[Anomaly] Anomaly Distribution (this round):
-   Normal            : 32
-   Bradypnea         : 0
-   Apnea             : 0
-   Tachypnea         : 0
-   SevTachy          : 0
-
-========================================
---- Round 6 Aggregation Report ---
-[BFT]  BFT Security Scan:
-   [OK] PASS: Client 0 looks benign. (Norm: 26.92)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-   [OK] PASS: Client 1 looks benign. (Norm: 26.92)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
-[Anomaly] Anomaly Distribution (this round):
-   Normal            : 32
-   Bradypnea         : 0
-   Apnea             : 0
-   Tachypnea         : 0
-   SevTachy          : 0
-
-========================================
---- Round 7 Aggregation Report ---
-[BFT]  BFT Security Scan:
-   [OK] PASS: Client 0 looks benign. (Norm: 27.00)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-   [OK] PASS: Client 1 looks benign. (Norm: 27.00)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
-[Anomaly] Anomaly Distribution (this round):
-   Normal            : 32
-   Bradypnea         : 0
-   Apnea             : 0
-   Tachypnea         : 0
-   SevTachy          : 0
-
-========================================
---- Round 8 Aggregation Report ---
-[BFT]  BFT Security Scan:
-   [OK] PASS: Client 0 looks benign. (Norm: 27.09)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-   [OK] PASS: Client 1 looks benign. (Norm: 27.09)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
-[Anomaly] Anomaly Distribution (this round):
-   Normal            : 32
-   Bradypnea         : 0
-   Apnea             : 0
-   Tachypnea         : 0
-   SevTachy          : 0
-
-========================================
---- Round 9 Aggregation Report ---
-[BFT]  BFT Security Scan:
-   [OK] PASS: Client 0 looks benign. (Norm: 27.20)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-   [OK] PASS: Client 1 looks benign. (Norm: 27.20)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
-[Anomaly] Anomaly Distribution (this round):
-   Normal            : 32
-   Bradypnea         : 0
-   Apnea             : 0
-   Tachypnea         : 0
-   SevTachy          : 0
-
-========================================
---- Round 10 Aggregation Report ---
-[BFT]  BFT Security Scan:
-   [OK] PASS: Client 0 looks benign. (Norm: 27.32)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-   [OK] PASS: Client 1 looks benign. (Norm: 27.32)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
-[Anomaly] Anomaly Distribution (this round):
-   Normal            : 32
-   Bradypnea         : 0
-   Apnea             : 0
-   Tachypnea         : 0
-   SevTachy          : 0
-
-========================================
---- Round 11 Aggregation Report ---
-[BFT]  BFT Security Scan:
-   [OK] PASS: Client 0 looks benign. (Norm: 27.44)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-   [OK] PASS: Client 1 looks benign. (Norm: 27.44)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
-[Anomaly] Anomaly Distribution (this round):
-   Normal            : 32
-   Bradypnea         : 0
-   Apnea             : 0
-   Tachypnea         : 0
-   SevTachy          : 0
-
-========================================
---- Round 12 Aggregation Report ---
-[BFT]  BFT Security Scan:
-   [OK] PASS: Client 0 looks benign. (Norm: 27.57)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-   [OK] PASS: Client 1 looks benign. (Norm: 27.57)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
-[Anomaly] Anomaly Distribution (this round):
-   Normal            : 32
-   Bradypnea         : 0
-   Apnea             : 0
-   Tachypnea         : 0
-   SevTachy          : 0
-
-========================================
---- Round 13 Aggregation Report ---
-[BFT]  BFT Security Scan:
-   [OK] PASS: Client 0 looks benign. (Norm: 27.69)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-   [OK] PASS: Client 1 looks benign. (Norm: 27.69)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-[DP] Privacy Budget -- epsilon = 0.0000, delta = 1e-05  (no DP)
-[Anomaly] Anomaly Distribution (this round):
-   Normal            : 32
-   Bradypnea         : 0
-   Apnea             : 0
-   Tachypnea         : 0
-   SevTachy          : 0
-
-========================================
---- Round 14 Aggregation Report ---
-[BFT]  BFT Security Scan:
-   [OK] PASS: Client 0 looks benign. (Norm: 27.82)
-   > Update Accepted: 20 samples | RQI: 0.1000 | Influence: 2.00
-   [OK] PASS: Client 1 looks benign. (Norm: 27.82)[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:40:40:INFO:aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:40:40:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:40:47:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
+04/03/2026 14:40:47:INFO:
 [92mINFO [0m:      [ROUND 15]
+04/03/2026 14:40:47:INFO:[ROUND 15]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:40:47:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:42:48:INFO:aggregate_fit: received 2 results and 0 failures
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:42:48:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:42:55:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
+04/03/2026 14:42:55:INFO:
 [92mINFO [0m:      [ROUND 16]
+04/03/2026 14:42:55:INFO:[ROUND 16]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:42:55:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:44:55:INFO:aggregate_fit: received 2 results and 0 failures
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:44:55:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:45:03:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
+04/03/2026 14:45:03:INFO:
 [92mINFO [0m:      [ROUND 17]
+04/03/2026 14:45:03:INFO:[ROUND 17]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:45:03:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:46:49:INFO:aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:46:49:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:46:55:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/03/2026 14:46:55:INFO:
+[92mINFO [0m:      [ROUND 18]
+04/03/2026 14:46:55:INFO:[ROUND 18]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:46:55:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:48:58:INFO:aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:48:58:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:49:04:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/03/2026 14:49:04:INFO:
+[92mINFO [0m:      [ROUND 19]
+04/03/2026 14:49:04:INFO:[ROUND 19]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:49:04:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:51:08:INFO:aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:51:08:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:51:15:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/03/2026 14:51:15:INFO:
+[92mINFO [0m:      [ROUND 20]
+04/03/2026 14:51:15:INFO:[ROUND 20]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/03/2026 14:51:15:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/03/2026 14:53:20:INFO:aggregate_fit: received 2 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/03/2026 14:53:20:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/03/2026 14:53:29:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/03/2026 14:53:29:INFO:
+[92mINFO [0m:      [SUMMARY]
+04/03/2026 14:53:29:INFO:[SUMMARY]
+[92mINFO [0m:      Run finished 20 round(s) in 2501.24s
+04/03/2026 14:53:29:INFO:Run finished 20 round(s) in 2501.24s
+[92mINFO [0m:      	History (loss, distributed):
+04/03/2026 14:53:29:INFO:	History (loss, distributed):
+[92mINFO [0m:      		round 1: 314.6053466796875
+04/03/2026 14:53:29:INFO:		round 1: 314.6053466796875
+[92mINFO [0m:      		round 2: 314.2901611328125
+04/03/2026 14:53:29:INFO:		round 2: 314.2901611328125
+[92mINFO [0m:      		round 3: 313.9551086425781
+04/03/2026 14:53:29:INFO:		round 3: 313.9551086425781
+[92mINFO [0m:      		round 4: 313.63233947753906
+04/03/2026 14:53:29:INFO:		round 4: 313.63233947753906
+[92mINFO [0m:      		round 5: 313.29518127441406
+04/03/2026 14:53:29:INFO:		round 5: 313.29518127441406
+[92mINFO [0m:      		round 6: 312.9517364501953
+04/03/2026 14:53:29:INFO:		round 6: 312.9517364501953
+[92mINFO [0m:      		round 7: 312.6062774658203
+04/03/2026 14:53:29:INFO:		round 7: 312.6062774658203
+[92mINFO [0m:      		round 8: 312.2739715576172
+04/03/2026 14:53:29:INFO:		round 8: 312.2739715576172
+[92mINFO [0m:      		round 9: 311.951904296875
+04/03/2026 14:53:29:INFO:		round 9: 311.951904296875
+[92mINFO [0m:      		round 10: 311.63148498535156
+04/03/2026 14:53:29:INFO:		round 10: 311.63148498535156
+[92mINFO [0m:      		round 11: 311.3079833984375
+04/03/2026 14:53:29:INFO:		round 11: 311.3079833984375
+[92mINFO [0m:      		round 12: 310.98516845703125
+04/03/2026 14:53:29:INFO:		round 12: 310.98516845703125
+[92mINFO [0m:      		round 13: 310.6603698730469
+04/03/2026 14:53:29:INFO:		round 13: 310.6603698730469
+[92mINFO [0m:      		round 14: 310.3244171142578
+04/03/2026 14:53:29:INFO:		round 14: 310.3244171142578
+[92mINFO [0m:      		round 15: 309.9842987060547
+04/03/2026 14:53:29:INFO:		round 15: 309.9842987060547
+[92mINFO [0m:      		round 16: 309.6422424316406
+04/03/2026 14:53:29:INFO:		round 16: 309.6422424316406
+[92mINFO [0m:      		round 17: 309.2916259765625
+04/03/2026 14:53:29:INFO:		round 17: 309.2916259765625
+[92mINFO [0m:      		round 18: 308.9324493408203
+04/03/2026 14:53:29:INFO:		round 18: 308.9324493408203
+[92mINFO [0m:      		round 19: 308.5751190185547
+04/03/2026 14:53:29:INFO:		round 19: 308.5751190185547
+[92mINFO [0m:      		round 20: 308.2146453857422
+04/03/2026 14:53:29:INFO:		round 20: 308.2146453857422
+[92mINFO [0m:      	History (metrics, distributed, evaluate):
+04/03/2026 14:53:29:INFO:	History (metrics, distributed, evaluate):
+[92mINFO [0m:      	{'mae': [(1, 17.524028142293293),
+04/03/2026 14:53:29:INFO:	{'mae': [(1, 17.524028142293293),
+[92mINFO [0m:      	         (2, 17.51503308614095),
+04/03/2026 14:53:29:INFO:	         (2, 17.51503308614095),
+[92mINFO [0m:      	         (3, 17.505465825398762),
+04/03/2026 14:53:29:INFO:	         (3, 17.505465825398762),
+[92mINFO [0m:      	         (4, 17.496245702107746),
+04/03/2026 14:53:29:INFO:	         (4, 17.496245702107746),
+[92mINFO [0m:      	         (5, 17.486605962117512),
+04/03/2026 14:53:29:INFO:	         (5, 17.486605962117512),
+[92mINFO [0m:      	         (6, 17.47678502400716),
+04/03/2026 14:53:29:INFO:	         (6, 17.47678502400716),
+[92mINFO [0m:      	         (7, 17.466899236043293),
+04/03/2026 14:53:29:INFO:	         (7, 17.466899236043293),
+[92mINFO [0m:      	         (8, 17.45738347371419),
+04/03/2026 14:53:29:INFO:	         (8, 17.45738347371419),
+[92mINFO [0m:      	         (9, 17.448157628377277),
+04/03/2026 14:53:29:INFO:	         (9, 17.448157628377277),
+[92mINFO [0m:      	         (10, 17.43897247314453),
+04/03/2026 14:53:29:INFO:	         (10, 17.43897247314453),
+[92mINFO [0m:      	         (11, 17.42969512939453),
+04/03/2026 14:53:29:INFO:	         (11, 17.42969512939453),
+[92mINFO [0m:      	         (12, 17.420432408650715),
+04/03/2026 14:53:29:INFO:	         (12, 17.420432408650715),
+[92mINFO [0m:      	         (13, 17.41110610961914),
+04/03/2026 14:53:29:INFO:	         (13, 17.41110610961914),
+[92mINFO [0m:      	         (14, 17.40145492553711),
+04/03/2026 14:53:29:INFO:	         (14, 17.40145492553711),
+[92mINFO [0m:      	         (15, 17.3916810353597),
+04/03/2026 14:53:29:INFO:	         (15, 17.3916810353597),
+[92mINFO [0m:      	         (16, 17.381844838460285),
+04/03/2026 14:53:29:INFO:	         (16, 17.381844838460285),
+[92mINFO [0m:      	         (17, 17.37175687154134),
+04/03/2026 14:53:29:INFO:	         (17, 17.37175687154134),
+[92mINFO [0m:      	         (18, 17.36141522725423),
+04/03/2026 14:53:29:INFO:	         (18, 17.36141522725423),
+[92mINFO [0m:      	         (19, 17.35112126668294),
+04/03/2026 14:53:29:INFO:	         (19, 17.35112126668294),
+[92mINFO [0m:      	         (20, 17.34073003133138)]}
+04/03/2026 14:53:29:INFO:	         (20, 17.34073003133138)]}
+[92mINFO [0m:      
+04/03/2026 14:53:29:INFO:

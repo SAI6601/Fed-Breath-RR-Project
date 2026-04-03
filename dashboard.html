@@ -1297,6 +1297,17 @@
     };
 
     ws.onerror = () => log('WebSocket error — is uvicorn running?', 'log-fail');
+    ws.onclose = () => {
+      log('WebSocket closed — reconnecting in 3 s...', 'log-warn');
+      setTimeout(() => {
+        log('Attempting reconnect...', 'log-warn');
+        const ws2 = new WebSocket(`ws://${window.location.host}/ws`);
+        ws2.onopen    = ws.onopen;
+        ws2.onmessage = ws.onmessage;
+        ws2.onerror   = ws.onerror;
+        ws2.onclose   = ws.onclose;
+      }, 3000);
+    };
   </script>
 </body>
 

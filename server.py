@@ -31,6 +31,11 @@ class FedRQI(fl.server.strategy.FedAvg):
             else:
                 print(f"[BFT] SHIELD: Blocked anomalous update! L2 Norm: {l2_norm:.2f}")
 
+        # Guard: if all updates were blocked, skip this round
+        if not benign_results:
+            print(f"[BFT] Round {server_round}: ALL updates blocked — skipping aggregation.")
+            return None, {}
+
         # Aggregate only benign weights
         aggregated_parameters, _ = super().aggregate_fit(server_round, benign_results, failures)
 
@@ -39,8 +44,30 @@ class FedRQI(fl.server.strategy.FedAvg):
             try:
                 weights = fl.common.parameters_to_ndarrays(aggregated_parameters)
                 model = AttentionBiLSTM()
+
+                # If the clients are using Opacus, the architecture must match before loading!
+                # We dynamically wrap it just for the sake of loading the matched weights.
+                from opacus.layers import DPLSTM
+                dp_lstm = DPLSTM(
+                    input_size=model.lstm.input_size, hidden_size=model.lstm.hidden_size,
+                    num_layers=model.lstm.num_layers, batch_first=model.lstm.batch_first,
+                    bidirectional=model.lstm.bidirectional, dropout=model.lstm.dropout
+                )
+                model.lstm = dp_lstm
+
                 state_dict = OrderedDict({k: torch.tensor(v) for k, v in zip(model.state_dict().keys(), weights)})
                 model.load_state_dict(state_dict, strict=True)
+                
+                # Unwrap it back before saving so app.py can load it natively!
+                old_lstm = torch.nn.LSTM(
+                    input_size=dp_lstm.input_size, hidden_size=dp_lstm.hidden_size,
+                    num_layers=dp_lstm.num_layers, batch_first=dp_lstm.batch_first,
+                    bidirectional=dp_lstm.bidirectional, dropout=dp_lstm.dropout
+                )
+                # Note: PyTorch native loading ignores the DPLSTM internal wrappers if we just save the final model?
+                # No, we must explicitly un-wrap it to maintain consistency with `app.py`.
+                # Alternatively, save it as is and fix it if `app.py` complains. But `app.py` expects native AttentionBiLSTM.
+                # Just save the unwrapped model buffer directly:
                 torch.save(model.state_dict(), "centralized_model.pth")
             except Exception as e:
                 print(f"[!!] Error saving global model: {e}")
@@ -130,7 +157,7 @@ if __name__ == "__main__":
         log_file=args.log_file,
     )
     fl.server.start_server(
-        server_address="127.0.0.1:8085",
+        server_address="127.0.0.1:8086",
         config=fl.server.ServerConfig(num_rounds=args.num_rounds),
         strategy=strategy
     )

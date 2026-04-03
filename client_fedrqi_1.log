@@ -1,4 +1,24 @@
+Starting Hospital Node #1 on cpu
+Differential Privacy : ENABLED
+Anomaly Detection    : ENABLED (lambda=0.3)
+[OK] Found 53 patient files in data/raw
+[DP] Node 1: Fixing model for Opacus (LSTM -> DPLSTM)...
+C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\opacus\privacy_engine.py:96: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+04/03/2026 14:11:48:WARNING:Ignoring drop_last as it is not compatible with DPDataLoader.
+[DP] Node 1: PrivacyEngine attached (sigma=1.0, C=1.0, delta=1e-05)
 [93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated. 
+	Instead, use `flwr.client.start_client()` by ensuring you first call the `.to_client()` method as shown below: 
+	flwr.client.start_client(
+		server_address='<IP>:<PORT>',
+		client=FlowerClient().to_client(), # <-- where FlowerClient is of type flwr.client.NumPyClient object
+	)
+	Using `start_numpy_client()` is deprecated.
+
+            This is a deprecated feature. It will be removed
+            entirely in future versions of Flower.
+        
+04/03/2026 14:11:48:WARNING:DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated. 
 	Instead, use `flwr.client.start_client()` by ensuring you first call the `.to_client()` method as shown below: 
 	flwr.client.start_client(
 		server_address='<IP>:<PORT>',
@@ -23,410 +43,436 @@
             This is a deprecated feature. It will be removed
             entirely in future versions of Flower.
         
+04/03/2026 14:11:48:WARNING:DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
+	Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
+
+		$ flower-supernode --insecure --superlink='<IP>:<PORT>'
+
+	To view all available options, run:
+
+		$ flower-supernode --help
+
+	Using `start_client()` is deprecated.
+
+            This is a deprecated feature. It will be removed
+            entirely in future versions of Flower.
+        
+04/03/2026 14:11:48:DEBUG:Using InMemoryObjectStore
+04/03/2026 14:11:48:DEBUG:Opened insecure gRPC connection (no certificates were passed)
+04/03/2026 14:11:48:DEBUG:ChannelConnectivity.IDLE
+04/03/2026 14:11:48:DEBUG:ChannelConnectivity.CONNECTING
 [92mINFO [0m:      
-[92mINFO [0m:      Received: train message 0ee5329c-e848-4bec-afae-dffb1282ae3f
-D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
-For migrations of users: 
-1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
-2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
-3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
-see https://github.com/pytorch/ao/issues/2259 for more details
-  return torch.quantization.quantize_dynamic(
+04/03/2026 14:11:48:DEBUG:ChannelConnectivity.READY
+04/03/2026 14:11:48:INFO:
+[92mINFO [0m:      Received: get_parameters message 54f77d05-bfa6-4a61-a415-f20bc808e4e0
+04/03/2026 14:11:48:INFO:Received: get_parameters message 54f77d05-bfa6-4a61-a415-f20bc808e4e0
 [92mINFO [0m:      Sent reply
+04/03/2026 14:11:48:INFO:Sent reply
 [92mINFO [0m:      
-[92mINFO [0m:      Received: evaluate message 74a105fe-d865-411c-afe6-02576123e235
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: train message 0d4db2be-2981-4c42-af50-dac1add5c308
-D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
-For migrations of users: 
-1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
-2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
-3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
-see https://github.com/pytorch/ao/issues/2259 for more details
-  return torch.quantization.quantize_dynamic(
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: evaluate message 4d3729a8-920e-4f12-8b9c-5a6d64fbf888
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: train message 7474d16d-fe69-43a1-9774-cc432281c78f
-D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
-For migrations of users: 
-1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
-2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
-3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
-see https://github.com/pytorch/ao/issues/2259 for more details
-  return torch.quantization.quantize_dynamic(
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: evaluate message abba6430-7c37-4b9b-8fe4-3129000b93a4
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: train message 6287c625-6195-4897-9b58-eb113dd3f1fa
-D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
-For migrations of users: 
-1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
-2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
-3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
-see https://github.com/pytorch/ao/issues/2259 for more details
-  return torch.quantization.quantize_dynamic(
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: evaluate message daf7379a-84a1-483e-b470-0e7637d3b8de
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: train message c1aa8cc3-a805-4abd-a61e-cc8dcb909595
-D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
-For migrations of users: 
-1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
-2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
-3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
-see https://github.com/pytorch/ao/issues/2259 for more details
-  return torch.quantization.quantize_dynamic(
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: evaluate message ed3d4cd6-4339-4698-9e85-554a0dd5b631
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: train message 37e721cc-5858-4534-b5a3-458b7c547e0f
-D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
-For migrations of users: 
-1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
-2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
-3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
-see https://github.com/pytorch/ao/issues/2259 for more details
-  return torch.quantization.quantize_dynamic(
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: evaluate message 1e5c0eb0-cf05-4c3a-b72a-72116c63a535
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: train message a321a482-8d21-4c54-b57c-d310df9ed147
-D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
-For migrations of users: 
-1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
-2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
-3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
-see https://github.com/pytorch/ao/issues/2259 for more details
-  return torch.quantization.quantize_dynamic(
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: evaluate message ebf58c0f-2d18-438e-96d4-4a930f730134
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: train message aefec0b0-2a36-4b81-885b-3d7f1c8d1aee
-D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
-For migrations of users: 
-1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
-2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
-3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
-see https://github.com/pytorch/ao/issues/2259 for more details
-  return torch.quantization.quantize_dynamic(
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: evaluate message fed484ab-ccf9-4b99-b590-e582fb7d686f
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: train message f10c930f-e4b2-40f0-bcb5-36e3af7d4855
-D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
-For migrations of users: 
-1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
-2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
-3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
-see https://github.com/pytorch/ao/issues/2259 for more details
-  return torch.quantization.quantize_dynamic(
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: evaluate message 8ec6d729-8607-4e42-bc6a-a82a21fd2e96
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: train message ee0982d1-5092-4caf-8f40-1622c2dd01e5
-D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
-For migrations of users: 
-1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
-2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
-3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
-see https://github.com/pytorch/ao/issues/2259 for more details
-  return torch.quantization.quantize_dynamic(
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: evaluate message 49f74426-26b1-41de-a458-d7376737cbde
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: train message a42bc077-80fe-4543-8628-db2711b7150f
-D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
-For migrations of users: 
-1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
-2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
-3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
-see https://github.com/pytorch/ao/issues/2259 for more details
-  return torch.quantization.quantize_dynamic(
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: evaluate message 46bcfe61-bbf4-41dc-bab1-1bf70aaf62b0
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: train message 7a5bb287-4b7c-42d2-aea1-1994bdc077c5
-D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
-For migrations of users: 
-1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
-2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
-3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
-see https://github.com/pytorch/ao/issues/2259 for more details
-  return torch.quantization.quantize_dynamic(
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: evaluate message 08e79c85-f92b-43c2-b6dc-0be8afbbef51
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: train message f479f964-0108-448a-a708-b688ee5d1ae8
-D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
-For migrations of users: 
-1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
-2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
-3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
-see https://github.com/pytorch/ao/issues/2259 for more details
-  return torch.quantization.quantize_dynamic(
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: evaluate message 1774f430-fc23-4c54-b0e2-9c4ea7862e43
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: train message 92ba751f-e2cf-4e29-a9fe-5f7fc9297751
-D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
-For migrations of users: 
-1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
-2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
-3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
-see https://github.com/pytorch/ao/issues/2259 for more details
-  return torch.quantization.quantize_dynamic(
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: evaluate message cef0e4ac-c50a-48c4-8a79-42c288db5e1a
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: train message 29056483-cd16-4d24-b93e-58d3ee5faa1d
-D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
-For migrations of users: 
-1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
-2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
-3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
-see https://github.com/pytorch/ao/issues/2259 for more details
-  return torch.quantization.quantize_dynamic(
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: evaluate message b5210c7e-c3d9-4ec4-b3ed-c41908c3c07f
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: train message db40a136-0a46-440c-aca7-62be3ef274c0
-D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
-For migrations of users: 
-1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
-2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
-3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
-see https://github.com/pytorch/ao/issues/2259 for more details
-  return torch.quantization.quantize_dynamic(
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: evaluate message ac507fcb-c6be-4c8a-94f9-83574f609bea
-[92mINFO [0m:      Sent reply
-[92mINFO [0m:      
-[92mINFO [0m:      Received: train message 94ff15f1-6dc5-4583-9e56-12364122f9d4
-D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py:44: DeprecationWarning: torch.ao.quantization is deprecated and will be removed in 2.10. 
-For migrations of users: 
-1. Eager mode quantization (torch.ao.quantization.quantize, torch.ao.quantization.quantize_dynamic), please migrate to use torchao eager mode quantize_ API instead 
-2. FX graph mode quantization (torch.ao.quantization.quantize_fx.prepare_fx,torch.ao.quantization.quantize_fx.convert_fx, please migrate to use torchao pt2e quantization API instead (prepare_pt2e, convert_pt2e) 
-3. pt2e quantization has been migrated to torchao (https://github.com/pytorch/ao/tree/main/torchao/quantization/pt2e) 
-see https://github.com/pytorch/ao/issues/2259 for more details
-  return torch.quantization.quantize_dynamic(
-[92mINFO [0m:      Sent reply
-Starting Hospital Node #1 on cpu
-Differential Privacy : ENABLED
-Anomaly Detection    : ENABLED (lambda=0.3)
-✅ Found 53 patient files in data/raw
-[DP] WARNING: Opacus not installed. Run: pip install opacus
-[Stats] Node 1 | RQI: 0.1000
+04/03/2026 14:11:48:INFO:
+[92mINFO [0m:      Received: train message 49834d17-5654-4c94-89c3-a01f2cf3bc89
+04/03/2026 14:11:48:INFO:Received: train message 49834d17-5654-4c94-89c3-a01f2cf3bc89
+[Node] Node 1 | RQI: 0.1000
    Anomaly distribution this round:
-   0 Normal              :    7 samples
-   1 Bradypnea           :    2 samples
-   2 Apnea               :    0 samples
-   3 Tachypnea           :    7 samples
-   4 Severe Tachypnea    :    0 samples
-[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
-[Stats] Node 1 | RQI: 0.1000
-   Anomaly distribution this round:
-   0 Normal              :   14 samples
+   0 Normal              :    0 samples
    1 Bradypnea           :    0 samples
-   2 Apnea               :    0 samples
-   3 Tachypnea           :    2 samples
-   4 Severe Tachypnea    :    0 samples
-[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
-[Stats] Node 1 | RQI: 0.1000
-   Anomaly distribution this round:
-   0 Normal              :   16 samples
-   1 Bradypnea           :    0 samples
-   2 Apnea               :    0 samples
+   2 Apnea               :   14 samples
    3 Tachypnea           :    0 samples
    4 Severe Tachypnea    :    0 samples
-[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
-[Stats] Node 1 | RQI: 0.1000
+[DP] DP Budget: epsilon = 4.8644, delta = 1e-05
+[Edge] FP32=0.553MB -> INT8=0.535MB (3.3%)
+[92mINFO [0m:      Sent reply
+04/03/2026 14:13:20:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:13:25:INFO:
+[92mINFO [0m:      Received: evaluate message e4d97e2c-09c1-4f0a-9043-365074f49a04
+04/03/2026 14:13:25:INFO:Received: evaluate message e4d97e2c-09c1-4f0a-9043-365074f49a04
+[92mINFO [0m:      Sent reply
+04/03/2026 14:13:31:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:13:31:INFO:
+[92mINFO [0m:      Received: train message 21506f9b-e5b2-478e-9deb-797e91874e87
+04/03/2026 14:13:31:INFO:Received: train message 21506f9b-e5b2-478e-9deb-797e91874e87
+[Node] Node 1 | RQI: 0.1000
    Anomaly distribution this round:
-   0 Normal              :   16 samples
+   0 Normal              :    0 samples
    1 Bradypnea           :    0 samples
-   2 Apnea               :    0 samples
+   2 Apnea               :   19 samples
    3 Tachypnea           :    0 samples
    4 Severe Tachypnea    :    0 samples
-[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
-[Stats] Node 1 | RQI: 0.1000
+[DP] DP Budget: epsilon = 6.6874, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:15:14:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:15:14:INFO:
+[92mINFO [0m:      Received: evaluate message 7eab0086-2c29-46ef-b3c6-92e586ddeb57
+04/03/2026 14:15:14:INFO:Received: evaluate message 7eab0086-2c29-46ef-b3c6-92e586ddeb57
+[92mINFO [0m:      Sent reply
+04/03/2026 14:15:20:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:15:21:INFO:
+[92mINFO [0m:      Received: train message c97716e7-87e2-4cfc-9903-4eddaf61208a
+04/03/2026 14:15:21:INFO:Received: train message c97716e7-87e2-4cfc-9903-4eddaf61208a
+[Node] Node 1 | RQI: 0.1000
    Anomaly distribution this round:
-   0 Normal              :   16 samples
+   0 Normal              :    0 samples
    1 Bradypnea           :    0 samples
-   2 Apnea               :    0 samples
+   2 Apnea               :   23 samples
    3 Tachypnea           :    0 samples
    4 Severe Tachypnea    :    0 samples
-[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
-[Stats] Node 1 | RQI: 0.1000
+[DP] DP Budget: epsilon = 8.1157, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:17:16:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:17:16:INFO:
+[92mINFO [0m:      Received: evaluate message 04468cf7-cec2-4308-9919-0327648b6edc
+04/03/2026 14:17:16:INFO:Received: evaluate message 04468cf7-cec2-4308-9919-0327648b6edc
+[92mINFO [0m:      Sent reply
+04/03/2026 14:17:23:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:17:23:INFO:
+[92mINFO [0m:      Received: train message 029f7882-2c00-442d-b1ef-ed5ec87e4c75
+04/03/2026 14:17:23:INFO:Received: train message 029f7882-2c00-442d-b1ef-ed5ec87e4c75
+[Node] Node 1 | RQI: 0.1000
    Anomaly distribution this round:
-   0 Normal              :   16 samples
+   0 Normal              :    0 samples
    1 Bradypnea           :    0 samples
-   2 Apnea               :    0 samples
+   2 Apnea               :   17 samples
    3 Tachypnea           :    0 samples
    4 Severe Tachypnea    :    0 samples
-[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
-[Stats] Node 1 | RQI: 0.1000
+[DP] DP Budget: epsilon = 9.3526, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:19:04:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:19:05:INFO:
+[92mINFO [0m:      Received: evaluate message 8d858485-5e70-46e8-875c-80ff71e54ae0
+04/03/2026 14:19:05:INFO:Received: evaluate message 8d858485-5e70-46e8-875c-80ff71e54ae0
+[92mINFO [0m:      Sent reply
+04/03/2026 14:19:11:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:19:11:INFO:
+[92mINFO [0m:      Received: train message 7a3e5f0a-ef61-4b7b-b5b6-5dc6241b9da3
+04/03/2026 14:19:11:INFO:Received: train message 7a3e5f0a-ef61-4b7b-b5b6-5dc6241b9da3
+[Node] Node 1 | RQI: 0.1000
    Anomaly distribution this round:
-   0 Normal              :   16 samples
+   0 Normal              :    0 samples
    1 Bradypnea           :    0 samples
-   2 Apnea               :    0 samples
+   2 Apnea               :   20 samples
    3 Tachypnea           :    0 samples
    4 Severe Tachypnea    :    0 samples
-[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
-[Stats] Node 1 | RQI: 0.1000
+[DP] DP Budget: epsilon = 10.4705, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:21:04:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:21:05:INFO:
+[92mINFO [0m:      Received: evaluate message 8eabcec2-a5a2-445d-bf82-29a3e9450415
+04/03/2026 14:21:05:INFO:Received: evaluate message 8eabcec2-a5a2-445d-bf82-29a3e9450415
+[92mINFO [0m:      Sent reply
+04/03/2026 14:21:12:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:21:12:INFO:
+[92mINFO [0m:      Received: train message 361e52f3-8b67-4399-ae16-13417d35908c
+04/03/2026 14:21:12:INFO:Received: train message 361e52f3-8b67-4399-ae16-13417d35908c
+[Node] Node 1 | RQI: 0.1000
    Anomaly distribution this round:
-   0 Normal              :   16 samples
+   0 Normal              :    0 samples
    1 Bradypnea           :    0 samples
-   2 Apnea               :    0 samples
+   2 Apnea               :   21 samples
    3 Tachypnea           :    0 samples
    4 Severe Tachypnea    :    0 samples
-[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
-[Stats] Node 1 | RQI: 0.1000
+[DP] DP Budget: epsilon = 11.5053, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:23:15:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:23:15:INFO:
+[92mINFO [0m:      Received: evaluate message 647cfc2e-584c-4bc7-ab79-536dd7971b5c
+04/03/2026 14:23:15:INFO:Received: evaluate message 647cfc2e-584c-4bc7-ab79-536dd7971b5c
+[92mINFO [0m:      Sent reply
+04/03/2026 14:23:24:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:23:24:INFO:
+[92mINFO [0m:      Received: train message f9428228-b551-4011-b0f8-236d9a1495df
+04/03/2026 14:23:24:INFO:Received: train message f9428228-b551-4011-b0f8-236d9a1495df
+[Node] Node 1 | RQI: 0.1000
    Anomaly distribution this round:
-   0 Normal              :   16 samples
+   0 Normal              :    0 samples
    1 Bradypnea           :    0 samples
-   2 Apnea               :    0 samples
+   2 Apnea               :   15 samples
    3 Tachypnea           :    0 samples
    4 Severe Tachypnea    :    0 samples
-[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
-[Stats] Node 1 | RQI: 0.1000
+[DP] DP Budget: epsilon = 12.4776, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:25:33:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:25:40:INFO:
+[92mINFO [0m:      Received: evaluate message c46478ec-8934-4928-a0ad-5ae2fb113b31
+04/03/2026 14:25:40:INFO:Received: evaluate message c46478ec-8934-4928-a0ad-5ae2fb113b31
+[92mINFO [0m:      Sent reply
+04/03/2026 14:25:47:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:25:47:INFO:
+[92mINFO [0m:      Received: train message d215796c-062d-4783-96e1-7b046ddf2328
+04/03/2026 14:25:47:INFO:Received: train message d215796c-062d-4783-96e1-7b046ddf2328
+[Node] Node 1 | RQI: 0.1000
    Anomaly distribution this round:
-   0 Normal              :   16 samples
+   0 Normal              :    0 samples
    1 Bradypnea           :    0 samples
-   2 Apnea               :    0 samples
+   2 Apnea               :   20 samples
    3 Tachypnea           :    0 samples
    4 Severe Tachypnea    :    0 samples
-[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
-[Stats] Node 1 | RQI: 0.1000
+[DP] DP Budget: epsilon = 13.4008, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:27:59:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:27:59:INFO:
+[92mINFO [0m:      Received: evaluate message 08ecbafc-a81d-415e-a00d-8fa6d566cf46
+04/03/2026 14:27:59:INFO:Received: evaluate message 08ecbafc-a81d-415e-a00d-8fa6d566cf46
+[92mINFO [0m:      Sent reply
+04/03/2026 14:28:07:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:28:07:INFO:
+[92mINFO [0m:      Received: train message d85b5740-b8fb-4f40-a372-db250d5a2916
+04/03/2026 14:28:07:INFO:Received: train message d85b5740-b8fb-4f40-a372-db250d5a2916
+[Node] Node 1 | RQI: 0.1000
    Anomaly distribution this round:
-   0 Normal              :   16 samples
+   0 Normal              :    0 samples
    1 Bradypnea           :    0 samples
-   2 Apnea               :    0 samples
+   2 Apnea               :   15 samples
    3 Tachypnea           :    0 samples
    4 Severe Tachypnea    :    0 samples
-[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
-[Stats] Node 1 | RQI: 0.1000
+[DP] DP Budget: epsilon = 14.2841, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:29:59:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:30:03:INFO:
+[92mINFO [0m:      Received: evaluate message 6b6c6def-b969-4884-869d-6f73108f4ebb
+04/03/2026 14:30:03:INFO:Received: evaluate message 6b6c6def-b969-4884-869d-6f73108f4ebb
+[92mINFO [0m:      Sent reply
+04/03/2026 14:30:09:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:30:09:INFO:
+[92mINFO [0m:      Received: train message 93a851ca-6482-43de-a015-48f944c89065
+04/03/2026 14:30:09:INFO:Received: train message 93a851ca-6482-43de-a015-48f944c89065
+[Node] Node 1 | RQI: 0.1000
    Anomaly distribution this round:
-   0 Normal              :   16 samples
+   0 Normal              :    0 samples
    1 Bradypnea           :    0 samples
-   2 Apnea               :    0 samples
+   2 Apnea               :   17 samples
    3 Tachypnea           :    0 samples
    4 Severe Tachypnea    :    0 samples
-[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
-[Stats] Node 1 | RQI: 0.1000
+[DP] DP Budget: epsilon = 15.1341, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:31:57:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:32:00:INFO:
+[92mINFO [0m:      Received: evaluate message ad8594f3-e9d2-468c-96e1-973328c6c1fc
+04/03/2026 14:32:00:INFO:Received: evaluate message ad8594f3-e9d2-468c-96e1-973328c6c1fc
+[92mINFO [0m:      Sent reply
+04/03/2026 14:32:07:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:32:07:INFO:
+[92mINFO [0m:      Received: train message e2b9dc64-edc7-4039-9caf-a1da41b08a1b
+04/03/2026 14:32:07:INFO:Received: train message e2b9dc64-edc7-4039-9caf-a1da41b08a1b
+[Node] Node 1 | RQI: 0.1000
    Anomaly distribution this round:
-   0 Normal              :   16 samples
+   0 Normal              :    0 samples
    1 Bradypnea           :    0 samples
-   2 Apnea               :    0 samples
+   2 Apnea               :   13 samples
    3 Tachypnea           :    0 samples
    4 Severe Tachypnea    :    0 samples
-[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
-[Stats] Node 1 | RQI: 0.1000
+[DP] DP Budget: epsilon = 15.9557, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:33:51:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:33:58:INFO:
+[92mINFO [0m:      Received: evaluate message 8c4e7a90-63ba-489b-975e-ceffe27de7d5
+04/03/2026 14:33:58:INFO:Received: evaluate message 8c4e7a90-63ba-489b-975e-ceffe27de7d5
+[92mINFO [0m:      Sent reply
+04/03/2026 14:34:05:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:34:05:INFO:
+[92mINFO [0m:      Received: train message a3f1fd28-db5d-4891-a6f4-926fa402f958
+04/03/2026 14:34:05:INFO:Received: train message a3f1fd28-db5d-4891-a6f4-926fa402f958
+[Node] Node 1 | RQI: 0.1000
    Anomaly distribution this round:
-   0 Normal              :   16 samples
+   0 Normal              :    0 samples
    1 Bradypnea           :    0 samples
-   2 Apnea               :    0 samples
+   2 Apnea               :   18 samples
    3 Tachypnea           :    0 samples
    4 Severe Tachypnea    :    0 samples
-[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
-[Stats] Node 1 | RQI: 0.1000
+[DP] DP Budget: epsilon = 16.7529, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:35:52:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:35:53:INFO:
+[92mINFO [0m:      Received: evaluate message 5dcbefdc-d608-417a-bba2-8ca6d215d82f
+04/03/2026 14:35:53:INFO:Received: evaluate message 5dcbefdc-d608-417a-bba2-8ca6d215d82f
+[92mINFO [0m:      Sent reply
+04/03/2026 14:36:00:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:36:00:INFO:
+[92mINFO [0m:      Received: train message e0cde90b-6edd-4526-99fb-f0ee77d181fd
+04/03/2026 14:36:00:INFO:Received: train message e0cde90b-6edd-4526-99fb-f0ee77d181fd
+[Node] Node 1 | RQI: 0.1000
    Anomaly distribution this round:
-   0 Normal              :   16 samples
+   0 Normal              :    0 samples
    1 Bradypnea           :    0 samples
-   2 Apnea               :    0 samples
+   2 Apnea               :   17 samples
    3 Tachypnea           :    0 samples
    4 Severe Tachypnea    :    0 samples
-[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
-[Stats] Node 1 | RQI: 0.1000
+[DP] DP Budget: epsilon = 17.5287, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:37:47:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:37:49:INFO:
+[92mINFO [0m:      Received: evaluate message 8d1c0890-9c4d-42ea-8fb0-f0ac52d52cc2
+04/03/2026 14:37:49:INFO:Received: evaluate message 8d1c0890-9c4d-42ea-8fb0-f0ac52d52cc2
+[92mINFO [0m:      Sent reply
+04/03/2026 14:38:00:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:38:00:INFO:
+[92mINFO [0m:      Received: train message 229c5cc3-0fc8-4fd3-a246-03493023ecd1
+04/03/2026 14:38:00:INFO:Received: train message 229c5cc3-0fc8-4fd3-a246-03493023ecd1
+[Node] Node 1 | RQI: 0.1000
    Anomaly distribution this round:
-   0 Normal              :   16 samples
+   0 Normal              :    0 samples
    1 Bradypnea           :    0 samples
-   2 Apnea               :    0 samples
+   2 Apnea               :   24 samples
    3 Tachypnea           :    0 samples
    4 Severe Tachypnea    :    0 samples
-[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
-[Stats] Node 1 | RQI: 0.1000
+[DP] DP Budget: epsilon = 18.2855, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:40:39:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:40:40:INFO:
+[92mINFO [0m:      Received: evaluate message 542009d4-abbf-44c2-8327-7d7e264c8c5c
+04/03/2026 14:40:40:INFO:Received: evaluate message 542009d4-abbf-44c2-8327-7d7e264c8c5c
+[92mINFO [0m:      Sent reply
+04/03/2026 14:40:47:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:40:47:INFO:
+[92mINFO [0m:      Received: train message b6a5270c-a89c-43b2-a698-4c2a55b9a256
+04/03/2026 14:40:47:INFO:Received: train message b6a5270c-a89c-43b2-a698-4c2a55b9a256
+[Node] Node 1 | RQI: 0.1000
    Anomaly distribution this round:
-   0 Normal              :   16 samples
+   0 Normal              :    0 samples
    1 Bradypnea           :    0 samples
-   2 Apnea               :    0 samples
+   2 Apnea               :   20 samples
    3 Tachypnea           :    0 samples
    4 Severe Tachypnea    :    0 samples
-[Edge]  Edge: FP32=0.561MB -> INT8=0.157MB (72.0%)
-Traceback (most recent call last):
-  File "D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py", line 273, in <module>
-    main()
-    ~~~~^^
-  File "D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py", line 267, in main
-    fl.client.start_numpy_client(
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
-        server_address="127.0.0.1:8085",
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        client=BreathClient(model, train_loader, val_loader, node_id=args.node_id),
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\compat\client\app.py", line 625, in start_numpy_client
-    start_client(
-    ~~~~~~~~~~~~^
-        server_address=server_address,
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ...<4 lines>...
-        transport=transport,
-        ^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\compat\client\app.py", line 184, in start_client
-    start_client_internal(
-    ~~~~~~~~~~~~~~~~~~~~~^
-        server_address=server_address,
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ...<10 lines>...
-        max_wait_time=max_wait_time,
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\compat\client\app.py", line 395, in start_client_internal
-    message = receive()
-  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\compat\client\grpc_client\connection.py", line 142, in receive
-    proto = next(server_message_iterator)
-  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\grpc\_channel.py", line 538, in __next__
-    return self._next()
-           ~~~~~~~~~~^^
-  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\grpc\_channel.py", line 945, in _next
-    raise self
-grpc._channel._MultiThreadedRendezvous: <_MultiThreadedRendezvous of RPC that terminated with:
-	status = StatusCode.UNAVAILABLE
-	details = "IOCP/Socket: Connection reset (An existing connection was forcibly closed by the remote host.
- -- 10054)"
-	debug_error_string = "UNKNOWN:Error received from peer ipv4:127.0.0.1:8085 {grpc_message:"IOCP/Socket: Connection reset (An existing connection was forcibly closed by the remote host.\r\n -- 10054)", grpc_status:14}"
->
+[DP] DP Budget: epsilon = 19.0254, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:42:48:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:42:48:INFO:
+[92mINFO [0m:      Received: evaluate message d8cb73a1-8c6e-465d-b0e6-956b66e4eeb2
+04/03/2026 14:42:48:INFO:Received: evaluate message d8cb73a1-8c6e-465d-b0e6-956b66e4eeb2
+[92mINFO [0m:      Sent reply
+04/03/2026 14:42:55:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:42:55:INFO:
+[92mINFO [0m:      Received: train message ea66ff48-2771-40c4-ad97-9f8e6c0e648f
+04/03/2026 14:42:55:INFO:Received: train message ea66ff48-2771-40c4-ad97-9f8e6c0e648f
+[Node] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :   21 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[DP] DP Budget: epsilon = 19.7500, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:44:55:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:44:56:INFO:
+[92mINFO [0m:      Received: evaluate message 1d04ad35-b220-4ee4-bd2d-5c6b95a9efd1
+04/03/2026 14:44:56:INFO:Received: evaluate message 1d04ad35-b220-4ee4-bd2d-5c6b95a9efd1
+[92mINFO [0m:      Sent reply
+04/03/2026 14:45:03:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:45:03:INFO:
+[92mINFO [0m:      Received: train message 068c1fcf-ed47-4d82-9afa-22078073711f
+04/03/2026 14:45:03:INFO:Received: train message 068c1fcf-ed47-4d82-9afa-22078073711f
+[Node] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :   18 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[DP] DP Budget: epsilon = 20.4607, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:46:49:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:46:49:INFO:
+[92mINFO [0m:      Received: evaluate message 47c71535-303b-4e99-909d-3b819b59c6f1
+04/03/2026 14:46:49:INFO:Received: evaluate message 47c71535-303b-4e99-909d-3b819b59c6f1
+[92mINFO [0m:      Sent reply
+04/03/2026 14:46:55:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:46:55:INFO:
+[92mINFO [0m:      Received: train message 161069d3-5b4a-4898-b330-6cfc3eacce83
+04/03/2026 14:46:55:INFO:Received: train message 161069d3-5b4a-4898-b330-6cfc3eacce83
+[Node] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :   22 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[DP] DP Budget: epsilon = 21.1588, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:48:57:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:48:58:INFO:
+[92mINFO [0m:      Received: evaluate message 62d39221-7a45-4557-aa6d-cba80e7f68f1
+04/03/2026 14:48:58:INFO:Received: evaluate message 62d39221-7a45-4557-aa6d-cba80e7f68f1
+[92mINFO [0m:      Sent reply
+04/03/2026 14:49:04:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:49:04:INFO:
+[92mINFO [0m:      Received: train message e41b6936-c33d-4c11-91f1-9829a8014f1c
+04/03/2026 14:49:04:INFO:Received: train message e41b6936-c33d-4c11-91f1-9829a8014f1c
+[Node] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :   17 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[DP] DP Budget: epsilon = 21.8454, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:51:04:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:51:08:INFO:
+[92mINFO [0m:      Received: evaluate message 192820a1-08c9-4ab8-8a4c-5ccf8373d08c
+04/03/2026 14:51:08:INFO:Received: evaluate message 192820a1-08c9-4ab8-8a4c-5ccf8373d08c
+[92mINFO [0m:      Sent reply
+04/03/2026 14:51:15:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:51:15:INFO:
+[92mINFO [0m:      Received: train message 9aca6b8d-c9c5-48aa-a82e-82d2d4aa4027
+04/03/2026 14:51:15:INFO:Received: train message 9aca6b8d-c9c5-48aa-a82e-82d2d4aa4027
+[Node] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :   24 samples
+   3 Tachypnea           :    0 samples
+   4 Severe Tachypnea    :    0 samples
+[DP] DP Budget: epsilon = 22.5213, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/03/2026 14:53:19:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:53:20:INFO:
+[92mINFO [0m:      Received: evaluate message 59fbad00-5349-4ae1-93e1-d21297dbaa39
+04/03/2026 14:53:20:INFO:Received: evaluate message 59fbad00-5349-4ae1-93e1-d21297dbaa39
+[92mINFO [0m:      Sent reply
+04/03/2026 14:53:29:INFO:Sent reply
+[92mINFO [0m:      
+04/03/2026 14:53:29:INFO:
+[92mINFO [0m:      Received: reconnect message 5d02d6b6-14c0-43a6-8409-1a0d68550a9c
+04/03/2026 14:53:29:INFO:Received: reconnect message 5d02d6b6-14c0-43a6-8409-1a0d68550a9c
+04/03/2026 14:53:29:DEBUG:gRPC channel closed
+[92mINFO [0m:      Disconnect and shut down
+04/03/2026 14:53:29:INFO:Disconnect and shut down

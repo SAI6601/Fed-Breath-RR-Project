@@ -25,17 +25,31 @@ _model_loaded = False
 
 def _try_load_model():
     global _model, _model_loaded
-    path = "model_bidmc_capnobase.pth"
-    if not os.path.exists(path):
-        print(f"[XAI] No model file found at {path} — using synthetic waveform fallback.")
+    # Try model paths in priority order: FL-updated first!
+    candidates = [
+        "centralized_model.pth",
+        "model_bidmc_capnobase.pth",
+        "model_bidmc.pth",
+    ]
+    path = next((p for p in candidates if os.path.exists(p)), None)
+    if path is None:
+        print(f"[XAI] No model file found ({candidates}) — using synthetic waveform fallback.")
         return
     try:
         m = AttentionBiLSTM().to(DEVICE)
-        m.load_state_dict(torch.load(path, map_location=DEVICE))
+        
+        if path == "centralized_model.pth":
+            from opacus.validators import ModuleValidator
+            try:
+                m = ModuleValidator.fix(m)
+            except Exception as e:
+                print(f"[XAI] DP wrapper fix failed: {e}")
+
+        m.load_state_dict(torch.load(path, map_location=DEVICE, weights_only=True))
         m.eval()
         _model = m
         _model_loaded = True
-        print("[XAI] AttentionBiLSTM loaded — real inference active.")
+        print(f"[XAI] AttentionBiLSTM loaded from {path} — real inference active.")
     except Exception as e:
         print(f"[XAI] Model load failed ({e}) — using synthetic fallback.")
 
@@ -87,6 +101,7 @@ def _fill_synthetic(n=SEGMENT_LEN * 8):
     Realistic ECG-style PPG waveform:
     - 72 BPM cardiac pulses (P-Q-R-S-T morphology, sharp R spike)
     - 15 BrPM breathing baseline modulation (0.25 Hz)
+    Populates both _signal_buffer (for inference) and _visual_buffer (for display).
     """
     t      = np.linspace(0, n / SAMPLE_RATE, n)
     hr_hz  = 1.2    # 72 BPM
@@ -117,8 +132,20 @@ def _fill_synthetic(n=SEGMENT_LEN * 8):
     sig += 0.015 * np.random.randn(n).astype(np.float32)
     sig  = np.clip(sig, -2.5, 2.5)
     sig  = sig / (np.abs(sig).max() + 1e-6) * 1.35
+
+    # Model inference buffer (raw signal)
     _signal_buffer.extend(sig.tolist())
-    print("[XAI] ECG-style synthetic PPG buffer initialised.")
+
+    # Visual display buffer: APG (second derivative) — same transform as real data loader
+    raw_f64 = sig.astype(np.float64)
+    d1      = np.gradient(raw_f64)
+    apg     = -np.gradient(d1)
+    std_apg = np.nanstd(apg)
+    vis     = (apg - np.nanmean(apg)) / (std_apg if std_apg > 1e-6 else 1.0)
+    vis     = np.nan_to_num(vis, nan=0.0).astype(np.float32)
+    _visual_buffer.extend(vis.tolist())
+
+    print("[XAI] ECG-style synthetic PPG buffer initialised (signal + visual).")
 
 if not _try_fill_from_file():
     _fill_synthetic()
@@ -270,7 +297,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     pass
 
             # --- Live Stream ---
-            if len(_signal_buffer) < SEGMENT_LEN:
+            if len(_signal_buffer) < SEGMENT_LEN or len(_visual_buffer) < FRAME_POINTS:
                 if not _try_fill_from_file():
                     _fill_synthetic()
 

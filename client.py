@@ -264,10 +264,10 @@ class BreathClient(fl.client.NumPyClient):
         for p in base_model.attention_layer.parameters():
             p.requires_grad = False
 
-        # Fine-tune heads only
+        # Fine-tune heads only (fc = RR regression head, anomaly_head = anomaly classifier)
         optimizer = optim.Adam([
-            *base_model.fc_rr.parameters(),
-            *base_model.fc_anomaly.parameters(),
+            *base_model.fc.parameters(),
+            *base_model.anomaly_head.parameters(),
         ], lr=lr)
 
         criterion_rr  = nn.MSELoss()
@@ -280,9 +280,7 @@ class BreathClient(fl.client.NumPyClient):
                 inputs, targets = inputs.to(DEVICE), targets.to(DEVICE)
                 optimizer.zero_grad()
 
-                rr_pred, anomaly_logits = base_model(
-                    inputs, return_anomaly=True
-                )
+                rr_pred, anomaly_logits = base_model(inputs, return_anomaly=True)
 
                 rr_loss = criterion_rr(rr_pred, targets.unsqueeze(1))
                 pseudo = torch.tensor(
@@ -341,7 +339,7 @@ def main():
     model = AttentionBiLSTM().to(DEVICE)
 
     fl.client.start_numpy_client(
-        server_address="127.0.0.1:8085",
+        server_address="127.0.0.1:8086",
         client=BreathClient(model, train_loader, val_loader, node_id=args.node_id),
     )
 

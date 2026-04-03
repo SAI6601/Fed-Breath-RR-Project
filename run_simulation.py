@@ -14,43 +14,97 @@ def run_experiment(strategy_name, num_clients, num_rounds):
           f"{num_clients} clients | {num_rounds} rounds")
     print(f"{'='*52}")
 
-    processes = []
+    srv_log_path = f"server_{strategy_name}.log"
+    print(f"  Server log : {srv_log_path}")
+
+    processes  = []
+    log_handles = []
 
     # 1. Start Server
+    srv_log_fh = open(srv_log_path, "w", encoding="utf-8")
+    log_handles.append(srv_log_fh)
+
     server_cmd = [
-        sys.executable, "server.py",
+        sys.executable, "-u", "server.py",
         "--strategy",   strategy_name,
         "--num-rounds", str(num_rounds),
     ]
-    server_proc = subprocess.Popen(server_cmd, env=utf8_env)
+    server_proc = subprocess.Popen(
+        server_cmd,
+        stdout=srv_log_fh,
+        stderr=srv_log_fh,
+        env=utf8_env,
+    )
     processes.append(server_proc)
-    print("Server started — waiting 5 s for port to open...")
+    print(f"  Server started (PID {server_proc.pid}) — waiting 5 s for port to open...")
+    print(f"  [NOTE] A 20-round simulation takes roughly ~30 minutes on CPU (~90 seconds per round).")
+    print(f"  [NOTE] The terminal may appear paused between round evaluations. Please be patient!")
     time.sleep(5)
 
     if server_proc.poll() is not None:
-        print(f"Server exited immediately (code {server_proc.returncode}). Aborting.")
+        print(f"  Server exited immediately (code {server_proc.returncode}). Aborting.")
+        print(f"  Check {srv_log_path} for details.")
+        srv_log_fh.close()
         return
 
     # 2. Start Clients
     for i in range(num_clients):
-        print(f"  > Launching client {i}...")
+        cli_log_path = f"client_{strategy_name}_{i}.log"
+        cli_log_fh   = open(cli_log_path, "w", encoding="utf-8")
+        log_handles.append(cli_log_fh)
+
+        print(f"  Launching client {i} → {cli_log_path}")
         client_proc = subprocess.Popen(
-            [sys.executable, "client.py",
-             "--node-id",    str(i),
+            [sys.executable, "-u", "client.py",
+             "--node-id",     str(i),
              "--num-clients", str(num_clients)],
-            env=utf8_env
+            stdout=cli_log_fh,
+            stderr=cli_log_fh,
+            env=utf8_env,
         )
         processes.append(client_proc)
 
-    # 3. Wait for server to finish (Ctrl+C to stop early)
+    print(f"\n  All processes running. Streaming server log:\n")
+
+    # 3. Stream server log to console while waiting
     try:
-        server_proc.wait()
+        with open(srv_log_path, "r", encoding="utf-8", errors="replace") as f:
+            while True:
+                if server_proc.poll() is not None:
+                    # Drain remaining output
+                    for line in f:
+                        print(f"  [server] {line}", end="")
+                    break
+                line = f.readline()
+                if line:
+                    print(f"  [server] {line}", end="", flush=True)
+                else:
+                    time.sleep(0.2)
     except KeyboardInterrupt:
-        print("\nStopping simulation...")
+        print("\n  Stopping simulation...")
         for p in processes:
             p.terminate()
 
-    print(f"Simulation '{strategy_name}' finished.")
+    # 4. Wait for clients to finish
+    for i, p in enumerate(processes[1:], start=0):
+        try:
+            p.wait(timeout=30)
+        except subprocess.TimeoutExpired:
+            p.kill()
+        print(f"  Client {i} finished (code {p.returncode}). "
+              f"Log: client_{strategy_name}_{i}.log")
+
+    # 5. Close all log handles
+    for fh in log_handles:
+        try:
+            fh.close()
+        except Exception:
+            pass
+
+    print(f"\n  Simulation '{strategy_name}' finished.")
+    print(f"  Server log : {srv_log_path}")
+    for i in range(num_clients):
+        print(f"  Client {i} log: client_{strategy_name}_{i}.log")
 
 
 if __name__ == "__main__":

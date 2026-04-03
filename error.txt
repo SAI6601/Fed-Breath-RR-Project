@@ -1,0 +1,35 @@
+C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\opacus\privacy_engine.py:96: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+04/03/2026 11:38:45:WARNING:Ignoring drop_last as it is not compatible with DPDataLoader.
+Traceback (most recent call last):
+  File "D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\debug_client.py", line 23, in <module>
+    client.fit(parameters=weights, config={})
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py", line 133, in fit
+    set_params(self.model, parameters)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\VIT VELLORE\Academics\SET_PROJECT\Fed-Breath\client.py", line 78, in set_params
+    base.load_state_dict(state_dict, strict=True)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\torch\nn\modules\module.py", line 2629, in load_state_dict
+    raise RuntimeError(
+    ...<3 lines>...
+    )
+RuntimeError: Error(s) in loading state_dict for AttentionBiLSTM:
+	Missing key(s) in state_dict: "lstm.l1.ih.weight", "lstm.l1.ih.bias", "lstm.l1.hh.weight", "lstm.l1.hh.bias", "lstm.l1_reverse.ih.weight", "lstm.l1_reverse.ih.bias", "lstm.l1_reverse.hh.weight", "lstm.l1_reverse.hh.bias", "attention_layer.weight", "attention_layer.bias", "fc.weight", "fc.bias", "anomaly_head.0.weight", "anomaly_head.0.bias", "anomaly_head.3.weight", "anomaly_head.3.bias". 
+	size mismatch for lstm.bias_ih_l0: copying a param with shape torch.Size([256, 64]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for lstm.weight_hh_l0: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([256, 64]).
+	size mismatch for lstm.bias_ih_l0_reverse: copying a param with shape torch.Size([256, 64]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for lstm.weight_hh_l0_reverse: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([256, 64]).
+	size mismatch for lstm.bias_ih_l1: copying a param with shape torch.Size([256, 64]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for lstm.weight_hh_l1: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([256, 64]).
+	size mismatch for lstm.bias_ih_l1_reverse: copying a param with shape torch.Size([256, 64]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for lstm.weight_hh_l1_reverse: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([256, 64]).
+	size mismatch for lstm.l0.ih.weight: copying a param with shape torch.Size([1, 128]) from checkpoint, the shape in current model is torch.Size([256, 1]).
+	size mismatch for lstm.l0.ih.bias: copying a param with shape torch.Size([1]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for lstm.l0.hh.weight: copying a param with shape torch.Size([1, 128]) from checkpoint, the shape in current model is torch.Size([256, 64]).
+	size mismatch for lstm.l0.hh.bias: copying a param with shape torch.Size([1]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for lstm.l0_reverse.ih.weight: copying a param with shape torch.Size([32, 128]) from checkpoint, the shape in current model is torch.Size([256, 1]).
+	size mismatch for lstm.l0_reverse.ih.bias: copying a param with shape torch.Size([32]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for lstm.l0_reverse.hh.weight: copying a param with shape torch.Size([5, 32]) from checkpoint, the shape in current model is torch.Size([256, 64]).
+	size mismatch for lstm.l0_reverse.hh.bias: copying a param with shape torch.Size([5]) from checkpoint, the shape in current model is torch.Size([256]).
