@@ -1,0 +1,5 @@
+1329c17 results: all 5-fold CV complete, 20-round convergence, CapnoBase dual-benchmark
+68ec354 Pre-Testing of project
+f39a093 fix: 300 DPI figures, mc_dropout_p=0.3
+efefd45 ECG & DP Activating
+5a87352 feat: CapnoBase TBME integration + calibration improvements

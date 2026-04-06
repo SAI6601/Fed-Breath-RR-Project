@@ -1,0 +1,21 @@
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   evaluation_results/bland_altman.png
+	modified:   evaluation_results/uncertainty.png
+	modified:   server_fedrqi.log
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   centralized_model.pth
+	modified:   client_fedrqi_0.log
+	modified:   client_fedrqi_1.log
+	modified:   server_fedrqi.log
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.git_status.txt
+
