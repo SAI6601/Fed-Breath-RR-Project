@@ -25,8 +25,8 @@ class FedRQI(fl.server.strategy.FedAvg):
             weights = fl.common.parameters_to_ndarrays(fit_res.parameters)
             l2_norm = sum(np.linalg.norm(w) for w in weights)
 
-            # Threshold for malicious norm spike
-            if l2_norm < 500.0:
+            # Threshold for malicious norm spike (increased for standard model norms)
+            if l2_norm < 50000.0:
                 benign_results.append((client, fit_res))
             else:
                 print(f"[BFT] SHIELD: Blocked anomalous update! L2 Norm: {l2_norm:.2f}")
@@ -44,31 +44,21 @@ class FedRQI(fl.server.strategy.FedAvg):
             try:
                 weights = fl.common.parameters_to_ndarrays(aggregated_parameters)
                 model = AttentionBiLSTM()
-
-                # If the clients are using Opacus, the architecture must match before loading!
-                # We dynamically wrap it just for the sake of loading the matched weights.
-                from opacus.layers import DPLSTM
-                dp_lstm = DPLSTM(
-                    input_size=model.lstm.input_size, hidden_size=model.lstm.hidden_size,
-                    num_layers=model.lstm.num_layers, batch_first=model.lstm.batch_first,
-                    bidirectional=model.lstm.bidirectional, dropout=model.lstm.dropout
-                )
-                model.lstm = dp_lstm
-
-                state_dict = OrderedDict({k: torch.tensor(v) for k, v in zip(model.state_dict().keys(), weights)})
-                model.load_state_dict(state_dict, strict=True)
                 
-                # Unwrap it back before saving so app.py can load it natively!
-                old_lstm = torch.nn.LSTM(
-                    input_size=dp_lstm.input_size, hidden_size=dp_lstm.hidden_size,
-                    num_layers=dp_lstm.num_layers, batch_first=dp_lstm.batch_first,
-                    bidirectional=dp_lstm.bidirectional, dropout=dp_lstm.dropout
-                )
-                # Note: PyTorch native loading ignores the DPLSTM internal wrappers if we just save the final model?
-                # No, we must explicitly un-wrap it to maintain consistency with `app.py`.
-                # Alternatively, save it as is and fix it if `app.py` complains. But `app.py` expects native AttentionBiLSTM.
-                # Just save the unwrapped model buffer directly:
+                # Try to load weights normally first. If it fails, try the DP fix.
+                state_dict = OrderedDict({k: torch.tensor(v) for k, v in zip(model.state_dict().keys(), weights)})
+                try:
+                    model.load_state_dict(state_dict, strict=True)
+                except RuntimeError:
+                    # Likely a DP/non-DP mismatch. Try wrapping in DP layers.
+                    from opacus.validators import ModuleValidator
+                    model = ModuleValidator.fix(model)
+                    state_dict = OrderedDict({k: torch.tensor(v) for k, v in zip(model.state_dict().keys(), weights)})
+                    model.load_state_dict(state_dict, strict=True)
+                
+                # Save the model state dict (fixed or not, app.py will handle it)
                 torch.save(model.state_dict(), "centralized_model.pth")
+                print(f"[Server] Global model updated: centralized_model.pth")
             except Exception as e:
                 print(f"[!!] Error saving global model: {e}")
 

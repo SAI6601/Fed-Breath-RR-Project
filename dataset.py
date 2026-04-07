@@ -87,16 +87,19 @@ class BidmcDataset(Dataset):
         sig_path = os.path.join(self.data_dir, signal_file)
 
         try:
-            df_sig = pd.read_csv(sig_path)
-            ppg_col = [c for c in df_sig.columns if 'PLETH' in c.upper()][0]
-            raw_ppg = df_sig[ppg_col].values
+            # Memory optimization: find signal column first without loading whole file
+            header = pd.read_csv(sig_path, nrows=0).columns
+            ppg_col = [c for c in header if 'PLETH' in c.upper()][0]
+            df_sig = pd.read_csv(sig_path, usecols=[ppg_col])
+            raw_ppg = df_sig[ppg_col].values.astype(np.float32)
 
-            # Load Labels
+            # Load Labels: find resp column first
             numerics_file = f'bidmc_{patient_id}_Numerics.csv'
             num_path = os.path.join(self.data_dir, numerics_file)
             if os.path.exists(num_path):
-                df_num = pd.read_csv(num_path)
-                resp_col = [c for c in df_num.columns if 'RESP' in c.upper()][0]
+                num_header = pd.read_csv(num_path, nrows=0).columns
+                resp_col = [c for c in num_header if 'RESP' in c.upper()][0]
+                df_num = pd.read_csv(num_path, usecols=[resp_col])
                 true_rr = df_num[resp_col].mean()
             else:
                 true_rr = 0.0

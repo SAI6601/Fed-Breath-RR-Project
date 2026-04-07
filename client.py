@@ -1,3 +1,4 @@
+import gc
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -18,17 +19,19 @@ warnings.filterwarnings("ignore", message=".*Full backward hook is firing.*")
 # -------------------------------------------------------------
 # Configuration
 # -------------------------------------------------------------
-BATCH_SIZE       = 8
-LEARNING_RATE    = 0.001
-EPOCHS_PER_ROUND = 1
-DEVICE           = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-SEED             = 42
 
 # -- Differential Privacy -------------------------------------
 DP_ENABLED       = True
 NOISE_MULTIPLIER = 1.0
 MAX_GRAD_NORM    = 1.0
 TARGET_DELTA     = 1e-5
+
+# -- General ---------------------------------------------------
+BATCH_SIZE       = 2 if DP_ENABLED else 8  # DPLSTM needs ~10x more memory per sample
+LEARNING_RATE    = 0.001
+EPOCHS_PER_ROUND = 1
+DEVICE           = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+SEED             = 42
 
 # -- Multi-task loss weights -----------------------------------
 LAMBDA_ANOMALY   = 0.3   # anomaly loss weight relative to RR regression loss
@@ -44,26 +47,54 @@ def get_model_size_mb(model):
 
 def quantize_for_edge(model):
     import copy
-    m = copy.deepcopy(model)
-    m.to("cpu")
+    import gc
+    # Move a copy to CPU and quantize
+    m = copy.deepcopy(model).to("cpu")
+    m.eval() # Quantization usually requires eval mode
     import warnings as _w
     with _w.catch_warnings():
         _w.simplefilter("ignore", DeprecationWarning)
-        return torch.quantization.quantize_dynamic(
+        q_model = torch.quantization.quantize_dynamic(
             m, {nn.LSTM, nn.Linear}, dtype=torch.qint8
         )
+    del m
+    gc.collect()
+    return q_model
 
 def calculate_rqi_for_batch(ppg_batch):
     rqi_sum = 0.0
-    signals = ppg_batch.cpu().numpy().squeeze(1)
+    # Robustly handle different input shapes (B, 1, L) or (B, L)
+    sigs_np = ppg_batch.cpu().numpy()
+    if sigs_np.ndim == 3:
+        signals = np.squeeze(sigs_np, axis=1)
+    else:
+        signals = sigs_np
+    
+    if signals.ndim == 1: # Single sample case
+        signals = signals[np.newaxis, :]
+
+    if len(signals) == 0:
+        return 0.0
+
     for sig in signals:
+        # Avoid processing if signal is too short or empty
+        if len(sig) < 100:
+            rqi_sum += 0.1
+            continue
+            
         peaks, _ = find_peaks(sig, distance=40, prominence=0.5)
         if len(peaks) < 2:
             rqi_sum += 0.1
             continue
         intervals = np.diff(peaks)
-        cv = np.std(intervals) / (np.mean(intervals) + 1e-8)
+        avg_int = np.mean(intervals)
+        if avg_int < 1e-8:
+            rqi_sum += 0.1
+            continue
+            
+        cv = np.std(intervals) / avg_int
         rqi_sum += max(0.0, 1.0 - cv)
+        
     return rqi_sum / len(signals)
 
 def get_params(model):
@@ -72,10 +103,14 @@ def get_params(model):
 
 def set_params(model, parameters):
     base = getattr(model, '_module', model)
-    state_dict = OrderedDict(
-        {k: torch.tensor(v) for k, v in zip(base.state_dict().keys(), parameters)}
-    )
+    keys = list(base.state_dict().keys())
+    state_dict = OrderedDict()
+    for k, v in zip(keys, parameters):
+        # use from_numpy to avoid extra copy if possible, then cast
+        t = torch.from_numpy(v)
+        state_dict[k] = t
     base.load_state_dict(state_dict, strict=True)
+    del state_dict # clear reference quickly
 
 # -------------------------------------------------------------
 # Flower Client
@@ -173,6 +208,13 @@ class BreathClient(fl.client.NumPyClient):
 
             total_rqi += calculate_rqi_for_batch(inputs)
             batches   += 1
+            if batches % 5 == 0:
+                print(f"[Node {self.node_id}] Training batch {batches}...")
+
+            # Free DPLSTM intermediate tensors to prevent OOM on CPU
+            del rr_pred, alpha, anomaly_logits, rr_loss, ano_loss, loss
+            del inputs, targets, pseudo_labels
+            gc.collect()
 
         final_rqi = total_rqi / batches if batches > 0 else 0.0
 

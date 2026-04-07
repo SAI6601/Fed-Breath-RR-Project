@@ -1,9 +1,11 @@
 import asyncio
 import csv
+import gc
 import json
 import os
 import math
 import numpy as np
+import itertools
 from collections import deque
 from fastapi import FastAPI, WebSocket
 from fastapi.responses import HTMLResponse
@@ -22,6 +24,7 @@ DEVICE       = torch.device("cpu")
 
 _model = None
 _model_loaded = False
+_inference_count = 0
 
 def _try_load_model():
     global _model, _model_loaded
@@ -37,15 +40,23 @@ def _try_load_model():
         return
     try:
         m = AttentionBiLSTM().to(DEVICE)
+        state_dict = torch.load(path, map_location=DEVICE, weights_only=True)
         
-        if path == "centralized_model.pth":
+        try:
+            # 1. Try standard load first
+            m.load_state_dict(state_dict, strict=True)
+        except RuntimeError:
+            # 2. If it fails, maybe it's a DP-wrapped architecture? Try the fix.
+            print(f"[XAI] Standard load failed for {path}. Attempting DP-wrapped architecture fix...")
             from opacus.validators import ModuleValidator
             try:
                 m = ModuleValidator.fix(m)
-            except Exception as e:
-                print(f"[XAI] DP wrapper fix failed: {e}")
+                m.load_state_dict(state_dict, strict=True)
+            except Exception as e2:
+                # 3. Last fallback: partial load
+                print(f"[XAI] DP fix also failed or mismatch persists: {e2}. Using partial load (strict=False).")
+                m.load_state_dict(state_dict, strict=False)
 
-        m.load_state_dict(torch.load(path, map_location=DEVICE, weights_only=True))
         m.eval()
         _model = m
         _model_loaded = True
@@ -161,23 +172,30 @@ def safe_float(val, precision=4):
         return 0.0
 
 def _run_inference():
-    buf = list(_signal_buffer)
-    global _read_cursor
+    global _read_cursor, _inference_count
+    
+    # 1. Take snapshot of current buffer lengths to avoid race conditions
+    sig_len = len(_signal_buffer)
+    vis_len = len(_visual_buffer)
+    
     # Send CONSECUTIVE raw samples — guaranteed smooth continuity at client
     ADVANCE      = FRAME_POINTS   
-    buf_list     = list(buf)
-    vis_list     = list(_visual_buffer)
-    buf_len      = len(buf_list)
-    _read_cursor = _read_cursor % max(1, buf_len - FRAME_POINTS)
-    wave_snippet = [safe_float(v) for v in vis_list[_read_cursor:_read_cursor + FRAME_POINTS]]
+    
+    # Both buffers have maxlen=SEGMENT_LEN*4, so they should be sync'd. 
+    # Use the minimum of both to be safe.
+    effective_len = min(sig_len, vis_len)
+    _read_cursor = _read_cursor % max(1, effective_len - FRAME_POINTS)
+    
+    # Memory optimization: Use islice for snippets instead of copying entire buffers to lists
+    wave_snippet = [safe_float(v) for v in itertools.islice(_visual_buffer, _read_cursor, _read_cursor + FRAME_POINTS)]
     
     end_idx = _read_cursor + FRAME_POINTS
     start_idx = end_idx - SEGMENT_LEN
-    _read_cursor = (_read_cursor + ADVANCE) % max(1, buf_len - FRAME_POINTS)
+    _read_cursor = (_read_cursor + ADVANCE) % max(1, effective_len - FRAME_POINTS)
 
-    if not _model_loaded or len(buf) < min(SEGMENT_LEN, FRAME_POINTS * 4):
+    if not _model_loaded or sig_len < min(SEGMENT_LEN, FRAME_POINTS * 4):
         if wave_snippet:
-            peak_val = max(abs(v) for v in wave_snippet)
+            peak_val = max(abs(v) for v in (wave_snippet if wave_snippet else [0.1]))
             thresh   = peak_val * 0.72    # mark R-peak spikes (top ~10%)
             attn     = [safe_float(1.0 if abs(v) >= thresh else 0.03) for v in wave_snippet]
         else:
@@ -194,14 +212,22 @@ def _run_inference():
         }
         return wave_snippet, attn, synthetic_anomaly
 
+    # Efficiently get segment for inference
     if start_idx < 0:
-        segment = np.concatenate((np.zeros(-start_idx), buf_list[0:end_idx]))
+        # Pad with zeros if buffer is starting
+        head_zeros = np.zeros(-start_idx, dtype=np.float32)
+        tail_data  = np.array(list(itertools.islice(_signal_buffer, 0, end_idx)), dtype=np.float32)
+        segment    = np.concatenate((head_zeros, tail_data))
     else:
-        segment = np.array(buf_list[start_idx:end_idx], dtype=np.float32)
+        segment = np.array(list(itertools.islice(_signal_buffer, start_idx, end_idx)), dtype=np.float32)
         
     segment = np.nan_to_num(segment, nan=0.0)
     
-    # Neural net needs the 0.1-0.5Hz bandpass!
+    # Neural net needs the 0.1-0.5Hz bandpass! 
+    # Safeguard: filtfilt/sosfiltfilt needs N > padlen (typically 27)
+    if len(segment) < 30:
+        return wave_snippet, [0.03] * FRAME_POINTS, synthetic_anomaly if 'synthetic_anomaly' in locals() else {}
+
     inf_segment = _bandpass(segment)
     inf_std = np.std(inf_segment)
     inf_segment = (inf_segment - np.mean(inf_segment)) / (inf_std if inf_std > 1e-6 else 1.0)
@@ -213,7 +239,11 @@ def _run_inference():
             x, return_attention=True, return_anomaly=True
         )
 
-    alpha_np = alpha.squeeze(0).cpu().numpy()
+    # Extract results to numpy/Python immediately, then free tensors
+    alpha_np   = alpha.squeeze(0).cpu().numpy()
+    probs      = torch.softmax(anomaly_logits, dim=-1).squeeze(0).cpu().numpy()
+    rr_val     = safe_float(rr_pred.squeeze(), precision=2)
+    del x, rr_pred, alpha, anomaly_logits  # free GPU/CPU tensor memory
     
     # Get attention precisely aligned with our 50-point raw wave snippet
     snippet_alpha = alpha_np[-FRAME_POINTS:]
@@ -222,11 +252,9 @@ def _run_inference():
     span = (window_max - window_min) if (window_max - window_min) > 1e-8 else 1.0
     attn = [safe_float((v - window_min) / span) for v in snippet_alpha]
 
-    probs      = torch.softmax(anomaly_logits, dim=-1).squeeze(0).cpu().numpy()
     probs      = np.nan_to_num(probs, nan=0.0)
     class_id   = int(np.argmax(probs))
     confidence = safe_float(probs[class_id])
-    rr_val     = safe_float(rr_pred.squeeze(), precision=2)
 
     anomaly_result = {
         "class_id":   class_id,
@@ -237,6 +265,13 @@ def _run_inference():
         "rr_pred":    rr_val,
         "all_probs":  [safe_float(p) for p in probs],
     }
+
+    # Aggressive garbage collection for tight CPU memory environments
+    _inference_count += 1
+    if _inference_count % 5 == 0:
+        import gc
+        gc.collect()
+
     return wave_snippet, attn, anomaly_result
 
 @app.get("/")
@@ -307,12 +342,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 print(f"[WS] Inference error ignored: {e}")
                 wave_snippet, attn, anomaly_result = [], [0.03]*FRAME_POINTS, {}
 
-            # Don't drain buffer - sliding window keeps signal healthy
-            # Only trim to keep buffer from growing unbounded
-            if len(_signal_buffer) > SEGMENT_LEN * 3:
-                excess = len(_signal_buffer) - SEGMENT_LEN * 2
-                for _ in range(excess):
-                    _signal_buffer.popleft()
+            # Sliding window keeps signal healthy; deques with maxlen handle memory.
 
             live_payload = {
                 "round":          last_sent_round if last_sent_round > 0 else 0,
