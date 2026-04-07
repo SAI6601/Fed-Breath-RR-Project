@@ -59,6 +59,7 @@
       padding: 14px 20px;
       border-bottom: 1px solid var(--border);
       background: rgba(11, 15, 26, .9);
+      -webkit-backdrop-filter: blur(12px);
       backdrop-filter: blur(12px);
       position: sticky;
       top: 0;
@@ -1158,7 +1159,9 @@
       // ── Parameters table ────────────────────────────────────
       if (d.round > 0) {
         document.getElementById('pt-round').textContent = d.round;
-        document.getElementById('pt-mae').textContent = d.mae.toFixed(4);
+        if (d.mae !== undefined) {
+          document.getElementById('pt-mae').textContent = d.mae.toFixed(4);
+        }
       }
       if (d.c0_rqi !== undefined) {
         document.getElementById('pt-rqi0').textContent = d.c0_rqi.toFixed(4);
@@ -1181,7 +1184,7 @@
 
       // ── MAE chart (new round) ────────────────────────────────
       const rLabel = `R${d.round}`;
-      if (d.round > 0 && !maeChart.data.labels.includes(rLabel)) {
+      if (d.round > 0 && d.mae !== undefined && !maeChart.data.labels.includes(rLabel)) {
         maeChart.data.labels.push(rLabel);
         maeChart.data.datasets[0].data.push(d.mae);
         maeChart.update();
