@@ -29,108 +29,545 @@
 [93mWARNING [0m:   No fit_metrics_aggregation_fn provided
 [Server] Global model updated: centralized_model.pth
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
-04/07/2026 21:25:29:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 04:13:05:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
-04/07/2026 21:25:39:INFO:aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 04:13:21:INFO:aggregate_evaluate: received 2 results and 0 failures
 [93mWARNING [0m:   No evaluate_metrics_aggregation_fn provided
-04/07/2026 21:25:39:WARNING:No evaluate_metrics_aggregation_fn provided
+04/08/2026 04:13:21:WARNING:No evaluate_metrics_aggregation_fn provided
 [92mINFO [0m:      
-04/07/2026 21:25:39:INFO:
+04/08/2026 04:13:21:INFO:
 [92mINFO [0m:      [ROUND 2]
-04/07/2026 21:25:39:INFO:[ROUND 2]
+04/08/2026 04:13:21:INFO:[ROUND 2]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
-04/07/2026 21:25:39:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 04:13:21:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
-04/07/2026 21:30:26:INFO:aggregate_fit: received 2 results and 0 failures
+04/08/2026 04:20:03:INFO:aggregate_fit: received 2 results and 0 failures
 [Server] Global model updated: centralized_model.pth
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
-04/07/2026 21:30:26:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 04:20:03:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
-04/07/2026 21:30:38:INFO:aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 04:20:18:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
-04/07/2026 21:30:38:INFO:
+04/08/2026 04:20:18:INFO:
 [92mINFO [0m:      [ROUND 3]
-04/07/2026 21:30:38:INFO:[ROUND 3]
+04/08/2026 04:20:18:INFO:[ROUND 3]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
-04/07/2026 21:30:38:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 04:20:18:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
-04/07/2026 21:35:54:INFO:aggregate_fit: received 2 results and 0 failures
+04/08/2026 04:26:55:INFO:aggregate_fit: received 2 results and 0 failures
 [Server] Global model updated: centralized_model.pth
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
-04/07/2026 21:35:55:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 04:26:56:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
-04/07/2026 21:36:26:INFO:aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 04:27:11:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
-04/07/2026 21:36:26:INFO:
+04/08/2026 04:27:11:INFO:
 [92mINFO [0m:      [ROUND 4]
-04/07/2026 21:36:26:INFO:[ROUND 4]
+04/08/2026 04:27:11:INFO:[ROUND 4]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
-04/07/2026 21:36:26:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 04:27:11:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
-04/07/2026 21:47:59:INFO:aggregate_fit: received 2 results and 0 failures
+04/08/2026 04:34:06:INFO:aggregate_fit: received 2 results and 0 failures
 [Server] Global model updated: centralized_model.pth
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
-04/07/2026 21:47:59:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 04:34:06:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
-04/07/2026 21:48:32:INFO:aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 04:34:22:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
-04/07/2026 21:48:32:INFO:
+04/08/2026 04:34:22:INFO:
 [92mINFO [0m:      [ROUND 5]
-04/07/2026 21:48:32:INFO:[ROUND 5]
+04/08/2026 04:34:22:INFO:[ROUND 5]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
-04/07/2026 21:48:32:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 04:34:22:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
-04/07/2026 22:00:31:INFO:aggregate_fit: received 2 results and 0 failures
+04/08/2026 04:40:35:INFO:aggregate_fit: received 2 results and 0 failures
 [Server] Global model updated: centralized_model.pth
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
-04/07/2026 22:00:31:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 04:40:35:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
-04/07/2026 22:01:07:INFO:aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 04:40:51:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
-04/07/2026 22:01:07:INFO:
+04/08/2026 04:40:51:INFO:
 [92mINFO [0m:      [ROUND 6]
-04/07/2026 22:01:07:INFO:[ROUND 6]
+04/08/2026 04:40:51:INFO:[ROUND 6]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
-04/07/2026 22:01:07:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 04:40:51:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
-04/07/2026 22:14:12:INFO:aggregate_fit: received 2 results and 0 failures
+04/08/2026 04:46:56:INFO:aggregate_fit: received 2 results and 0 failures
 [Server] Global model updated: centralized_model.pth
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
-04/07/2026 22:14:12:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 04:46:56:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
-04/07/2026 22:14:49:INFO:aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 04:47:10:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
-04/07/2026 22:14:49:INFO:
+04/08/2026 04:47:10:INFO:
 [92mINFO [0m:      [ROUND 7]
-04/07/2026 22:14:49:INFO:[ROUND 7]
+04/08/2026 04:47:10:INFO:[ROUND 7]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
-04/07/2026 22:14:49:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 04:47:10:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
-04/07/2026 22:26:17:INFO:aggregate_fit: received 2 results and 0 failures
+04/08/2026 04:52:42:INFO:aggregate_fit: received 2 results and 0 failures
 [Server] Global model updated: centralized_model.pth
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
-04/07/2026 22:26:17:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 04:52:42:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
-04/07/2026 22:26:49:INFO:aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 04:52:56:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
-04/07/2026 22:26:49:INFO:
+04/08/2026 04:52:56:INFO:
 [92mINFO [0m:      [ROUND 8]
-04/07/2026 22:26:49:INFO:[ROUND 8]
+04/08/2026 04:52:56:INFO:[ROUND 8]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
-04/07/2026 22:26:49:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 04:52:56:INFO:configure_fit: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
-04/07/2026 22:39:09:INFO:aggregate_fit: received 2 results and 0 failures
+04/08/2026 04:58:16:INFO:aggregate_fit: received 2 results and 0 failures
 [Server] Global model updated: centralized_model.pth
 [92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
-04/07/2026 22:39:09:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 04:58:16:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
 [92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
-04/07/2026 22:39:40:INFO:aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 04:58:30:INFO:aggregate_evaluate: received 2 results and 0 failures
 [92mINFO [0m:      
-04/07/2026 22:39:40:INFO:
+04/08/2026 04:58:30:INFO:
 [92mINFO [0m:      [ROUND 9]
-04/07/2026 22:39:40:INFO:[ROUND 9]
+04/08/2026 04:58:30:INFO:[ROUND 9]
 [92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
-04/07/2026 22:39:40:INFO:configure_fit: strategy sampled 2 clients (out of 2)
-[92mINFO [0m:      aggregate_fit: received 1 results and 1 failures
-04/07/2026 22:51:56:INFO:aggregate_fit: received 1 results and 1 failures
+04/08/2026 04:58:30:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 05:04:13:INFO:aggregate_fit: received 2 results and 0 failures
 [Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 05:04:13:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 05:04:29:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 05:04:29:INFO:
+[92mINFO [0m:      [ROUND 10]
+04/08/2026 05:04:29:INFO:[ROUND 10]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 05:04:29:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 05:10:18:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 05:10:18:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 05:10:31:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 05:10:31:INFO:
+[92mINFO [0m:      [ROUND 11]
+04/08/2026 05:10:31:INFO:[ROUND 11]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 05:10:31:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 05:16:18:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 05:16:18:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 05:16:31:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 05:16:31:INFO:
+[92mINFO [0m:      [ROUND 12]
+04/08/2026 05:16:31:INFO:[ROUND 12]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 05:16:31:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 05:22:20:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 05:22:20:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 05:22:33:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 05:22:33:INFO:
+[92mINFO [0m:      [ROUND 13]
+04/08/2026 05:22:33:INFO:[ROUND 13]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 05:22:33:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 05:28:11:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 05:28:11:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 05:28:25:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 05:28:25:INFO:
+[92mINFO [0m:      [ROUND 14]
+04/08/2026 05:28:25:INFO:[ROUND 14]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 05:28:25:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 05:34:13:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 05:34:13:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 05:34:27:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 05:34:27:INFO:
+[92mINFO [0m:      [ROUND 15]
+04/08/2026 05:34:27:INFO:[ROUND 15]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 05:34:27:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 05:40:36:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 05:40:36:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 05:40:52:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 05:40:52:INFO:
+[92mINFO [0m:      [ROUND 16]
+04/08/2026 05:40:52:INFO:[ROUND 16]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 05:40:52:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 05:47:43:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 05:47:44:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 05:47:59:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 05:47:59:INFO:
+[92mINFO [0m:      [ROUND 17]
+04/08/2026 05:47:59:INFO:[ROUND 17]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 05:47:59:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 05:54:36:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 05:54:36:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 05:54:51:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 05:54:51:INFO:
+[92mINFO [0m:      [ROUND 18]
+04/08/2026 05:54:51:INFO:[ROUND 18]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 05:54:51:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 06:01:10:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 06:01:10:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 06:01:25:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 06:01:25:INFO:
+[92mINFO [0m:      [ROUND 19]
+04/08/2026 06:01:25:INFO:[ROUND 19]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 06:01:25:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 06:08:53:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 06:08:54:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 06:09:08:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 06:09:08:INFO:
+[92mINFO [0m:      [ROUND 20]
+04/08/2026 06:09:08:INFO:[ROUND 20]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 06:09:08:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 06:15:36:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 06:15:37:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 06:15:52:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 06:15:52:INFO:
+[92mINFO [0m:      [ROUND 21]
+04/08/2026 06:15:52:INFO:[ROUND 21]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 06:15:52:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 06:22:13:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 06:22:13:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 06:22:27:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 06:22:27:INFO:
+[92mINFO [0m:      [ROUND 22]
+04/08/2026 06:22:27:INFO:[ROUND 22]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 06:22:27:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 06:28:38:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 06:28:39:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 06:28:53:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 06:28:53:INFO:
+[92mINFO [0m:      [ROUND 23]
+04/08/2026 06:28:53:INFO:[ROUND 23]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 06:28:53:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 06:35:34:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 06:35:34:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 06:35:49:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 06:35:49:INFO:
+[92mINFO [0m:      [ROUND 24]
+04/08/2026 06:35:49:INFO:[ROUND 24]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 06:35:49:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 06:42:29:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 06:42:29:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 06:42:48:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 06:42:48:INFO:
+[92mINFO [0m:      [ROUND 25]
+04/08/2026 06:42:48:INFO:[ROUND 25]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 06:42:48:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 06:48:47:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 06:48:47:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 06:49:01:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 06:49:01:INFO:
+[92mINFO [0m:      [ROUND 26]
+04/08/2026 06:49:01:INFO:[ROUND 26]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 06:49:01:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 06:55:08:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 06:55:08:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 06:55:22:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 06:55:22:INFO:
+[92mINFO [0m:      [ROUND 27]
+04/08/2026 06:55:22:INFO:[ROUND 27]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 06:55:22:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 07:00:57:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 07:00:57:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 07:01:10:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 07:01:10:INFO:
+[92mINFO [0m:      [ROUND 28]
+04/08/2026 07:01:10:INFO:[ROUND 28]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 07:01:10:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 07:06:54:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 07:06:54:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 07:07:08:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 07:07:08:INFO:
+[92mINFO [0m:      [ROUND 29]
+04/08/2026 07:07:08:INFO:[ROUND 29]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 07:07:08:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 07:12:28:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 07:12:28:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 07:12:42:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 07:12:42:INFO:
+[92mINFO [0m:      [ROUND 30]
+04/08/2026 07:12:42:INFO:[ROUND 30]
+[92mINFO [0m:      configure_fit: strategy sampled 2 clients (out of 2)
+04/08/2026 07:12:42:INFO:configure_fit: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_fit: received 2 results and 0 failures
+04/08/2026 07:18:10:INFO:aggregate_fit: received 2 results and 0 failures
+[Server] Global model updated: centralized_model.pth
+[92mINFO [0m:      configure_evaluate: strategy sampled 2 clients (out of 2)
+04/08/2026 07:18:10:INFO:configure_evaluate: strategy sampled 2 clients (out of 2)
+[92mINFO [0m:      aggregate_evaluate: received 2 results and 0 failures
+04/08/2026 07:18:23:INFO:aggregate_evaluate: received 2 results and 0 failures
+[92mINFO [0m:      
+04/08/2026 07:18:23:INFO:
+[92mINFO [0m:      [SUMMARY]
+04/08/2026 07:18:23:INFO:[SUMMARY]
+[92mINFO [0m:      Run finished 30 round(s) in 11623.59s
+04/08/2026 07:18:23:INFO:Run finished 30 round(s) in 11623.59s
+[92mINFO [0m:      	History (loss, distributed):
+04/08/2026 07:18:23:INFO:	History (loss, distributed):
+[92mINFO [0m:      		round 1: 314.8824920654297
+04/08/2026 07:18:23:INFO:		round 1: 314.8824920654297
+[92mINFO [0m:      		round 2: 314.3094024658203
+04/08/2026 07:18:23:INFO:		round 2: 314.3094024658203
+[92mINFO [0m:      		round 3: 313.68907165527344
+04/08/2026 07:18:23:INFO:		round 3: 313.68907165527344
+[92mINFO [0m:      		round 4: 313.1105499267578
+04/08/2026 07:18:23:INFO:		round 4: 313.1105499267578
+[92mINFO [0m:      		round 5: 312.5968933105469
+04/08/2026 07:18:23:INFO:		round 5: 312.5968933105469
+[92mINFO [0m:      		round 6: 312.16075134277344
+04/08/2026 07:18:23:INFO:		round 6: 312.16075134277344
+[92mINFO [0m:      		round 7: 311.7190704345703
+04/08/2026 07:18:23:INFO:		round 7: 311.7190704345703
+[92mINFO [0m:      		round 8: 311.277587890625
+04/08/2026 07:18:23:INFO:		round 8: 311.277587890625
+[92mINFO [0m:      		round 9: 310.7582702636719
+04/08/2026 07:18:23:INFO:		round 9: 310.7582702636719
+[92mINFO [0m:      		round 10: 310.15760803222656
+04/08/2026 07:18:23:INFO:		round 10: 310.15760803222656
+[92mINFO [0m:      		round 11: 309.4226379394531
+04/08/2026 07:18:23:INFO:		round 11: 309.4226379394531
+[92mINFO [0m:      		round 12: 308.7860412597656
+04/08/2026 07:18:23:INFO:		round 12: 308.7860412597656
+[92mINFO [0m:      		round 13: 308.1932830810547
+04/08/2026 07:18:23:INFO:		round 13: 308.1932830810547
+[92mINFO [0m:      		round 14: 307.5782928466797
+04/08/2026 07:18:23:INFO:		round 14: 307.5782928466797
+[92mINFO [0m:      		round 15: 306.8957214355469
+04/08/2026 07:18:23:INFO:		round 15: 306.8957214355469
+[92mINFO [0m:      		round 16: 306.2264404296875
+04/08/2026 07:18:23:INFO:		round 16: 306.2264404296875
+[92mINFO [0m:      		round 17: 305.60292053222656
+04/08/2026 07:18:23:INFO:		round 17: 305.60292053222656
+[92mINFO [0m:      		round 18: 305.0283660888672
+04/08/2026 07:18:23:INFO:		round 18: 305.0283660888672
+[92mINFO [0m:      		round 19: 304.4754943847656
+04/08/2026 07:18:23:INFO:		round 19: 304.4754943847656
+[92mINFO [0m:      		round 20: 303.9057312011719
+04/08/2026 07:18:23:INFO:		round 20: 303.9057312011719
+[92mINFO [0m:      		round 21: 303.28089904785156
+04/08/2026 07:18:23:INFO:		round 21: 303.28089904785156
+[92mINFO [0m:      		round 22: 302.6449279785156
+04/08/2026 07:18:23:INFO:		round 22: 302.6449279785156
+[92mINFO [0m:      		round 23: 302.0685272216797
+04/08/2026 07:18:23:INFO:		round 23: 302.0685272216797
+[92mINFO [0m:      		round 24: 301.55519104003906
+04/08/2026 07:18:23:INFO:		round 24: 301.55519104003906
+[92mINFO [0m:      		round 25: 300.96826171875
+04/08/2026 07:18:23:INFO:		round 25: 300.96826171875
+[92mINFO [0m:      		round 26: 300.53302001953125
+04/08/2026 07:18:23:INFO:		round 26: 300.53302001953125
+[92mINFO [0m:      		round 27: 300.0198669433594
+04/08/2026 07:18:23:INFO:		round 27: 300.0198669433594
+[92mINFO [0m:      		round 28: 299.34136962890625
+04/08/2026 07:18:23:INFO:		round 28: 299.34136962890625
+[92mINFO [0m:      		round 29: 298.7095031738281
+04/08/2026 07:18:23:INFO:		round 29: 298.7095031738281
+[92mINFO [0m:      		round 30: 298.0305938720703
+04/08/2026 07:18:23:INFO:		round 30: 298.0305938720703
+[92mINFO [0m:      	History (metrics, distributed, evaluate):
+04/08/2026 07:18:23:INFO:	History (metrics, distributed, evaluate):
+[92mINFO [0m:      	{'mae': [(1, 17.53193473815918),
+04/08/2026 07:18:23:INFO:	{'mae': [(1, 17.53193473815918),
+[92mINFO [0m:      	         (2, 17.515583674112957),
+04/08/2026 07:18:23:INFO:	         (2, 17.515583674112957),
+[92mINFO [0m:      	         (3, 17.4978666305542),
+04/08/2026 07:18:23:INFO:	         (3, 17.4978666305542),
+[92mINFO [0m:      	         (4, 17.481327692667644),
+04/08/2026 07:18:23:INFO:	         (4, 17.481327692667644),
+[92mINFO [0m:      	         (5, 17.46662966410319),
+04/08/2026 07:18:23:INFO:	         (5, 17.46662966410319),
+[92mINFO [0m:      	         (6, 17.454140345255535),
+04/08/2026 07:18:23:INFO:	         (6, 17.454140345255535),
+[92mINFO [0m:      	         (7, 17.44148317972819),
+04/08/2026 07:18:23:INFO:	         (7, 17.44148317972819),
+[92mINFO [0m:      	         (8, 17.428822199503582),
+04/08/2026 07:18:23:INFO:	         (8, 17.428822199503582),
+[92mINFO [0m:      	         (9, 17.413918177286785),
+04/08/2026 07:18:23:INFO:	         (9, 17.413918177286785),
+[92mINFO [0m:      	         (10, 17.39666239420573),
+04/08/2026 07:18:23:INFO:	         (10, 17.39666239420573),
+[92mINFO [0m:      	         (11, 17.37552547454834),
+04/08/2026 07:18:23:INFO:	         (11, 17.37552547454834),
+[92mINFO [0m:      	         (12, 17.357197443644207),
+04/08/2026 07:18:23:INFO:	         (12, 17.357197443644207),
+[92mINFO [0m:      	         (13, 17.340113639831543),
+04/08/2026 07:18:23:INFO:	         (13, 17.340113639831543),
+[92mINFO [0m:      	         (14, 17.32237148284912),
+04/08/2026 07:18:23:INFO:	         (14, 17.32237148284912),
+[92mINFO [0m:      	         (15, 17.302658557891846),
+04/08/2026 07:18:23:INFO:	         (15, 17.302658557891846),
+[92mINFO [0m:      	         (16, 17.28330675760905),
+04/08/2026 07:18:23:INFO:	         (16, 17.28330675760905),
+[92mINFO [0m:      	         (17, 17.265260060628254),
+04/08/2026 07:18:23:INFO:	         (17, 17.265260060628254),
+[92mINFO [0m:      	         (18, 17.248612721761067),
+04/08/2026 07:18:23:INFO:	         (18, 17.248612721761067),
+[92mINFO [0m:      	         (19, 17.23257891337077),
+04/08/2026 07:18:23:INFO:	         (19, 17.23257891337077),
+[92mINFO [0m:      	         (20, 17.216039021809895),
+04/08/2026 07:18:23:INFO:	         (20, 17.216039021809895),
+[92mINFO [0m:      	         (21, 17.197882334391277),
+04/08/2026 07:18:23:INFO:	         (21, 17.197882334391277),
+[92mINFO [0m:      	         (22, 17.179382801055908),
+04/08/2026 07:18:23:INFO:	         (22, 17.179382801055908),
+[92mINFO [0m:      	         (23, 17.16259829203288),
+04/08/2026 07:18:23:INFO:	         (23, 17.16259829203288),
+[92mINFO [0m:      	         (24, 17.147637049357098),
+04/08/2026 07:18:23:INFO:	         (24, 17.147637049357098),
+[92mINFO [0m:      	         (25, 17.13051430384318),
+04/08/2026 07:18:23:INFO:	         (25, 17.13051430384318),
+[92mINFO [0m:      	         (26, 17.11780611673991),
+04/08/2026 07:18:23:INFO:	         (26, 17.11780611673991),
+[92mINFO [0m:      	         (27, 17.102810541788738),
+04/08/2026 07:18:23:INFO:	         (27, 17.102810541788738),
+[92mINFO [0m:      	         (28, 17.08296267191569),
+04/08/2026 07:18:23:INFO:	         (28, 17.08296267191569),
+[92mINFO [0m:      	         (29, 17.06445900599162),
+04/08/2026 07:18:23:INFO:	         (29, 17.06445900599162),
+[92mINFO [0m:      	         (30, 17.044554710388184)]}
+04/08/2026 07:18:23:INFO:	         (30, 17.044554710388184)]}
+[92mINFO [0m:      
+04/08/2026 07:18:23:INFO:
+04/08/2026 07:18:23:ERROR:Exception iterating responses: 
+Traceback (most recent call last):
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\grpc\_server.py", line 652, in _take_response_from_response_iterator
+    return next(response_iterator), True
+           ~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\server\superlink\fleet\grpc_bidi\flower_service_servicer.py", line 118, in Join
+    ins_wrapper: InsWrapper = next(ins_wrapper_iterator)
+                              ~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\server\superlink\fleet\grpc_bidi\grpc_bridge.py", line 165, in ins_wrapper_iterator
+    self._raise_if_closed()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\server\superlink\fleet\grpc_bidi\grpc_bridge.py", line 81, in _raise_if_closed
+    raise GrpcBridgeClosed()
+flwr.server.superlink.fleet.grpc_bidi.grpc_bridge.GrpcBridgeClosed
+04/08/2026 07:18:23:ERROR:Exception iterating responses: 
+Traceback (most recent call last):
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\grpc\_server.py", line 652, in _take_response_from_response_iterator
+    return next(response_iterator), True
+           ~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\server\superlink\fleet\grpc_bidi\flower_service_servicer.py", line 118, in Join
+    ins_wrapper: InsWrapper = next(ins_wrapper_iterator)
+                              ~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\server\superlink\fleet\grpc_bidi\grpc_bridge.py", line 165, in ins_wrapper_iterator
+    self._raise_if_closed()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\flwr\server\superlink\fleet\grpc_bidi\grpc_bridge.py", line 81, in _raise_if_closed
+    raise GrpcBridgeClosed()
+flwr.server.superlink.fleet.grpc_bidi.grpc_bridge.GrpcBridgeClosed

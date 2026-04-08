@@ -5,7 +5,7 @@ Anomaly Detection    : ENABLED (lambda=0.3)
 [DP] Node 1: Fixing model for Opacus (LSTM -> DPLSTM)...
 C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-packages\opacus\privacy_engine.py:96: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
   warnings.warn(
-04/07/2026 21:20:41:WARNING:Ignoring drop_last as it is not compatible with DPDataLoader.
+04/08/2026 04:04:38:WARNING:Ignoring drop_last as it is not compatible with DPDataLoader.
 [DP] Node 1: PrivacyEngine attached (sigma=1.0, C=1.0, delta=1e-05)
 [93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated. 
 	Instead, use `flwr.client.start_client()` by ensuring you first call the `.to_client()` method as shown below: 
@@ -18,7 +18,7 @@ C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-pack
             This is a deprecated feature. It will be removed
             entirely in future versions of Flower.
         
-04/07/2026 21:20:41:WARNING:DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated. 
+04/08/2026 04:04:38:WARNING:DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated. 
 	Instead, use `flwr.client.start_client()` by ensuring you first call the `.to_client()` method as shown below: 
 	flwr.client.start_client(
 		server_address='<IP>:<PORT>',
@@ -43,7 +43,7 @@ C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-pack
             This is a deprecated feature. It will be removed
             entirely in future versions of Flower.
         
-04/07/2026 21:20:41:WARNING:DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
+04/08/2026 04:04:38:WARNING:DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
 	Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
 
 		$ flower-supernode --insecure --superlink='<IP>:<PORT>'
@@ -57,201 +57,676 @@ C:\Users\RAMCHANDRA S NAIK\AppData\Local\Programs\Python\Python313\Lib\site-pack
             This is a deprecated feature. It will be removed
             entirely in future versions of Flower.
         
-04/07/2026 21:20:41:DEBUG:Using InMemoryObjectStore
-04/07/2026 21:20:41:DEBUG:Opened insecure gRPC connection (no certificates were passed)
-04/07/2026 21:20:41:DEBUG:ChannelConnectivity.IDLE
-04/07/2026 21:20:41:DEBUG:ChannelConnectivity.CONNECTING
-04/07/2026 21:20:41:DEBUG:ChannelConnectivity.READY
+04/08/2026 04:04:38:DEBUG:Using InMemoryObjectStore
+04/08/2026 04:04:38:DEBUG:Opened insecure gRPC connection (no certificates were passed)
+04/08/2026 04:04:38:DEBUG:ChannelConnectivity.IDLE
+04/08/2026 04:04:38:DEBUG:ChannelConnectivity.CONNECTING
+04/08/2026 04:04:39:DEBUG:ChannelConnectivity.READY
 [92mINFO [0m:      
-04/07/2026 21:20:41:INFO:
-[92mINFO [0m:      Received: train message 43481d93-fc06-4f0d-8c77-f5e6950669ab
-04/07/2026 21:20:41:INFO:Received: train message 43481d93-fc06-4f0d-8c77-f5e6950669ab
+04/08/2026 04:04:39:INFO:
+[92mINFO [0m:      Received: train message 12b8c4a0-7c97-4f1b-9808-12727dd85cd5
+04/08/2026 04:04:39:INFO:Received: train message 12b8c4a0-7c97-4f1b-9808-12727dd85cd5
 [Node 1] Training batch 5...
 [Node 1] Training batch 10...
-[Node] Node 1 | RQI: 0.0800
+[Node] Node 1 | RQI: 0.0900
    Anomaly distribution this round:
    0 Normal              :    0 samples
-   1 Bradypnea           :    7 samples
-   2 Apnea               :   14 samples
-   3 Tachypnea           :    0 samples
-   4 Severe Tachypnea    :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    5 samples
+   4 Severe Tachypnea    :   16 samples
 [DP] DP Budget: epsilon = 2.8648, delta = 1e-05
 [Edge] FP32=0.553MB -> INT8=0.535MB (3.3%)
 [92mINFO [0m:      Sent reply
-04/07/2026 21:25:22:INFO:Sent reply
+04/08/2026 04:12:55:INFO:Sent reply
 [92mINFO [0m:      
-04/07/2026 21:25:29:INFO:
-[92mINFO [0m:      Received: evaluate message 8cc6cfba-c56d-441e-9ce1-5c8849f5dea7
-04/07/2026 21:25:29:INFO:Received: evaluate message 8cc6cfba-c56d-441e-9ce1-5c8849f5dea7
+04/08/2026 04:13:05:INFO:
+[92mINFO [0m:      Received: evaluate message a9f2236e-f1e3-40f4-aa91-c3e7b950fa0d
+04/08/2026 04:13:05:INFO:Received: evaluate message a9f2236e-f1e3-40f4-aa91-c3e7b950fa0d
 [92mINFO [0m:      Sent reply
-04/07/2026 21:25:39:INFO:Sent reply
+04/08/2026 04:13:21:INFO:Sent reply
 [92mINFO [0m:      
-04/07/2026 21:25:39:INFO:
-[92mINFO [0m:      Received: train message f5a6fd43-ae99-4f43-b916-fff986c34e0d
-04/07/2026 21:25:39:INFO:Received: train message f5a6fd43-ae99-4f43-b916-fff986c34e0d
+04/08/2026 04:13:21:INFO:
+[92mINFO [0m:      Received: train message f2832be7-1032-4a7a-9940-85c68c13ce03
+04/08/2026 04:13:21:INFO:Received: train message f2832be7-1032-4a7a-9940-85c68c13ce03
 [Node 1] Training batch 5...
 [Node 1] Training batch 10...
 [Node] Node 1 | RQI: 0.0900
    Anomaly distribution this round:
    0 Normal              :    0 samples
-   1 Bradypnea           :   11 samples
-   2 Apnea               :   15 samples
-   3 Tachypnea           :    0 samples
-   4 Severe Tachypnea    :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :   13 samples
+   4 Severe Tachypnea    :    6 samples
 [DP] DP Budget: epsilon = 3.6010, delta = 1e-05
 [92mINFO [0m:      Sent reply
-04/07/2026 21:30:26:INFO:Sent reply
+04/08/2026 04:19:58:INFO:Sent reply
 [92mINFO [0m:      
-04/07/2026 21:30:26:INFO:
-[92mINFO [0m:      Received: evaluate message 0e41cfd7-8e29-4d1f-9cb1-b3454ed8992f
-04/07/2026 21:30:26:INFO:Received: evaluate message 0e41cfd7-8e29-4d1f-9cb1-b3454ed8992f
+04/08/2026 04:20:03:INFO:
+[92mINFO [0m:      Received: evaluate message 7974b2e6-f974-436b-a958-d59adba04fb4
+04/08/2026 04:20:03:INFO:Received: evaluate message 7974b2e6-f974-436b-a958-d59adba04fb4
 [92mINFO [0m:      Sent reply
-04/07/2026 21:30:38:INFO:Sent reply
+04/08/2026 04:20:18:INFO:Sent reply
 [92mINFO [0m:      
-04/07/2026 21:30:38:INFO:
-[92mINFO [0m:      Received: train message ae24f030-541d-4455-83ee-03b2bdb85e79
-04/07/2026 21:30:38:INFO:Received: train message ae24f030-541d-4455-83ee-03b2bdb85e79
-[Node 1] Training batch 5...
-[Node 1] Training batch 10...
-[Node] Node 1 | RQI: 0.0900
-   Anomaly distribution this round:
-   0 Normal              :    0 samples
-   1 Bradypnea           :   10 samples
-   2 Apnea               :   12 samples
-   3 Tachypnea           :    0 samples
-   4 Severe Tachypnea    :    0 samples
-[DP] DP Budget: epsilon = 4.1886, delta = 1e-05
-[92mINFO [0m:      Sent reply
-04/07/2026 21:35:54:INFO:Sent reply
-[92mINFO [0m:      
-04/07/2026 21:35:55:INFO:
-[92mINFO [0m:      Received: evaluate message e7663c93-0691-484e-9c45-4d029d89f194
-04/07/2026 21:35:55:INFO:Received: evaluate message e7663c93-0691-484e-9c45-4d029d89f194
-[92mINFO [0m:      Sent reply
-04/07/2026 21:36:26:INFO:Sent reply
-[92mINFO [0m:      
-04/07/2026 21:36:26:INFO:
-[92mINFO [0m:      Received: train message 6cbc92ab-7237-4980-bdf1-b60d4d4d583c
-04/07/2026 21:36:26:INFO:Received: train message 6cbc92ab-7237-4980-bdf1-b60d4d4d583c
-[Node 1] Training batch 5...
-[Node 1] Training batch 10...
-[Node] Node 1 | RQI: 0.0900
-   Anomaly distribution this round:
-   0 Normal              :    0 samples
-   1 Bradypnea           :    9 samples
-   2 Apnea               :   10 samples
-   3 Tachypnea           :    0 samples
-   4 Severe Tachypnea    :    0 samples
-[DP] DP Budget: epsilon = 4.6985, delta = 1e-05
-[92mINFO [0m:      Sent reply
-04/07/2026 21:47:59:INFO:Sent reply
-[92mINFO [0m:      
-04/07/2026 21:47:59:INFO:
-[92mINFO [0m:      Received: evaluate message 2e1b19b2-2118-4ba0-bbfd-f43474315533
-04/07/2026 21:47:59:INFO:Received: evaluate message 2e1b19b2-2118-4ba0-bbfd-f43474315533
-[92mINFO [0m:      Sent reply
-04/07/2026 21:48:32:INFO:Sent reply
-[92mINFO [0m:      
-04/07/2026 21:48:32:INFO:
-[92mINFO [0m:      Received: train message 7229923d-2bb4-4a65-a949-a05ece7ff0e0
-04/07/2026 21:48:32:INFO:Received: train message 7229923d-2bb4-4a65-a949-a05ece7ff0e0
-[Node 1] Training batch 5...
-[Node 1] Training batch 10...
-[Node] Node 1 | RQI: 0.0900
-   Anomaly distribution this round:
-   0 Normal              :    0 samples
-   1 Bradypnea           :    9 samples
-   2 Apnea               :    9 samples
-   3 Tachypnea           :    0 samples
-   4 Severe Tachypnea    :    0 samples
-[DP] DP Budget: epsilon = 5.1586, delta = 1e-05
-[92mINFO [0m:      Sent reply
-04/07/2026 22:00:26:INFO:Sent reply
-[92mINFO [0m:      
-04/07/2026 22:00:31:INFO:
-[92mINFO [0m:      Received: evaluate message 1b0cce88-9c9d-4248-b896-8b1fe7e82a89
-04/07/2026 22:00:31:INFO:Received: evaluate message 1b0cce88-9c9d-4248-b896-8b1fe7e82a89
-[92mINFO [0m:      Sent reply
-04/07/2026 22:01:06:INFO:Sent reply
-[92mINFO [0m:      
-04/07/2026 22:01:07:INFO:
-[92mINFO [0m:      Received: train message b0a83508-2157-40ca-a62e-318d1a75d5a8
-04/07/2026 22:01:07:INFO:Received: train message b0a83508-2157-40ca-a62e-318d1a75d5a8
+04/08/2026 04:20:18:INFO:
+[92mINFO [0m:      Received: train message 5ac14117-255b-41f3-a1a0-f46fd18e5a62
+04/08/2026 04:20:18:INFO:Received: train message 5ac14117-255b-41f3-a1a0-f46fd18e5a62
 [Node 1] Training batch 5...
 [Node 1] Training batch 10...
 [Node] Node 1 | RQI: 0.0700
    Anomaly distribution this round:
    0 Normal              :    0 samples
-   1 Bradypnea           :    3 samples
-   2 Apnea               :   11 samples
-   3 Tachypnea           :    0 samples
-   4 Severe Tachypnea    :    0 samples
-[DP] DP Budget: epsilon = 5.5831, delta = 1e-05
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :   10 samples
+   4 Severe Tachypnea    :    8 samples
+[DP] DP Budget: epsilon = 4.1886, delta = 1e-05
 [92mINFO [0m:      Sent reply
-04/07/2026 22:13:21:INFO:Sent reply
+04/08/2026 04:26:39:INFO:Sent reply
 [92mINFO [0m:      
-04/07/2026 22:14:12:INFO:
-[92mINFO [0m:      Received: evaluate message 01391d04-d9aa-49cb-83c6-f4c99e4c035c
-04/07/2026 22:14:12:INFO:Received: evaluate message 01391d04-d9aa-49cb-83c6-f4c99e4c035c
+04/08/2026 04:26:56:INFO:
+[92mINFO [0m:      Received: evaluate message b16f9693-0de5-45b6-9a67-3dc3012c0de1
+04/08/2026 04:26:56:INFO:Received: evaluate message b16f9693-0de5-45b6-9a67-3dc3012c0de1
 [92mINFO [0m:      Sent reply
-04/07/2026 22:14:49:INFO:Sent reply
+04/08/2026 04:27:11:INFO:Sent reply
 [92mINFO [0m:      
-04/07/2026 22:14:49:INFO:
-[92mINFO [0m:      Received: train message 39b50ac6-1e06-4930-91b6-a14b36c14422
-04/07/2026 22:14:49:INFO:Received: train message 39b50ac6-1e06-4930-91b6-a14b36c14422
-[Node 1] Training batch 5...
-[Node 1] Training batch 10...
-[Node] Node 1 | RQI: 0.0800
-   Anomaly distribution this round:
-   0 Normal              :    0 samples
-   1 Bradypnea           :    9 samples
-   2 Apnea               :    9 samples
-   3 Tachypnea           :    0 samples
-   4 Severe Tachypnea    :    0 samples
-[DP] DP Budget: epsilon = 5.9804, delta = 1e-05
-[92mINFO [0m:      Sent reply
-04/07/2026 22:26:07:INFO:Sent reply
-[92mINFO [0m:      
-04/07/2026 22:26:17:INFO:
-[92mINFO [0m:      Received: evaluate message 77772320-1f90-494b-9116-013f064ddd28
-04/07/2026 22:26:17:INFO:Received: evaluate message 77772320-1f90-494b-9116-013f064ddd28
-[92mINFO [0m:      Sent reply
-04/07/2026 22:26:48:INFO:Sent reply
-[92mINFO [0m:      
-04/07/2026 22:26:49:INFO:
-[92mINFO [0m:      Received: train message 2ad81f5b-fbbe-4942-a1d3-c53766ec2fee
-04/07/2026 22:26:49:INFO:Received: train message 2ad81f5b-fbbe-4942-a1d3-c53766ec2fee
-[Node 1] Training batch 5...
-[Node 1] Training batch 10...
-[Node] Node 1 | RQI: 0.1000
-   Anomaly distribution this round:
-   0 Normal              :    0 samples
-   1 Bradypnea           :    7 samples
-   2 Apnea               :   11 samples
-   3 Tachypnea           :    0 samples
-   4 Severe Tachypnea    :    0 samples
-[DP] DP Budget: epsilon = 6.3560, delta = 1e-05
-[92mINFO [0m:      Sent reply
-04/07/2026 22:39:09:INFO:Sent reply
-[92mINFO [0m:      
-04/07/2026 22:39:09:INFO:
-[92mINFO [0m:      Received: evaluate message 9be959d3-a79b-44a8-9c30-207a91d05e2e
-04/07/2026 22:39:09:INFO:Received: evaluate message 9be959d3-a79b-44a8-9c30-207a91d05e2e
-[92mINFO [0m:      Sent reply
-04/07/2026 22:39:40:INFO:Sent reply
-[92mINFO [0m:      
-04/07/2026 22:39:40:INFO:
-[92mINFO [0m:      Received: train message b64ffede-b986-40f0-b36b-530077a842fe
-04/07/2026 22:39:40:INFO:Received: train message b64ffede-b986-40f0-b36b-530077a842fe
+04/08/2026 04:27:11:INFO:
+[92mINFO [0m:      Received: train message 836fc741-f0d9-463a-8986-f718dfd5ab1d
+04/08/2026 04:27:11:INFO:Received: train message 836fc741-f0d9-463a-8986-f718dfd5ab1d
 [Node 1] Training batch 5...
 [Node 1] Training batch 10...
 [Node] Node 1 | RQI: 0.0900
    Anomaly distribution this round:
    0 Normal              :    0 samples
-   1 Bradypnea           :   14 samples
-   2 Apnea               :   10 samples
-   3 Tachypnea           :    0 samples
-   4 Severe Tachypnea    :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    8 samples
+   4 Severe Tachypnea    :   11 samples
+[DP] DP Budget: epsilon = 4.6985, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 04:34:06:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 04:34:07:INFO:
+[92mINFO [0m:      Received: evaluate message bcffa56b-1ee8-4440-b4c3-a5232fd67421
+04/08/2026 04:34:07:INFO:Received: evaluate message bcffa56b-1ee8-4440-b4c3-a5232fd67421
+[92mINFO [0m:      Sent reply
+04/08/2026 04:34:22:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 04:34:22:INFO:
+[92mINFO [0m:      Received: train message b688ce13-92eb-4c0d-a180-dee244fc6591
+04/08/2026 04:34:22:INFO:Received: train message b688ce13-92eb-4c0d-a180-dee244fc6591
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0700
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    8 samples
+   4 Severe Tachypnea    :    6 samples
+[DP] DP Budget: epsilon = 5.1586, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 04:40:35:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 04:40:35:INFO:
+[92mINFO [0m:      Received: evaluate message 04411c88-eec5-4779-8651-6a5433a9f75b
+04/08/2026 04:40:35:INFO:Received: evaluate message 04411c88-eec5-4779-8651-6a5433a9f75b
+[92mINFO [0m:      Sent reply
+04/08/2026 04:40:51:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 04:40:51:INFO:
+[92mINFO [0m:      Received: train message 89e82707-aad4-4367-b1fd-64f8536a953c
+04/08/2026 04:40:51:INFO:Received: train message 89e82707-aad4-4367-b1fd-64f8536a953c
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0900
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    7 samples
+   4 Severe Tachypnea    :   11 samples
+[DP] DP Budget: epsilon = 5.5831, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 04:46:53:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 04:46:56:INFO:
+[92mINFO [0m:      Received: evaluate message f1824453-b882-4f8e-bd14-004ad830532c
+04/08/2026 04:46:56:INFO:Received: evaluate message f1824453-b882-4f8e-bd14-004ad830532c
+[92mINFO [0m:      Sent reply
+04/08/2026 04:47:10:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 04:47:10:INFO:
+[92mINFO [0m:      Received: train message 1ab9bbf5-0510-489e-a559-077a2bab9717
+04/08/2026 04:47:10:INFO:Received: train message 1ab9bbf5-0510-489e-a559-077a2bab9717
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0700
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    7 samples
+   4 Severe Tachypnea    :    4 samples
+[DP] DP Budget: epsilon = 5.9804, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 04:52:24:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 04:52:42:INFO:
+[92mINFO [0m:      Received: evaluate message 3494a7c0-87f8-4e71-b131-1f4b0b5a93e4
+04/08/2026 04:52:42:INFO:Received: evaluate message 3494a7c0-87f8-4e71-b131-1f4b0b5a93e4
+[92mINFO [0m:      Sent reply
+04/08/2026 04:52:56:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 04:52:56:INFO:
+[92mINFO [0m:      Received: train message 613f9b44-1709-41a3-b980-4e802c647048
+04/08/2026 04:52:56:INFO:Received: train message 613f9b44-1709-41a3-b980-4e802c647048
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0700
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    4 samples
+   4 Severe Tachypnea    :   15 samples
+[DP] DP Budget: epsilon = 6.3560, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 04:58:16:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 04:58:16:INFO:
+[92mINFO [0m:      Received: evaluate message 57013c7b-b6e9-49f5-ac26-229606e252aa
+04/08/2026 04:58:16:INFO:Received: evaluate message 57013c7b-b6e9-49f5-ac26-229606e252aa
+[92mINFO [0m:      Sent reply
+04/08/2026 04:58:30:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 04:58:30:INFO:
+[92mINFO [0m:      Received: train message edd3cb20-adbc-423c-a098-4dc1c2004a3b
+04/08/2026 04:58:30:INFO:Received: train message edd3cb20-adbc-423c-a098-4dc1c2004a3b
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0900
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    4 samples
+   4 Severe Tachypnea    :   18 samples
 [DP] DP Budget: epsilon = 6.7140, delta = 1e-05
 [92mINFO [0m:      Sent reply
-04/07/2026 22:51:56:INFO:Sent reply
+04/08/2026 05:04:13:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:04:13:INFO:
+[92mINFO [0m:      Received: evaluate message 5c796743-4233-491a-ab9e-d49f3e0cdc1c
+04/08/2026 05:04:13:INFO:Received: evaluate message 5c796743-4233-491a-ab9e-d49f3e0cdc1c
+[92mINFO [0m:      Sent reply
+04/08/2026 05:04:28:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:04:29:INFO:
+[92mINFO [0m:      Received: train message 51e8299c-0786-4a77-aa92-3d58fe2083b2
+04/08/2026 05:04:29:INFO:Received: train message 51e8299c-0786-4a77-aa92-3d58fe2083b2
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    6 samples
+   4 Severe Tachypnea    :   19 samples
+[DP] DP Budget: epsilon = 7.0571, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 05:10:18:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:10:18:INFO:
+[92mINFO [0m:      Received: evaluate message 7c482553-db0c-4912-81b0-3752683aedda
+04/08/2026 05:10:18:INFO:Received: evaluate message 7c482553-db0c-4912-81b0-3752683aedda
+[92mINFO [0m:      Sent reply
+04/08/2026 05:10:31:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:10:32:INFO:
+[92mINFO [0m:      Received: train message ae400649-6f9f-46b5-8058-fb5eda2e9383
+04/08/2026 05:10:32:INFO:Received: train message ae400649-6f9f-46b5-8058-fb5eda2e9383
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    8 samples
+   4 Severe Tachypnea    :   19 samples
+[DP] DP Budget: epsilon = 7.3874, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 05:16:18:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:16:18:INFO:
+[92mINFO [0m:      Received: evaluate message 93df8212-8e66-4a49-b0f3-81279befa8f7
+04/08/2026 05:16:18:INFO:Received: evaluate message 93df8212-8e66-4a49-b0f3-81279befa8f7
+[92mINFO [0m:      Sent reply
+04/08/2026 05:16:31:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:16:31:INFO:
+[92mINFO [0m:      Received: train message 6e7ef8be-9230-4c48-ae87-46a1b670d446
+04/08/2026 05:16:31:INFO:Received: train message 6e7ef8be-9230-4c48-ae87-46a1b670d446
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0900
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    8 samples
+   4 Severe Tachypnea    :    9 samples
+[DP] DP Budget: epsilon = 7.7066, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 05:22:15:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:22:20:INFO:
+[92mINFO [0m:      Received: evaluate message e80e102f-0e99-4ab5-9f55-120c57f1d26e
+04/08/2026 05:22:20:INFO:Received: evaluate message e80e102f-0e99-4ab5-9f55-120c57f1d26e
+[92mINFO [0m:      Sent reply
+04/08/2026 05:22:33:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:22:33:INFO:
+[92mINFO [0m:      Received: train message 33cf6bb4-103c-4413-8704-5703910a6d5a
+04/08/2026 05:22:33:INFO:Received: train message 33cf6bb4-103c-4413-8704-5703910a6d5a
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0900
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    6 samples
+   4 Severe Tachypnea    :   11 samples
+[DP] DP Budget: epsilon = 8.0161, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 05:28:07:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:28:11:INFO:
+[92mINFO [0m:      Received: evaluate message 77419715-520b-4ca2-b3e8-597103b37957
+04/08/2026 05:28:11:INFO:Received: evaluate message 77419715-520b-4ca2-b3e8-597103b37957
+[92mINFO [0m:      Sent reply
+04/08/2026 05:28:25:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:28:25:INFO:
+[92mINFO [0m:      Received: train message 4400f704-9616-42a6-9332-3b3b3c6a7f9e
+04/08/2026 05:28:25:INFO:Received: train message 4400f704-9616-42a6-9332-3b3b3c6a7f9e
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :   10 samples
+   4 Severe Tachypnea    :   16 samples
+[DP] DP Budget: epsilon = 8.3170, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 05:34:13:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:34:13:INFO:
+[92mINFO [0m:      Received: evaluate message 0f814bab-88ca-47fe-85aa-496281b95e44
+04/08/2026 05:34:13:INFO:Received: evaluate message 0f814bab-88ca-47fe-85aa-496281b95e44
+[92mINFO [0m:      Sent reply
+04/08/2026 05:34:27:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:34:27:INFO:
+[92mINFO [0m:      Received: train message 12afe8ab-af84-4b5a-bbdd-550b46b5931b
+04/08/2026 05:34:27:INFO:Received: train message 12afe8ab-af84-4b5a-bbdd-550b46b5931b
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    8 samples
+   4 Severe Tachypnea    :   17 samples
+[DP] DP Budget: epsilon = 8.6100, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 05:40:36:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:40:36:INFO:
+[92mINFO [0m:      Received: evaluate message c93b318b-7bc4-4611-a8b2-2d19ce0ad4f7
+04/08/2026 05:40:36:INFO:Received: evaluate message c93b318b-7bc4-4611-a8b2-2d19ce0ad4f7
+[92mINFO [0m:      Sent reply
+04/08/2026 05:40:52:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:40:52:INFO:
+[92mINFO [0m:      Received: train message d6c733ae-ffdf-4e26-823a-afacc826ef47
+04/08/2026 05:40:52:INFO:Received: train message d6c733ae-ffdf-4e26-823a-afacc826ef47
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0900
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :   12 samples
+   4 Severe Tachypnea    :   13 samples
+[DP] DP Budget: epsilon = 8.8961, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 05:47:43:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:47:44:INFO:
+[92mINFO [0m:      Received: evaluate message b0273565-136e-465d-86bc-f00bdfeabad1
+04/08/2026 05:47:44:INFO:Received: evaluate message b0273565-136e-465d-86bc-f00bdfeabad1
+[92mINFO [0m:      Sent reply
+04/08/2026 05:47:59:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:47:59:INFO:
+[92mINFO [0m:      Received: train message 8e05b660-2904-4fbc-8d51-b3d884e64b98
+04/08/2026 05:47:59:INFO:Received: train message 8e05b660-2904-4fbc-8d51-b3d884e64b98
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0900
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :   13 samples
+   4 Severe Tachypnea    :   12 samples
+[DP] DP Budget: epsilon = 9.1758, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 05:54:36:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:54:36:INFO:
+[92mINFO [0m:      Received: evaluate message 57ed845d-c228-45c9-b70c-3d9fb4b146d0
+04/08/2026 05:54:36:INFO:Received: evaluate message 57ed845d-c228-45c9-b70c-3d9fb4b146d0
+[92mINFO [0m:      Sent reply
+04/08/2026 05:54:51:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 05:54:51:INFO:
+[92mINFO [0m:      Received: train message 586f2c16-6a7c-426f-8882-e5b9663243a7
+04/08/2026 05:54:51:INFO:Received: train message 586f2c16-6a7c-426f-8882-e5b9663243a7
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0900
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :   10 samples
+   4 Severe Tachypnea    :    7 samples
+[DP] DP Budget: epsilon = 9.4497, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 06:01:08:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:01:11:INFO:
+[92mINFO [0m:      Received: evaluate message e1084d30-1791-49f4-8dba-9a6763cbb92c
+04/08/2026 06:01:11:INFO:Received: evaluate message e1084d30-1791-49f4-8dba-9a6763cbb92c
+[92mINFO [0m:      Sent reply
+04/08/2026 06:01:25:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:01:25:INFO:
+[92mINFO [0m:      Received: train message 993f688f-af12-4b3e-bf7d-7a0abff40d05
+04/08/2026 06:01:25:INFO:Received: train message 993f688f-af12-4b3e-bf7d-7a0abff40d05
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0900
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :   11 samples
+   4 Severe Tachypnea    :   14 samples
+[DP] DP Budget: epsilon = 9.7183, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 06:08:53:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:08:54:INFO:
+[92mINFO [0m:      Received: evaluate message 144063a7-61c8-4a9f-bd40-75fe2ba45503
+04/08/2026 06:08:54:INFO:Received: evaluate message 144063a7-61c8-4a9f-bd40-75fe2ba45503
+[92mINFO [0m:      Sent reply
+04/08/2026 06:09:08:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:09:08:INFO:
+[92mINFO [0m:      Received: train message 63d7ed17-0368-422a-9c5c-b5aa2b29891c
+04/08/2026 06:09:08:INFO:Received: train message 63d7ed17-0368-422a-9c5c-b5aa2b29891c
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0700
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    8 samples
+   4 Severe Tachypnea    :    6 samples
+[DP] DP Budget: epsilon = 9.9818, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 06:15:20:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:15:37:INFO:
+[92mINFO [0m:      Received: evaluate message abe8e0d2-258f-4ca7-9740-9507029c93e1
+04/08/2026 06:15:37:INFO:Received: evaluate message abe8e0d2-258f-4ca7-9740-9507029c93e1
+[92mINFO [0m:      Sent reply
+04/08/2026 06:15:51:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:15:52:INFO:
+[92mINFO [0m:      Received: train message 88772090-e8be-4ec1-8d17-7f06352b2942
+04/08/2026 06:15:52:INFO:Received: train message 88772090-e8be-4ec1-8d17-7f06352b2942
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :   14 samples
+   4 Severe Tachypnea    :   11 samples
+[DP] DP Budget: epsilon = 10.2408, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 06:22:12:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:22:13:INFO:
+[92mINFO [0m:      Received: evaluate message 06bebef1-26b8-4069-9791-8ffcc9fc486e
+04/08/2026 06:22:13:INFO:Received: evaluate message 06bebef1-26b8-4069-9791-8ffcc9fc486e
+[92mINFO [0m:      Sent reply
+04/08/2026 06:22:27:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:22:27:INFO:
+[92mINFO [0m:      Received: train message ca1ecbdc-342f-4340-9a6e-b9619d24215e
+04/08/2026 06:22:27:INFO:Received: train message ca1ecbdc-342f-4340-9a6e-b9619d24215e
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.1000
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :   13 samples
+   4 Severe Tachypnea    :    7 samples
+[DP] DP Budget: epsilon = 10.4956, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 06:28:38:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:28:39:INFO:
+[92mINFO [0m:      Received: evaluate message 713dce61-7e83-47bb-abb5-7b283fc10fbc
+04/08/2026 06:28:39:INFO:Received: evaluate message 713dce61-7e83-47bb-abb5-7b283fc10fbc
+[92mINFO [0m:      Sent reply
+04/08/2026 06:28:53:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:28:53:INFO:
+[92mINFO [0m:      Received: train message 60a2b28d-71d3-4776-839a-8a97d906c8ff
+04/08/2026 06:28:53:INFO:Received: train message 60a2b28d-71d3-4776-839a-8a97d906c8ff
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0800
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    8 samples
+   4 Severe Tachypnea    :    8 samples
+[DP] DP Budget: epsilon = 10.7463, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 06:35:34:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:35:34:INFO:
+[92mINFO [0m:      Received: evaluate message a51268fb-cdbe-49f5-978f-5d8d9e3129c1
+04/08/2026 06:35:34:INFO:Received: evaluate message a51268fb-cdbe-49f5-978f-5d8d9e3129c1
+[92mINFO [0m:      Sent reply
+04/08/2026 06:35:49:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:35:49:INFO:
+[92mINFO [0m:      Received: train message 13a7198b-b4e7-4cb0-880c-518d7ecb0d44
+04/08/2026 06:35:49:INFO:Received: train message 13a7198b-b4e7-4cb0-880c-518d7ecb0d44
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0900
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :    9 samples
+   4 Severe Tachypnea    :   16 samples
+[DP] DP Budget: epsilon = 10.9934, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 06:42:29:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:42:29:INFO:
+[92mINFO [0m:      Received: evaluate message e9e201f1-6a66-4d86-b97c-ab1691a1a56a
+04/08/2026 06:42:29:INFO:Received: evaluate message e9e201f1-6a66-4d86-b97c-ab1691a1a56a
+[92mINFO [0m:      Sent reply
+04/08/2026 06:42:48:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:42:48:INFO:
+[92mINFO [0m:      Received: train message a44b0214-a14e-4b64-8fbf-13310eac201c
+04/08/2026 06:42:48:INFO:Received: train message a44b0214-a14e-4b64-8fbf-13310eac201c
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0900
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :   14 samples
+   4 Severe Tachypnea    :    5 samples
+[DP] DP Budget: epsilon = 11.2369, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 06:48:47:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:48:47:INFO:
+[92mINFO [0m:      Received: evaluate message 670b542e-05c5-47d3-8059-e1635758163c
+04/08/2026 06:48:47:INFO:Received: evaluate message 670b542e-05c5-47d3-8059-e1635758163c
+[92mINFO [0m:      Sent reply
+04/08/2026 06:49:01:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:49:01:INFO:
+[92mINFO [0m:      Received: train message d4102c44-317c-47f2-bc02-c38520370d6d
+04/08/2026 06:49:01:INFO:Received: train message d4102c44-317c-47f2-bc02-c38520370d6d
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0900
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :   10 samples
+   4 Severe Tachypnea    :    3 samples
+[DP] DP Budget: epsilon = 11.4771, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 06:55:08:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:55:08:INFO:
+[92mINFO [0m:      Received: evaluate message 49cc4b1c-404b-43bd-a349-e7c431195f5f
+04/08/2026 06:55:08:INFO:Received: evaluate message 49cc4b1c-404b-43bd-a349-e7c431195f5f
+[92mINFO [0m:      Sent reply
+04/08/2026 06:55:22:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 06:55:22:INFO:
+[92mINFO [0m:      Received: train message bb0d4414-7297-4b5a-a7d1-73c0a20f9ad7
+04/08/2026 06:55:22:INFO:Received: train message bb0d4414-7297-4b5a-a7d1-73c0a20f9ad7
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0900
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :   17 samples
+   4 Severe Tachypnea    :    4 samples
+[DP] DP Budget: epsilon = 11.7142, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 07:00:55:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 07:00:57:INFO:
+[92mINFO [0m:      Received: evaluate message a447748b-8d38-4d66-b896-1889047c1226
+04/08/2026 07:00:57:INFO:Received: evaluate message a447748b-8d38-4d66-b896-1889047c1226
+[92mINFO [0m:      Sent reply
+04/08/2026 07:01:10:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 07:01:10:INFO:
+[92mINFO [0m:      Received: train message d8ba2797-0e01-4b70-80ae-bfc67ad6f7a6
+04/08/2026 07:01:10:INFO:Received: train message d8ba2797-0e01-4b70-80ae-bfc67ad6f7a6
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0800
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :   17 samples
+   4 Severe Tachypnea    :    4 samples
+[DP] DP Budget: epsilon = 11.9484, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 07:06:54:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 07:06:54:INFO:
+[92mINFO [0m:      Received: evaluate message 0463ee1b-5669-41ca-862b-0879cbe7c652
+04/08/2026 07:06:54:INFO:Received: evaluate message 0463ee1b-5669-41ca-862b-0879cbe7c652
+[92mINFO [0m:      Sent reply
+04/08/2026 07:07:08:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 07:07:08:INFO:
+[92mINFO [0m:      Received: train message e131a5cf-0c0e-4f7b-b91a-de021da16782
+04/08/2026 07:07:08:INFO:Received: train message e131a5cf-0c0e-4f7b-b91a-de021da16782
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0800
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :   15 samples
+   4 Severe Tachypnea    :    3 samples
+[DP] DP Budget: epsilon = 12.1798, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 07:12:28:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 07:12:28:INFO:
+[92mINFO [0m:      Received: evaluate message 156578e4-81ea-4cab-84e6-61c03f67f11f
+04/08/2026 07:12:28:INFO:Received: evaluate message 156578e4-81ea-4cab-84e6-61c03f67f11f
+[92mINFO [0m:      Sent reply
+04/08/2026 07:12:42:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 07:12:42:INFO:
+[92mINFO [0m:      Received: train message b30d4a9e-441d-46d8-b394-bd3302bdc949
+04/08/2026 07:12:42:INFO:Received: train message b30d4a9e-441d-46d8-b394-bd3302bdc949
+[Node 1] Training batch 5...
+[Node 1] Training batch 10...
+[Node] Node 1 | RQI: 0.0700
+   Anomaly distribution this round:
+   0 Normal              :    0 samples
+   1 Bradypnea           :    0 samples
+   2 Apnea               :    0 samples
+   3 Tachypnea           :   17 samples
+   4 Severe Tachypnea    :    6 samples
+[DP] DP Budget: epsilon = 12.4085, delta = 1e-05
+[92mINFO [0m:      Sent reply
+04/08/2026 07:18:08:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 07:18:10:INFO:
+[92mINFO [0m:      Received: evaluate message 09304f61-7347-4f6e-9cad-74e9676b6b33
+04/08/2026 07:18:10:INFO:Received: evaluate message 09304f61-7347-4f6e-9cad-74e9676b6b33
+[92mINFO [0m:      Sent reply
+04/08/2026 07:18:23:INFO:Sent reply
+[92mINFO [0m:      
+04/08/2026 07:18:23:INFO:
+[92mINFO [0m:      Received: reconnect message 3dd88207-dad7-4c7f-85e1-1e09a399eb20
+04/08/2026 07:18:23:INFO:Received: reconnect message 3dd88207-dad7-4c7f-85e1-1e09a399eb20
+04/08/2026 07:18:23:DEBUG:gRPC channel closed
+[92mINFO [0m:      Disconnect and shut down
+04/08/2026 07:18:23:INFO:Disconnect and shut down
